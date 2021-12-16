@@ -15,7 +15,9 @@ declare global {
 
 export type RootStackParamList = {
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
-  Modal: undefined;
+  Modal: {
+    workout: Workout
+  };
   NotFound: undefined;
 };
 
@@ -33,3 +35,18 @@ export type RootTabScreenProps<Screen extends keyof RootTabParamList> = Composit
   BottomTabScreenProps<RootTabParamList, Screen>,
   NativeStackScreenProps<RootStackParamList>
 >;
+
+
+export type Workout = {
+  id: string;
+  name: string;
+  associatedCodes: Record<string, string>
+}
+
+export type Set = {
+  id: string;
+  reps: number;
+  weight: number;
+  createdAt: number;
+  workoutId: string;
+}
