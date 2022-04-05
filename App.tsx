@@ -2,6 +2,8 @@ import 'react-native-get-random-values';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { Provider } from 'react-native-paper';
+import AuthProvider from './contexts/AuthContext';
+
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { WorkoutContextProvider } from './contexts/WorkoutDataContext';
 
@@ -16,9 +18,10 @@ export default function App() {
 
   if (!isLoadingComplete) {
     return null;
+
   } else {
     return (
-      
+      <AuthProvider>
         <Provider>
           <SnackbarProvider>
           <WorkoutContextProvider>      
@@ -29,7 +32,7 @@ export default function App() {
           </WorkoutContextProvider>
           </SnackbarProvider>
         </Provider>
-    
+    </AuthProvider>
     );
   }
 }

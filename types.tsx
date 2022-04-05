@@ -31,6 +31,17 @@ export type RootTabParamList = {
   TabTwo: undefined;
 };
 
+export type LoginParamList = {
+  readonly LoginRequest: undefined;
+  readonly LoginConfirm: { readonly email: string };
+};
+
+export type LoginScreenProps<Screen extends keyof LoginParamList> = CompositeScreenProps<
+NativeStackScreenProps<LoginParamList, Screen>,
+NativeStackScreenProps<RootStackParamList>
+>;
+
+
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> = CompositeScreenProps<
   BottomTabScreenProps<RootTabParamList, Screen>,
   NativeStackScreenProps<RootStackParamList>
@@ -50,3 +61,6 @@ export type Set = {
   createdAt: number;
   workoutId: string;
 }
+
+
+
