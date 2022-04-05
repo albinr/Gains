@@ -1,12 +1,11 @@
-import { StyleSheet } from 'react-native';
-
+import { styles  } from '../../constants/Styles';
 import LoginConfirm from '../components/LoginConfirm';
-import { View } from '../components/Themed';
-import { LoginScreenProps } from '../types';
+import { View } from 'react-native';
+import { LoginScreenProps } from '../../types';
 
 export default function LoginConfirmScreen({ route: { params: { email } } }: LoginScreenProps<'LoginConfirm'>) {
   return (
-    <View>
+    <View style={styles.wrapper}>
       <LoginConfirm email={email} />
     </View>
   );

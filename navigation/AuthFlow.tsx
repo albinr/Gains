@@ -6,10 +6,10 @@
  import { createNativeStackNavigator } from '@react-navigation/native-stack';
  import * as React from 'react';
  
- import LoginConfirmScreen from '../screens/LoginConfirmScreen';
- import LoginScreen from '../screens/LoginRequestScreen';
- import ModalScreen from '../screens/ModalScreen';
- import NotFoundScreen from '../screens/NotFoundScreen';
+ import LoginConfirmScreen from '../src/screens/LoginConfirmScreen';
+ import LoginScreen from '../src/screens/LoginRequestScreen';
+ import ModalScreen from '../src/screens/ModalScreen';
+ import NotFoundScreen from '../src/screens/NotFoundScreen';
  import {
    LoginParamList, LoginScreenProps, RootStackParamList,
  } from '../types';
@@ -18,7 +18,7 @@
    * A root stack navigator is often used for displaying modals on top of all other content.
    * https://reactnavigation.org/docs/modal
    */
-/*  const Stack = createNativeStackNavigator<RootStackParamList>();
+ const Stack = createNativeStackNavigator<RootStackParamList>();
  
 export default function NotLoggedInNavigator() {
    return (
@@ -31,7 +31,7 @@ export default function NotLoggedInNavigator() {
      </Stack.Navigator>
    );
  }
-  */
+ 
  /**
    * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
    * https://reactnavigation.org/docs/bottom-tab-navigator
@@ -48,7 +48,7 @@ export default function NotLoggedInNavigator() {
          component={LoginScreen}
          options={({ navigation }: LoginScreenProps<'LoginRequest'>) => ({
            title: 'Login',
-           headerShown: false,
+           headerShown: true,
          })}
        />
        <StackNav.Screen
@@ -56,6 +56,7 @@ export default function NotLoggedInNavigator() {
          component={LoginConfirmScreen}
          options={{
            title: 'Login',
+
          }}
        />
      </StackNav.Navigator>

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { Set, Workout } from "../types";
+import { Set, Workout } from "../../types";
 import { nanoid } from "nanoid";
 
 

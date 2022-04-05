@@ -1,12 +1,11 @@
-import { StyleSheet } from 'react-native';
-
+import { View } from 'react-native';
 import LoginRequest from '../components/LoginRequest';
-import { View } from '../components/Themed';
-import { LoginScreenProps } from '../types';
+import { styles  } from '../../constants/Styles';
+import { LoginScreenProps } from '../../types';
 
 export default function LoginRequestScreen({ navigation }: LoginScreenProps<'LoginRequest'>) {
   return (
-    <View>
+    <View style={styles.wrapper}>
       <LoginRequest
         onEmailRequested={(email) => navigation.navigate('LoginConfirm', { email })}
       />
