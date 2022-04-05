@@ -10,7 +10,7 @@ import { VictoryAxis, VictoryChart, VictoryScatter } from 'victory-native';
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
 import { useSaveSet, useSetsForWorkout } from '../contexts/WorkoutDataContext';
-import { RootStackScreenProps, Set } from '../types';
+import { RootStackScreenProps, Set } from '../../types';
 
 dayjs.extend(calendar, {
   sameDay: '[Today at] h:mm A', // The same day ( Today at 2:30 AM )

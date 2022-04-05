@@ -3,6 +3,7 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
+import { Button } from 'react-native-paper';
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
@@ -10,21 +11,24 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { ColorSchemeName, Pressable } from 'react-native';
 
+import { AuthContext } from '../src/contexts/AuthContext';
+import NotLoggedInNavigator from './AuthFlow'
 import Colors from '../constants/Colors';
-import useColorScheme from '../hooks/useColorScheme';
-import ModalScreen from '../screens/WorkoutDetails';
-import NotFoundScreen from '../screens/NotFoundScreen';
-import TabOneScreen from '../screens/WorkoutListScreen';
-import TabTwoScreen from '../screens/TabTwoScreen';
+import useColorScheme from '../src/hooks/useColorScheme';
+import ModalScreen from '../src/screens/WorkoutDetails';
+import NotFoundScreen from '../src/screens/NotFoundScreen';
+import ExerciseListScreen from '../src/screens/WorkoutListScreen';
+import TabTwoScreen from '../src/screens/TabTwoScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
+  const { isLoggedIn } = React.useContext(AuthContext);
   return (
     <NavigationContainer
       linking={LinkingConfiguration}
       theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <RootNavigator />
+       { isLoggedIn ? <RootNavigator /> : <NotLoggedInNavigator /> }
     </NavigationContainer>
   );
 }
@@ -58,14 +62,14 @@ function BottomTabNavigator() {
 
   return (
     <BottomTab.Navigator
-      initialRouteName="TabOne"
+      initialRouteName="ExerciseListTab"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint,
       }}>
       <BottomTab.Screen
-        name="TabOne"
-        component={TabOneScreen}
-        options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
+        name="ExerciseListTab"
+        component={ExerciseListScreen}
+        options={({ navigation }: RootTabScreenProps<'ExerciseListTab'>) => ({
           title: 'Workouts',
           tabBarIcon: ({ color }) => <TabBarIcon name="arm-flex" color={color} />,
           headerRight: () => (

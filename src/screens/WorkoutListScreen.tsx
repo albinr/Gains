@@ -1,12 +1,13 @@
-import React, { useCallback, useEffect, useMemo, useRef} from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useContext} from 'react';
 import { FlatList, Keyboard, KeyboardAvoidingView, Pressable, StyleSheet } from 'react-native';
 import { Button, Dialog, List, Portal, Searchbar, Text, TextInput, useTheme } from 'react-native-paper';
 
 import { View } from '../components/Themed';
-import { RootTabScreenProps } from '../types';
+import { RootTabScreenProps } from '../../types';
 import useBoolState from '../hooks/useBoolState';
 import { useAddWorkout, useWorkouts } from '../contexts/WorkoutDataContext';
 
+import { AuthContext } from '../contexts/AuthContext';
 import { useState,  } from 'react';
 import { BarCodeScannedCallback, BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner';
 import { useShowSnackbar } from 'react-native-telegraph';
@@ -74,9 +75,10 @@ const CreateWorkoutDialog: React.FC<{ title?: string, isVisible: boolean, onDism
 
 
 
-export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
+export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'ExerciseListTab'>) {
   const workouts = useWorkouts();
   const addWorkout = useAddWorkout();
+  const { logout } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [isCreateWorkoutDialogVisible, showWorkoutDialog, hideWorkoutDialog] = useBoolState(false);
   const [isQrScannerVisible, showQrScanner, hideQrScanner] = useBoolState(false);
@@ -93,7 +95,8 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
   useEffect(() => {
     navigation.setOptions({
       headerLeft: (props) => <Pressable
-      onPress={showQrScanner}
+      onPress={logout}
+      // onPress={showQrScanner}
         style={({ pressed }) => ({
           opacity: pressed ? 0.5 : 1,
         })}>
@@ -109,6 +112,7 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
       style={({ pressed }) => ({
         opacity: pressed ? 0.5 : 1,
       })}>
+        
       <MaterialCommunityIcons
         name="plus"
         size={25}
@@ -155,7 +159,7 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
 }
 /*
 <Button icon={'qrcode-scan'} onPress={showQrScanner}>Scan any QR</Button>
-      <Button icon={'plus'} onPress={showWorkoutDialog}>Create new workout</Button>
+<Button icon={'plus'} onPress={showWorkoutDialog}>Create new workout</Button>
 */
 // https://lottiefiles.com/dinhdesigner
 // https://lottiefiles.com/18558-chinup-animation
