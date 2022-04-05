@@ -11,6 +11,9 @@ mutation LoginRequest($email: String!) {
 
 mutation LoginConfirm($email: String!, $code: String!) {
   loginConfirm(email: $email, code: $code) {
+    ... on Error {
+      message
+    }
     ... on LoginConfirmSuccessfulResponse {
       accessToken
     }

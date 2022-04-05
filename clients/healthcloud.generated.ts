@@ -17,7 +17,7 @@ export type LoginConfirmMutationVariables = Types.Exact<{
 }>;
 
 
-export type LoginConfirmMutation = { readonly __typename: 'Mutation', readonly loginConfirm: { readonly __typename: 'CodeNotValidError' } | { readonly __typename: 'EmailNotValidError' } | { readonly __typename: 'LoginConfirmSuccessfulResponse', readonly accessToken: string } | { readonly __typename: 'LoginFailedError' } };
+export type LoginConfirmMutation = { readonly __typename: 'Mutation', readonly loginConfirm: { readonly __typename: 'CodeNotValidError', readonly message: string } | { readonly __typename: 'EmailNotValidError', readonly message: string } | { readonly __typename: 'LoginConfirmSuccessfulResponse', readonly accessToken: string } | { readonly __typename: 'LoginFailedError', readonly message: string } };
 
 export type UpsertSamplesMutationVariables = Types.Exact<{
   samples: ReadonlyArray<Types.QuantitySampleUpsert> | Types.QuantitySampleUpsert;
@@ -46,6 +46,9 @@ export function useLoginRequestMutation() {
 export const LoginConfirmDocument = gql`
     mutation LoginConfirm($email: String!, $code: String!) {
   loginConfirm(email: $email, code: $code) {
+    ... on Error {
+      message
+    }
     ... on LoginConfirmSuccessfulResponse {
       accessToken
     }
