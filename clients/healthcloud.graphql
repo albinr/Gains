@@ -1,0 +1,26 @@
+mutation LoginRequest($email: String!) {
+  loginRequest(email: $email) {
+    ... on LoginRequestSuccessResponse {
+      success
+    }
+    ... on Error {
+      message
+    }
+  }
+}
+
+mutation LoginConfirm($email: String!, $code: String!) {
+  loginConfirm(email: $email, code: $code) {
+    ... on LoginConfirmSuccessfulResponse {
+      accessToken
+    }
+  }
+}
+
+mutation UpsertSamples($samples: [QuantitySampleUpsert!]!) {
+  upsertQuantitySamples(samples: $samples) {
+    upsertedCount
+    insertedCount
+    modifiedCount
+  }
+}

@@ -1,0 +1,43 @@
+overwrite: true
+schema: 'https://healthcloud-staging.herokuapp.com/graphql'
+# errorsOnly: true # this seems to do the trick, even though validation fails
+# schema: https://healthcloud-staging.herokuapp.com/graphql
+  #- '../schedulist-backend/src/schema.graphql'
+documents: '**/*.graphql'
+generates:
+  clients/__generated__/schema.ts:
+    plugins:
+      - typescript
+    config:
+      useTypeImports: true
+      nonOptionalTypename: true
+      immutableTypes: true
+      scalars:
+        DateTime: dayjs#Dayjs
+        ObjectId: string
+      namingConvention:
+          enumValues: keep
+  clients/:
+    preset: near-operation-file
+    presetConfig:
+      extension: .generated.ts
+      baseTypesPath: __generated__/schema
+    plugins:
+      - typescript-operations
+      - typescript-urql
+      - add:
+          placement: 'prepend'
+          content: "import type { Dayjs } from 'dayjs'"
+    config:
+      withComponent: false
+      withHOC: false
+      withHooks: true
+      immutableTypes: true
+      useTypeImports: true
+      nonOptionalTypename: true
+      namingConvention:
+          enumValues: keep
+      scalars:
+        DateTime: dayjs#Dayjs
+        ObjectId: string
+  
