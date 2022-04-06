@@ -1,21 +1,22 @@
 /* eslint-disable no-unused-vars */
-import type {Dayjs} from 'dayjs';
+import type { Dayjs } from 'dayjs';
+
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends { readonly [key: string]: unknown }> = { readonly [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { readonly [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { readonly [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
+  readonly ID: string;
+  readonly String: string;
+  readonly Boolean: boolean;
+  readonly Int: number;
+  readonly Float: number;
   /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
-  DateTime: Dayjs;
+  readonly DateTime: Dayjs;
   /** ObjectId is a mongodb ObjectId. String of 12 or 24 hex chars */
-  ObjectId: string;
+  readonly ObjectId: string;
 };
 
 export type AcceptCompetitionInviteResponse = Competition | ForbiddenError | NotFoundError;
@@ -189,19 +190,17 @@ export type MealSample = CommonSampleProps & {
   readonly weightInGrams?: Maybe<Scalars['Float']>;
 };
 
-
 export type MealSampleQuantitiesAfterMealArgs = {
-  durationInMinutes: Scalars['Int'];
-  offsetInMinutes?: InputMaybe<Scalars['Int']>;
-  quantityType: QuantityType;
+  readonly durationInMinutes: Scalars['Int'];
+  readonly offsetInMinutes?: InputMaybe<Scalars['Int']>;
+  readonly quantityType: QuantityType;
 };
 
-
 export type MealSampleStatAfterMealArgs = {
-  durationInMinutes: Scalars['Int'];
-  offsetInMinutes?: InputMaybe<Scalars['Int']>;
-  quantityType: QuantityType;
-  statType: QuantityStat;
+  readonly durationInMinutes: Scalars['Int'];
+  readonly offsetInMinutes?: InputMaybe<Scalars['Int']>;
+  readonly quantityType: QuantityType;
+  readonly statType: QuantityStat;
 };
 
 export type MealSampleUpsert = {
@@ -244,61 +243,50 @@ export type Mutation = {
   readonly upsertWorkoutSamples: UpsertedResult;
 };
 
-
 export type MutationAcceptCompetitionInviteArgs = {
-  inviteToken: Scalars['String'];
+  readonly inviteToken: Scalars['String'];
 };
-
 
 export type MutationAcceptFollowerInviteArgs = {
-  inviteToken: Scalars['String'];
+  readonly inviteToken: Scalars['String'];
 };
-
 
 export type MutationAddSetArgs = {
-  set: WorkoutSetInput;
-  workoutId: Scalars['ObjectId'];
+  readonly set: WorkoutSetInput;
+  readonly workoutId: Scalars['ObjectId'];
 };
-
 
 export type MutationGenerateCompetitionInviteArgs = {
-  competitionId: Scalars['ObjectId'];
+  readonly competitionId: Scalars['ObjectId'];
 };
-
 
 export type MutationLoginConfirmArgs = {
-  code: Scalars['String'];
-  email: Scalars['String'];
+  readonly code: Scalars['String'];
+  readonly email: Scalars['String'];
 };
-
 
 export type MutationLoginRequestArgs = {
-  email: Scalars['String'];
+  readonly email: Scalars['String'];
 };
-
 
 export type MutationUpsertCompetitionArgs = {
-  competition: UpsertCompetition;
+  readonly competition: UpsertCompetition;
 };
-
 
 export type MutationUpsertMealsArgs = {
-  samples: ReadonlyArray<MealSampleUpsert>;
+  readonly samples: ReadonlyArray<MealSampleUpsert>;
 };
-
 
 export type MutationUpsertQuantitySampleArgs = {
-  quantitySample: QuantitySampleUpsert;
+  readonly quantitySample: QuantitySampleUpsert;
 };
-
 
 export type MutationUpsertQuantitySamplesArgs = {
-  samples: ReadonlyArray<QuantitySampleUpsert>;
+  readonly samples: ReadonlyArray<QuantitySampleUpsert>;
 };
 
-
 export type MutationUpsertWorkoutSamplesArgs = {
-  samples: ReadonlyArray<WorkoutSampleUpsert>;
+  readonly samples: ReadonlyArray<WorkoutSampleUpsert>;
 };
 
 export type NotFoundError = Error & {
@@ -334,9 +322,8 @@ export type QuantitySample = CommonSampleProps & {
   readonly value: Scalars['Float'];
 };
 
-
 export type QuantitySampleValueArgs = {
-  asUnit?: InputMaybe<Unit>;
+  readonly asUnit?: InputMaybe<Unit>;
 };
 
 export type QuantitySampleUpsert = {
@@ -476,14 +463,12 @@ export type Query = {
   readonly userById: UserByIdResponse;
 };
 
-
 export type QueryCompetitionByIdArgs = {
-  competitionId: Scalars['ObjectId'];
+  readonly competitionId: Scalars['ObjectId'];
 };
 
-
 export type QueryUserByIdArgs = {
-  userId: Scalars['ObjectId'];
+  readonly userId: Scalars['ObjectId'];
 };
 
 export enum ResistanceType {
@@ -630,60 +615,53 @@ export type User = IUser & {
   readonly workoutSamples: ReadonlyArray<WorkoutSample>;
 };
 
-
 export type UserChartImageUrlArgs = {
-  quantityType: QuantityType;
+  readonly quantityType: QuantityType;
 };
-
 
 export type UserMealSamplesArgs = {
-  fromDate?: InputMaybe<Scalars['DateTime']>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  sortBy?: InputMaybe<ReadonlyArray<SampleSort>>;
-  toDate?: InputMaybe<Scalars['DateTime']>;
+  readonly fromDate?: InputMaybe<Scalars['DateTime']>;
+  readonly limit?: InputMaybe<Scalars['Int']>;
+  readonly offset?: InputMaybe<Scalars['Int']>;
+  readonly sortBy?: InputMaybe<ReadonlyArray<SampleSort>>;
+  readonly toDate?: InputMaybe<Scalars['DateTime']>;
 };
-
 
 export type UserQuantitySampleMaxArgs = {
-  fromDate?: InputMaybe<Scalars['DateTime']>;
-  quantityType: QuantityType;
-  toDate?: InputMaybe<Scalars['DateTime']>;
+  readonly fromDate?: InputMaybe<Scalars['DateTime']>;
+  readonly quantityType: QuantityType;
+  readonly toDate?: InputMaybe<Scalars['DateTime']>;
 };
-
 
 export type UserQuantitySampleMinArgs = {
-  fromDate?: InputMaybe<Scalars['DateTime']>;
-  quantityType: QuantityType;
-  toDate?: InputMaybe<Scalars['DateTime']>;
+  readonly fromDate?: InputMaybe<Scalars['DateTime']>;
+  readonly quantityType: QuantityType;
+  readonly toDate?: InputMaybe<Scalars['DateTime']>;
 };
-
 
 export type UserQuantitySamplesArgs = {
-  fromDate?: InputMaybe<Scalars['DateTime']>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  quantityType: QuantityType;
-  sortBy?: InputMaybe<ReadonlyArray<QuantitySort>>;
-  toDate?: InputMaybe<Scalars['DateTime']>;
+  readonly fromDate?: InputMaybe<Scalars['DateTime']>;
+  readonly limit?: InputMaybe<Scalars['Int']>;
+  readonly offset?: InputMaybe<Scalars['Int']>;
+  readonly quantityType: QuantityType;
+  readonly sortBy?: InputMaybe<ReadonlyArray<QuantitySort>>;
+  readonly toDate?: InputMaybe<Scalars['DateTime']>;
 };
-
 
 export type UserQuantityStatArgs = {
-  fromDate?: InputMaybe<Scalars['DateTime']>;
-  quantityType: QuantityType;
-  statistic: QuantityStat;
-  toDate?: InputMaybe<Scalars['DateTime']>;
-  unit?: InputMaybe<Unit>;
+  readonly fromDate?: InputMaybe<Scalars['DateTime']>;
+  readonly quantityType: QuantityType;
+  readonly statistic: QuantityStat;
+  readonly toDate?: InputMaybe<Scalars['DateTime']>;
+  readonly unit?: InputMaybe<Unit>;
 };
 
-
 export type UserWorkoutSamplesArgs = {
-  fromDate?: InputMaybe<Scalars['DateTime']>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  sortBy?: InputMaybe<ReadonlyArray<SampleSort>>;
-  toDate?: InputMaybe<Scalars['DateTime']>;
+  readonly fromDate?: InputMaybe<Scalars['DateTime']>;
+  readonly limit?: InputMaybe<Scalars['Int']>;
+  readonly offset?: InputMaybe<Scalars['Int']>;
+  readonly sortBy?: InputMaybe<ReadonlyArray<SampleSort>>;
+  readonly toDate?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type UserByIdResponse = AuthenticationError | NotFoundError | RestrictedUser | User;
@@ -872,29 +850,25 @@ export type WorkoutSample = CommonSampleProps & {
   readonly workoutActivityType: WorkoutActivityType;
 };
 
-
 export type WorkoutSampleQuantitiesArgs = {
-  quantityType: QuantityType;
+  readonly quantityType: QuantityType;
 };
-
 
 export type WorkoutSampleQuantitiesAfterWorkoutArgs = {
-  durationInMinutes: Scalars['Int'];
-  quantityType: QuantityType;
+  readonly durationInMinutes: Scalars['Int'];
+  readonly quantityType: QuantityType;
 };
-
 
 export type WorkoutSampleStatArgs = {
-  quantityType: QuantityType;
-  statType: QuantityStat;
+  readonly quantityType: QuantityType;
+  readonly statType: QuantityStat;
 };
 
-
 export type WorkoutSampleStatAfterWorkoutArgs = {
-  durationInMinutes: Scalars['Int'];
-  offsetInMinutes?: InputMaybe<Scalars['Int']>;
-  quantityType: QuantityType;
-  statType: QuantityStat;
+  readonly durationInMinutes: Scalars['Int'];
+  readonly offsetInMinutes?: InputMaybe<Scalars['Int']>;
+  readonly quantityType: QuantityType;
+  readonly statType: QuantityStat;
 };
 
 export type WorkoutSampleUpsert = {

@@ -13,6 +13,7 @@
         "plugin:jest/recommended"
     ],
     "rules": {
+        "react/react-in-jsx-scope": 0,
         "@typescript-eslint/explicit-module-boundary-types": 0,
         "react-native/no-inline-styles": 1,
         "no-unreachable": 2,

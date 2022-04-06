@@ -1,19 +1,23 @@
-import React, {useCallback, useEffect, useMemo, useRef, useContext} from 'react';
-import {FlatList, Keyboard, KeyboardAvoidingView, Pressable, StyleSheet} from 'react-native';
-import {Button, Dialog, List, Portal, Searchbar, Text, TextInput, useTheme} from 'react-native-paper';
+import React, {
+  useCallback, useEffect, useMemo, useRef, useContext, useState,
+} from 'react';
+import {
+  FlatList, Keyboard, KeyboardAvoidingView, Pressable, StyleSheet,
+} from 'react-native';
+import {
+  Button, Dialog, List, Portal, Searchbar, Text, TextInput, useTheme,
+} from 'react-native-paper';
+import { BarCodeScannedCallback, BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner';
+import { useShowSnackbar } from 'react-native-telegraph';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import {View} from '../components/Themed';
-import {RootTabScreenProps} from '../../types';
+import { View } from '../components/Themed';
+import { RootTabScreenProps } from '../../types';
 import useBoolState from '../hooks/useBoolState';
-import {useAddWorkout, useWorkouts} from '../contexts/WorkoutDataContext';
+import { useAddWorkout, useWorkouts } from '../contexts/WorkoutDataContext';
+import { AuthContext } from '../contexts/AuthContext';
 
-import {AuthContext} from '../contexts/AuthContext';
-import {useState} from 'react';
-import {BarCodeScannedCallback, BarCodeScanner, PermissionStatus} from 'expo-barcode-scanner';
-import {useShowSnackbar} from 'react-native-telegraph';
-import {MaterialCommunityIcons} from '@expo/vector-icons';
-
-const QrScanner: React.FC<{ isVisible: boolean, onDismiss: () => void, onScan: BarCodeScannedCallback }> = ({isVisible, onDismiss, onScan}) => {
+const QrScanner: React.FC<{ readonly isVisible: boolean, readonly onDismiss: () => void, readonly onScan: BarCodeScannedCallback }> = ({ isVisible, onDismiss, onScan }) => {
   // const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const showSnackbar = useShowSnackbar();
 
@@ -21,18 +25,18 @@ const QrScanner: React.FC<{ isVisible: boolean, onDismiss: () => void, onScan: B
     if (isVisible) {
       Keyboard.dismiss();
       (async () => {
-        const {status} = await BarCodeScanner.requestPermissionsAsync();
+        const { status } = await BarCodeScanner.requestPermissionsAsync();
         if (status === PermissionStatus.DENIED) {
           showSnackbar('Please enable camera permissions in settings');
           onDismiss();
         }
       })();
     }
-  }, []);
+  }, [isVisible, onDismiss, showSnackbar]);
 
   return isVisible ? (
     <Portal>
-      <View style={[StyleSheet.absoluteFillObject, {flex: 1}]}>
+      <View style={[StyleSheet.absoluteFillObject, { flex: 1 }]}>
         <BarCodeScanner
           onBarCodeScanned={onScan}
           style={StyleSheet.absoluteFillObject}
@@ -42,117 +46,136 @@ const QrScanner: React.FC<{ isVisible: boolean, onDismiss: () => void, onScan: B
   ) : null;
 };
 
-const CreateWorkoutDialog: React.FC<{ title?: string, isVisible: boolean, onDismiss: () => void, onCreate: (name: string) => void }> = ({isVisible, title, onDismiss, onCreate}) => {
+const CreateWorkoutDialog: React.FC<{ readonly title?: string, readonly isVisible: boolean, readonly onDismiss: () => void, readonly onCreate: (name: string) => void }> = ({
+  isVisible, title, onDismiss, onCreate,
+}) => {
   const workoutName = useRef('');
 
   const onCreateInternal = useCallback(() => {
     onCreate(workoutName.current);
-  }, []);
+  }, [onCreate]);
 
   useEffect(() => {
     if (!isVisible) {
       workoutName.current = '';
     }
-  }, []);
+  }, [isVisible]);
 
-  return <Portal>
+  return (
+    <Portal>
 
-    <Dialog visible={isVisible} onDismiss={onDismiss}>
-      <KeyboardAvoidingView>
-        <Dialog.Title>{title ||'Create workout'}</Dialog.Title>
-        <Dialog.Content>
-          <TextInput onSubmitEditing={onCreateInternal} placeholder='Workout name' autoFocus onChangeText={(text) => workoutName.current = text}></TextInput>
-        </Dialog.Content>
-        <Dialog.Actions>
-          <Button onPress={onDismiss}>Cancel</Button>
-          <Button onPress={onCreateInternal}>Create</Button>
-        </Dialog.Actions>
-      </KeyboardAvoidingView>
-    </Dialog>
+      <Dialog visible={isVisible} onDismiss={onDismiss}>
+        <KeyboardAvoidingView>
+          <Dialog.Title>{title || 'Create workout'}</Dialog.Title>
+          <Dialog.Content>
+            <TextInput onSubmitEditing={onCreateInternal} placeholder='Workout name' autoFocus onChangeText={(text) => workoutName.current = text} />
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={onDismiss}>Cancel</Button>
+            <Button onPress={onCreateInternal}>Create</Button>
+          </Dialog.Actions>
+        </KeyboardAvoidingView>
+      </Dialog>
 
-  </Portal>;
+    </Portal>
+  );
 };
 
-
-export default function WorkoutListScreen({navigation}: RootTabScreenProps<'WorkoutListTab'>) {
+export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'WorkoutListTab'>) {
   const workouts = useWorkouts();
   const addWorkout = useAddWorkout();
-  const {logout} = useContext(AuthContext);
+  const { logout } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [isCreateWorkoutDialogVisible, showWorkoutDialog, hideWorkoutDialog] = useBoolState(false);
   const [isQrScannerVisible, showQrScanner, hideQrScanner] = useBoolState(false);
-  const [lastScannedQRCode, setLastScannedQRCode] = useState<{data: string, type: string}>();
+  const [lastScannedQRCode, setLastScannedQRCode] = useState<{readonly data: string, readonly type: string}>();
   const showSnackbar = useShowSnackbar();
   const theme = useTheme();
 
-  const workoutsToShow = useMemo(() => {
-    return searchQuery.length > 0 ?
-      workouts.filter((w) => w.name.toLowerCase().includes(searchQuery.toLowerCase())) :
-      workouts;
-  }, [searchQuery, workouts]);
+  const workoutsToShow = useMemo(() => (searchQuery.length > 0
+    ? workouts.filter((w) => w.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    : workouts), [searchQuery, workouts]);
 
   useEffect(() => {
     navigation.setOptions({
-      headerLeft: (props) => <Pressable
-        onPress={logout}
-        // onPress={showQrScanner}
-        style={({pressed}) => ({
-          opacity: pressed ? 0.5 : 1,
-        })}>
-        <MaterialCommunityIcons
-          name="qrcode-scan"
-          size={25}
-          color={theme.colors.text}
-          style={{marginLeft: 15}}
-        />
-      </Pressable>,
-      headerRight: (props) => <Pressable
-        onPress={showWorkoutDialog}
-        style={({pressed}) => ({
-          opacity: pressed ? 0.5 : 1,
-        })}>
+      headerLeft: (props) => (
+        <Pressable
 
-        <MaterialCommunityIcons
-          name="plus"
-          size={25}
-          color={theme.colors.text}
-          style={{marginRight: 15}}
-        />
-      </Pressable>,
+          onPress={showQrScanner}
+          style={({ pressed }) => ({
+            opacity: pressed ? 0.5 : 1,
+          })}
+        >
+          <MaterialCommunityIcons
+            name='qrcode-scan'
+            size={25}
+            color={theme.colors.text}
+            style={{ marginLeft: 15 }}
+          />
+        </Pressable>
+      ),
+      headerRight: (props) => (
+        <Pressable
+          onPress={showWorkoutDialog}
+          style={({ pressed }) => ({
+            opacity: pressed ? 0.5 : 1,
+          })}
+        >
+
+          <MaterialCommunityIcons
+            name='plus'
+            size={25}
+            color={theme.colors.text}
+            style={{ marginRight: 15 }}
+          />
+        </Pressable>
+      ),
     });
-  }, []);
-
+  }, [logout, navigation, showWorkoutDialog, theme.colors.text]);
 
   return (
     <View style={styles.container}>
-      <QrScanner isVisible={isQrScannerVisible} onDismiss={hideQrScanner} onScan={({data, type}) => {
-        hideQrScanner();
-        const existingWorkout = workouts.find((w) => w.associatedCodes[type] === data);
-        if (existingWorkout) {
-          navigation.navigate('Modal', {workout: existingWorkout});
-        } else {
-          showWorkoutDialog();
-          setLastScannedQRCode({data, type});
-        }
+      <QrScanner
+        isVisible={isQrScannerVisible}
+        onDismiss={hideQrScanner}
+        onScan={({ data, type }) => {
+          hideQrScanner();
+          const existingWorkout = workouts.find((w) => w.associatedCodes[type] === data);
+          if (existingWorkout) {
+            navigation.navigate('Modal', { workout: existingWorkout });
+          } else {
+            showWorkoutDialog();
+            setLastScannedQRCode({ data, type });
+          }
 
-        // showSnackbar('QR code scanned, will be associated with workout');
-      }} />
+          // showSnackbar('QR code scanned, will be associated with workout');
+        }}
+      />
       <CreateWorkoutDialog
         isVisible={isCreateWorkoutDialogVisible}
         onDismiss={hideWorkoutDialog}
         title={lastScannedQRCode ? `Give it a name` : undefined}
         onCreate={(name) => {
           hideWorkoutDialog();
-          const associatedCodes = lastScannedQRCode ? {[lastScannedQRCode.type]: lastScannedQRCode.data} : {};
-          addWorkout({name, associatedCodes});
+          const associatedCodes = lastScannedQRCode ? { [lastScannedQRCode.type]: lastScannedQRCode.data } : {};
+          addWorkout({ name, associatedCodes });
           setLastScannedQRCode(undefined);
         }}
       />
 
       <Searchbar placeholder='Search tracked workouts..' value={searchQuery} onChangeText={setSearchQuery} autoFocus />
-      <FlatList data={workoutsToShow} style={{width: '100%'}} renderItem={({item}) => <List.Item onPress={() => {
-        navigation.navigate('Modal', {workout: item});
-      }} title={item.name} /> } />
+      <FlatList
+        data={workoutsToShow}
+        style={{ width: '100%' }}
+        renderItem={({ item }) => (
+          <List.Item
+            onPress={() => {
+              navigation.navigate('Modal', { workout: item });
+            }}
+            title={item.name}
+          />
+        )}
+      />
     </View>
   );
 }
