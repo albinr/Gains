@@ -10,7 +10,9 @@
     "eject": "expo eject",
     "test": "jest --watchAll",
     "codegen": "graphql-codegen --config codegen.yml",
-    "codegen-watch": "nodemon --watch src -e ts,tsx --exec 'yarn codegen --watch'"
+    "codegen-watch": "nodemon --watch src -e ts,tsx --exec 'yarn codegen --watch'",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "jest": {
     "preset": "jest-expo"
@@ -52,8 +54,15 @@
     "@graphql-codegen/near-operation-file-preset": "^2.2.9",
     "@graphql-codegen/typescript-operations": "^2.3.5",
     "@graphql-codegen/typescript-urql": "^3.5.7",
+    "@storybook/addon-actions": "^6.4.20",
+    "@storybook/addon-essentials": "^6.4.20",
+    "@storybook/addon-interactions": "^6.4.20",
+    "@storybook/addon-links": "^6.4.20",
+    "@storybook/react": "^6.4.20",
+    "@storybook/testing-library": "^0.0.9",
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.64.12",
+    "babel-loader": "^8.2.4",
     "jest-expo": "^44.0.0",
     "typescript": "4"
   },
