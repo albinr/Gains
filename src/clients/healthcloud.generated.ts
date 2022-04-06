@@ -1,4 +1,4 @@
-import type * as Types from './__generated__/schema';
+import type * as Types from '../../clients/__generated__/schema';
 
 import type { Dayjs } from 'dayjs'
 import gql from 'graphql-tag';
