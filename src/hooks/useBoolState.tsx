@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-const useBoolState = (initialValue = false): [boolean, () => void, () => void] => {
+const useBoolState = (initialValue = false): readonly [boolean, () => void, () => void] => {
   const [isHovered, setIsHovered] = useState(initialValue);
 
   const setEnabled = useCallback(() => {

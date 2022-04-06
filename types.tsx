@@ -8,29 +8,33 @@ import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/n
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList {}
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    type RootParamList = RootStackParamList
   }
 }
 
 export type RootStackParamList = {
-  Root: NavigatorScreenParams<RootTabParamList> | undefined;
-  Modal: {
-    workout: Workout
+  readonly Root: NavigatorScreenParams<RootTabParamList> | undefined;
+  readonly Modal: {
+    readonly workout: Workout
   };
-  NotFound: undefined;
+  readonly NotFound: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<
-  RootStackParamList,
-  Screen
+RootStackParamList,
+Screen
 >;
 
 export type RootTabParamList = {
-  ExerciseListTab: undefined;
-  StartWorkoutTab: undefined;
-  TabTwo: undefined;
-  
+  readonly WorkoutListTab: undefined;
+  readonly ExerciseListTab: undefined;
+  readonly StartWorkoutTab: undefined;
+  readonly TabTwo: undefined;
+  readonly ProfileTab: undefined;
 
 };
 
@@ -44,26 +48,21 @@ NativeStackScreenProps<LoginParamList, Screen>,
 NativeStackScreenProps<RootStackParamList>
 >;
 
-
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> = CompositeScreenProps<
-  BottomTabScreenProps<RootTabParamList, Screen>,
-  NativeStackScreenProps<RootStackParamList>
+BottomTabScreenProps<RootTabParamList, Screen>,
+NativeStackScreenProps<RootStackParamList>
 >;
 
-
 export type Workout = {
-  id: string;
-  name: string;
-  associatedCodes: Record<string, string>
+  readonly id: string;
+  readonly name: string;
+  readonly associatedCodes: Record<string, string>
 }
 
-export type Set = {
-  id: string;
-  reps: number;
-  weight: number;
-  createdAt: number;
-  workoutId: string;
+export type ExerciseSet = {
+  readonly id: string;
+  readonly reps: number;
+  readonly weight: number;
+  readonly createdAt: number;
+  readonly workoutId: string;
 }
-
-
-

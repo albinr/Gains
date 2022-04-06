@@ -21,4 +21,6 @@ export default {
   },
 };
 
-export { primary, secondary, tintColorLight, tintColorDark };
+export {
+  primary, secondary, tintColorLight, tintColorDark,
+};

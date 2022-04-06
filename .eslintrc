@@ -1,0 +1,98 @@
+{
+    "plugins": ["@typescript-eslint", "react-hooks","import", "json","react-native", "functional"],
+    "extends": [
+        "airbnb",
+        "eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:react/recommended",
+        "plugin:import/typescript",
+        "plugin:json/recommended",
+        "plugin:react/recommended",
+        "plugin:jest/recommended"
+    ],
+    "rules": {
+        "react/react-in-jsx-scope": 0,
+        "@typescript-eslint/explicit-module-boundary-types": 0,
+        "react-native/no-inline-styles": 1,
+        "no-unreachable": 2,
+        "react-hooks/rules-of-hooks": "error",
+        // would like to have these but they don't work well..
+        "@typescript-eslint/no-unsafe-assignment": 0,
+        "linebreak-style": ["error", "unix"],
+        "@typescript-eslint/no-unsafe-call": 0,
+        "import/no-cycle": 0,
+        "import/no-named-as-default-member": 0,
+        "@typescript-eslint/no-implied-eval": 0,
+        "react/require-default-props": 0,
+        "functional/prefer-readonly-type": "error",
+        "functional/prefer-tacit": "error",
+        "functional/immutable-data": ["error", {
+            "ignoreAccessorPattern": "**.current"
+        }],
+        "@typescript-eslint/no-unsafe-argument": 1,
+        "react/no-unused-prop-types": 1,
+        "import/no-named-as-default": 0,
+        "@typescript-eslint/no-unsafe-return": 0,
+        "react/no-unstable-nested-components": 1,
+        "@typescript-eslint/no-unsafe-member-access": 0,
+        "@typescript-eslint/no-misused-promises": [
+            "error",
+            {
+              "checksVoidReturn": false
+            }
+          ],
+        "react/function-component-definition": 0,
+        "@typescript-eslint/restrict-template-expressions": 0,
+        "@typescript-eslint/no-unnecessary-type-assertion": 0,
+        "@typescript-eslint/unbound-method": ["error",
+            {
+              "ignoreStatic": true
+            }],
+        "react-hooks/exhaustive-deps": "error",
+        "global-require": 0,
+        "comma-dangle": ["error", "always-multiline"],
+        "react/jsx-props-no-spreading": 0,
+        "react/prop-types": 0,
+        "prefer-arrow-callback": [ "error", { "allowNamedFunctions": true } ],
+        "max-len": ["warn", { "code": 200 }],
+        "no-nested-ternary": 0,
+        "no-void": ["error", { "allowAsStatement": true }],
+        "one-var": 0,
+        "react-native/no-unused-styles": 1,
+        "@typescript-eslint/no-empty-function": [1, {"allow": ["arrowFunctions"]}],
+        "import/no-extraneous-dependencies": ["error", {"devDependencies": ["src/**/*.test.ts", "src/**/*.test.tsx"]}],
+        "jest/expect-expect": 2,
+        "indent": 0,
+        "@typescript-eslint/indent": ["error", 2, { "VariableDeclarator": { "var": 2, "let": 2, "const": 3 }, "ignoredNodes": ["JSXAttribute", "JSXSpreadAttribute"], }],
+        "react/boolean-prop-naming": ["error", { "rule": "^(is|has)[A-Z]([A-Za-z0-9]?)+", "propTypeNames": ["bool", "mutuallyExclusiveTrueProps"] }],
+        "quote-props": ["error", "consistent-as-needed"],
+        "no-underscore-dangle": ["error", { "allow": ["_id", "__typename"] }],
+        "quotes": ["error", "single", { "avoidEscape": true, "allowTemplateLiterals": true }],
+        "react/display-name": 1,
+        "@typescript-eslint/no-shadow": 1,
+        "no-shadow": 0,
+        "import/prefer-default-export": 0,
+        "react/jsx-filename-extension": [2, { "extensions": [".tsx"] }],
+        "jsx-quotes": ["error", "prefer-single"],
+        "import/order": ["error", { "newlines-between": "always", "groups": [["builtin", "external"], ["parent", "sibling", "index"], ["type"]] }],
+        "@typescript-eslint/explicit-function-return-type": 0,
+        "no-use-before-define": "off",
+        "@typescript-eslint/no-use-before-define": ["error", { "functions": true, "classes": true, "variables": false }],
+        "import/extensions": [
+            2,
+            {
+                "graphql": "always"
+            }
+        ]
+    },
+    "parserOptions": {
+        "project": "./tsconfig.json"
+    },
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
+    }
+}

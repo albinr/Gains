@@ -1,0 +1,14 @@
+// {
+//     "typescript.tsdk": "node_modules\\typescript\\lib"
+// }
+{
+    "jest.pathToJest": "node_modules/.bin/jest",
+    "eslint.enable": true,
+    "eslint.format.enable" : true,
+    "files.eol": "\n",
+    "editor.codeActionsOnSave" : {
+      "source.organizeImports" : false,
+      "source.fixAll.eslint" : true
+    },
+    "eslint.packageManager": "yarn"
+  }

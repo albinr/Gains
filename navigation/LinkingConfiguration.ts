@@ -15,9 +15,9 @@ const linking: LinkingOptions<RootStackParamList> = {
     screens: {
       Root: {
         screens: {
-          ExerciseListTab: {
+          WorkoutListTab: {
             screens: {
-              ExerciseListScreen: 'one',
+              WorkoutListScreen: 'one',
             },
           },
           TabTwo: {

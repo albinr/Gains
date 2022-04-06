@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import type { Dayjs } from 'dayjs';
 
 export type Maybe<T> = T | null;

@@ -1,6 +1,5 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-
 import { Button } from 'react-native-paper';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
@@ -10,19 +9,19 @@ export default {
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {
     color: { control: 'color' },
-    mode: { 
+    mode: {
       defaultValue: 'contained',
       control: 'radio',
-      options: ['contained', 'outlined', 'text']
+      options: ['contained', 'outlined', 'text'],
     },
     dark: {
       type: 'boolean',
       defaultValue: false,
-    }
+    },
   },
   args: {
-    
-  }
+
+  },
 } as ComponentMeta<typeof Button>;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
@@ -36,15 +35,15 @@ export const Text = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Primary.args = {
   mode: 'contained',
-  children: 'My button title'
+  children: 'My button title',
 };
 
 Outlined.args = {
   mode: 'outlined',
-  children: 'My button title'
+  children: 'My button title',
 };
 
 Text.args = {
   mode: 'text',
-  children: 'My button title'
+  children: 'My button title',
 };
