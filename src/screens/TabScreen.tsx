@@ -81,7 +81,7 @@ const CreateWorkoutDialog: React.FC<{ readonly title?: string, readonly isVisibl
   );
 };
 
-export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'WorkoutListTab'>) {
+export default function TabScreen({ navigation }: RootTabScreenProps<'WorkoutListTab'>) {
   const workouts = useWorkouts();
   const addWorkout = useAddWorkout();
   const { logout } = useContext(AuthContext);
@@ -131,7 +131,7 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
         </Pressable>
       ),
     });
-  }, [logout, navigation, showWorkoutDialog, theme.colors.text]);
+  }, [logout, navigation, showWorkoutDialog, theme.colors.text, showQrScanner]);
 
   return (
     <View style={styles.container}>
