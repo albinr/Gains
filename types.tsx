@@ -6,6 +6,7 @@
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { WorkoutExerciseType } from './clients/__generated__/schema';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -56,7 +57,8 @@ NativeStackScreenProps<RootStackParamList>
 export type Workout = {
   readonly id: string;
   readonly name: string;
-  readonly associatedCodes: Record<string, string>
+  readonly associatedCodes: Record<string, string>;
+  readonly workoutExerciseType: WorkoutExerciseType;
 }
 
 export type ExerciseSet = {
