@@ -2,6 +2,8 @@
   "expo": {
     "name": "Gains",
     "slug": "gains",
+    "owner": "kingstinct",
+    "githubUrl": "https://github.com/Kingstinct/gains",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
