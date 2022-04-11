@@ -15,6 +15,7 @@
     "codegen-watch": "nodemon --watch src -e ts,tsx --exec 'yarn codegen --watch'",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
+    "typecheck": "tsc --noEmit",
     "prepare": "husky install"
   },
   "jest": {

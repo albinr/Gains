@@ -24,6 +24,16 @@ import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../typ
 import LinkingConfiguration from './LinkingConfiguration';
 
 /**
+ * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
+ */
+function TabBarIcon(props: {
+  readonly name: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+  readonly color: string;
+}) {
+  return <MaterialCommunityIcons size={30} style={{ marginBottom: -3 }} {...props} />;
+}
+
+/**
  * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
  * https://reactnavigation.org/docs/bottom-tab-navigator
  */
@@ -115,14 +125,4 @@ export default function Navigation({ colorScheme }: { readonly colorScheme: Colo
       { isLoggedIn ? <RootNavigator /> : <NotLoggedInNavigator /> }
     </NavigationContainer>
   );
-}
-
-/**
- * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
- */
-function TabBarIcon(props: {
-  readonly name: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
-  readonly color: string;
-}) {
-  return <MaterialCommunityIcons size={30} style={{ marginBottom: -3 }} {...props} />;
 }

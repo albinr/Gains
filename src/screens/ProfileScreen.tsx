@@ -10,7 +10,7 @@ import useBoolState from '../hooks/useBoolState';
 import { useAddWorkout, useWorkouts } from '../contexts/WorkoutDataContext';
 import { AuthContext } from '../contexts/AuthContext';
 
-export default function ProflieScreen({ navigation }: RootTabScreenProps<'ProflieScreenTab'>) {
+export default function ProflieScreen({ navigation }: RootTabScreenProps<'ProfileTab'>) {
   const { logout } = useContext(AuthContext);
   const theme = useTheme();
   return (
