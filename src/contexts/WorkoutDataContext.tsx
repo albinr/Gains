@@ -20,6 +20,11 @@ const originalWorkouts: readonly Workout[] = [{
   workoutExerciseType: WorkoutExerciseType.PRESS_BENCH,
   name: 'Bench Press',
   associatedCodes: {},
+}, {
+  id: 'deadlift',
+  workoutExerciseType: WorkoutExerciseType.DEADLIFT,
+  name: 'Deadlift',
+  associatedCodes: {},
 }];
 
 export const WorkoutContextProvider: React.FC = ({ children }) => {
