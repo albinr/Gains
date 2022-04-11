@@ -3,16 +3,27 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { nanoid } from 'nanoid';
 
 import { ExerciseSet, Workout } from '../../types';
+import { WorkoutExerciseType } from '../../clients/__generated__/schema';
 
-const WorkoutContext = React.createContext<{ readonly sets: readonly ExerciseSet[], readonly workouts: readonly Workout[], readonly addWorkout:(workout: Omit<Workout, 'id'>) => void, readonly addSet: (set: Omit<ExerciseSet, 'id' | 'createdAt'>) => void }>({
+const WorkoutContext = React.createContext<{ 
+  readonly sets: readonly ExerciseSet[], 
+  readonly workouts: readonly Workout[], readonly addWorkout:(workout: Omit<Workout, 'id'>) => void, readonly addSet: (set: Omit<ExerciseSet, 'id' | 'createdAt'>
+) => void }>({
   workouts: [],
   sets: [],
   addWorkout: () => {},
   addSet: () => {},
 });
 
+const originalWorkouts: readonly Workout[] = [{
+  id: 'press_bench',
+  workoutExerciseType: WorkoutExerciseType.PRESS_BENCH,
+  name: 'Bench Press',
+  associatedCodes: {}
+}];
+
 export const WorkoutContextProvider: React.FC = ({ children }) => {
-  const [workouts, setWorkouts] = React.useState<readonly Workout[]>([]);
+  const [workouts, setWorkouts] = React.useState<readonly Workout[]>(originalWorkouts);
   const [sets, setSets] = React.useState<readonly ExerciseSet[]>([]);
 
   useEffect(() => {

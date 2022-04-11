@@ -16,6 +16,7 @@ import { RootTabScreenProps } from '../../types';
 import useBoolState from '../hooks/useBoolState';
 import { useAddWorkout, useWorkouts } from '../contexts/WorkoutDataContext';
 import { AuthContext } from '../contexts/AuthContext';
+import { WorkoutExerciseType } from '../../clients/__generated__/schema';
 
 const QrScanner: React.FC<{ readonly isVisible: boolean, readonly onDismiss: () => void, readonly onScan: BarCodeScannedCallback }> = ({ isVisible, onDismiss, onScan }) => {
   // const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -158,7 +159,7 @@ export default function TabScreen({ navigation }: RootTabScreenProps<'WorkoutLis
         onCreate={(name) => {
           hideWorkoutDialog();
           const associatedCodes = lastScannedQRCode ? { [lastScannedQRCode.type]: lastScannedQRCode.data } : {};
-          addWorkout({ name, associatedCodes });
+          addWorkout({ name, associatedCodes, workoutExerciseType: WorkoutExerciseType.GOOD_MORNING });
           setLastScannedQRCode(undefined);
         }}
       />
