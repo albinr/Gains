@@ -1,0 +1,105 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI Test And Publish
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  test:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+        id: checkout
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.0
+        id: setup
+
+      - uses: actions/cache@v2
+        id: cache
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-v2-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Install deps
+        id: install
+        run: yarn
+
+      - name: Test
+        id: test
+        run: yarn lint
+                      
+      # - name: Reverse patch-package
+      #   if: ${{ always() }}
+      #   run: npx patch-package --reverse
+        
+      - uses: sarisia/actions-status-discord@v1
+        if: ${{ failure() }}
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+  publish-expo-development:
+    # The type of runner that the job will run on
+    needs: test
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+      EAS_BUILD_AUTOCOMMIT: 1
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+        id: checkout
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.0
+        id: setup
+
+      - uses: actions/cache@v2
+        id: cache
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-v2-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Install deps
+        id: install
+        run: yarn
+
+      - name: Expo GitHub Action
+        uses: expo/expo-github-action@v5
+        id: expo-init
+        with:
+          # Your Expo username, for authentication.
+          expo-token: ${{ secrets.EXPO_TOKEN }}
+          # If Expo should be stored in the GitHub Actions cache (can be true or false)
+          expo-cache: true # optional
+          
+      - name: Expo Publish
+        id: expo-publish-staging
+        run: expo publish
+
+      - uses: sarisia/actions-status-discord@v1
+        if: ${{ failure() }}
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+
+      - uses: sarisia/actions-status-discord@v1
+        if: ${{ success() }}
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: "Gains has an updated bundle available! 🚀"
