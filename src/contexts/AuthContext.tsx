@@ -28,8 +28,6 @@ const AuthProvider: React.FC = ({ children }) => {
   useEffect(() => {
     const init = async () => {
       const token = await AsyncStorage.getItem(AUTH_TOKEN_KEY);
-      console.log('got token', token);
-      console.log(AUTH_TOKEN_KEY);
       setToken(token);
     };
     void init();
@@ -39,7 +37,6 @@ const AuthProvider: React.FC = ({ children }) => {
     isLoggedIn: !!token,
     token,
     login: (token: string) => {
-      console.log('login', token);
       setToken(token);
       void AsyncStorage.setItem(AUTH_TOKEN_KEY, token);
     },

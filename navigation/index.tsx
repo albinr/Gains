@@ -15,10 +15,12 @@ import { AuthContext } from '../src/contexts/AuthContext';
 import NotLoggedInNavigator from './AuthFlow';
 import Colors from '../constants/Colors';
 import useColorScheme from '../src/hooks/useColorScheme';
-import ModalScreen from '../src/screens/WorkoutDetails';
+// import ModalScreen from '../src/screens/WorkoutDetails';
+import ModalScreen from '../src/screens/ExerciseDetails';
 import NotFoundScreen from '../src/screens/NotFoundScreen';
-import WorkoutListScreen from '../src/screens/TabScreen';
+import TabScreen from '../src/screens/TabScreen';
 import ProflieScreen from '../src/screens/ProfileScreen';
+import WorkoutListScreen from '../src/screens/WorkoutListScreen';
 import TabTwoScreen from '../src/screens/TabTwoScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
@@ -51,7 +53,7 @@ function BottomTabNavigator() {
     >
       <BottomTab.Screen
         name='WorkoutListTab'
-        component={WorkoutListScreen}
+        component={TabScreen}
         options={({ navigation }: RootTabScreenProps<'WorkoutListTab'>) => ({
           title: 'Workouts',
           tabBarIcon: ({ color }) => <TabBarIcon name='arm-flex' color={color} />,
@@ -71,6 +73,30 @@ function BottomTabNavigator() {
           ),
         })}
       />
+
+      <BottomTab.Screen
+        name='ExerciseListTab'
+        component={WorkoutListScreen}
+        options={({ navigation }: RootTabScreenProps<'ExerciseListTab'>) => ({
+          title: 'Workouts',
+          tabBarIcon: ({ color }) => <TabBarIcon name='account-child' color={color} />,
+          headerRight: () => (
+            <Pressable
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.5 : 1,
+              })}
+            >
+              <FontAwesome
+                name='info-circle'
+                size={25}
+                color={Colors[colorScheme].text}
+                style={{ marginRight: 15 }}
+              />
+            </Pressable>
+          ),
+        })}
+      />
+
       <BottomTab.Screen
         name='ProfileTab'
         component={ProflieScreen}
@@ -84,7 +110,7 @@ function BottomTabNavigator() {
               })}
             >
               <FontAwesome
-                name='info-circle'
+                name='user'
                 size={25}
                 color={Colors[colorScheme].text}
                 style={{ marginRight: 15 }}
