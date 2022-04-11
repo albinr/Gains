@@ -28,6 +28,9 @@ generates:
       - add:
           placement: 'prepend'
           content: "import type { Dayjs } from 'dayjs'"
+      - add:
+          placement: 'prepend'
+          content: "/* eslint-disable import/no-extraneous-dependencies */"
     config:
       withComponent: false
       withHOC: false

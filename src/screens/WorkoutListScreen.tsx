@@ -40,7 +40,7 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
     navigation.setOptions({
 
     });
-  }, [navigation]); */
+  }, [navigation]);
 
   return (
     <View>
@@ -70,4 +70,5 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
       {/* <Button onPress={() => addOrSearchExercises}>+</Button> */}
     </View>
   );
+
 }

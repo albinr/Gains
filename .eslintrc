@@ -28,6 +28,7 @@
         "react/require-default-props": 0,
         "functional/prefer-readonly-type": "error",
         "functional/prefer-tacit": "error",
+        "react/jsx-curly-brace-presence": [2, { "children": "ignore" }],
         "functional/immutable-data": ["error", {
             "ignoreAccessorPattern": "**.current"
         }],

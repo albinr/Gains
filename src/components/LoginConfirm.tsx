@@ -32,7 +32,6 @@ const LoginConfirm: React.FC<{readonly email:string}> = ({ email }) => {
         keyboardType='number-pad'
         placeholderTextColor='#2f95dc'
         value={code}
-        keyboardType='numbers-and-punctuation'
         onChangeText={setCode}
         onSubmitEditing={onSubmit}
         enablesReturnKeyAutomatically

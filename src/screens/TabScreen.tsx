@@ -5,7 +5,7 @@ import {
   FlatList, Keyboard, KeyboardAvoidingView, Pressable, StyleSheet,
 } from 'react-native';
 import {
-  Button, Dialog, List, Portal, Searchbar, Text, TextInput, useTheme,
+  Button, Dialog, List, Portal, Searchbar, TextInput, useTheme,
 } from 'react-native-paper';
 import { BarCodeScannedCallback, BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner';
 import { useShowSnackbar } from 'react-native-telegraph';
@@ -25,7 +25,7 @@ const QrScanner: React.FC<{ readonly isVisible: boolean, readonly onDismiss: () 
   useEffect(() => {
     if (isVisible) {
       Keyboard.dismiss();
-      (async () => {
+      void (async () => {
         const { status } = await BarCodeScanner.requestPermissionsAsync();
         if (status === PermissionStatus.DENIED) {
           showSnackbar('Please enable camera permissions in settings');
@@ -69,7 +69,12 @@ const CreateWorkoutDialog: React.FC<{ readonly title?: string, readonly isVisibl
         <KeyboardAvoidingView>
           <Dialog.Title>{title || 'Create workout'}</Dialog.Title>
           <Dialog.Content>
-            <TextInput onSubmitEditing={onCreateInternal} placeholder='Workout name' autoFocus onChangeText={(text) => workoutName.current = text} />
+            <TextInput
+              onSubmitEditing={onCreateInternal}
+              placeholder='Workout name'
+              autoFocus
+              onChangeText={(text) => { workoutName.current = text; }}
+            />
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={onDismiss}>Cancel</Button>
@@ -101,7 +106,6 @@ export default function TabScreen({ navigation }: RootTabScreenProps<'WorkoutLis
     navigation.setOptions({
       headerLeft: (props) => (
         <Pressable
-
           onPress={showQrScanner}
           style={({ pressed }) => ({
             opacity: pressed ? 0.5 : 1,

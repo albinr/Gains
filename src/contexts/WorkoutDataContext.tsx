@@ -5,21 +5,21 @@ import { nanoid } from 'nanoid';
 import { ExerciseSet, Workout } from '../../types';
 import { WorkoutExerciseType } from '../../clients/__generated__/schema';
 
-const WorkoutContext = React.createContext<{ 
-  readonly sets: readonly ExerciseSet[], 
+const WorkoutContext = React.createContext<{
+  readonly sets: readonly ExerciseSet[],
   readonly workouts: readonly Workout[], readonly addWorkout:(workout: Omit<Workout, 'id'>) => void, readonly addSet: (set: Omit<ExerciseSet, 'id' | 'createdAt'>
-) => void }>({
-  workouts: [],
-  sets: [],
-  addWorkout: () => {},
-  addSet: () => {},
-});
+  ) => void }>({
+      workouts: [],
+      sets: [],
+      addWorkout: () => {},
+      addSet: () => {},
+    });
 
 const originalWorkouts: readonly Workout[] = [{
   id: 'press_bench',
   workoutExerciseType: WorkoutExerciseType.PRESS_BENCH,
   name: 'Bench Press',
-  associatedCodes: {}
+  associatedCodes: {},
 }];
 
 export const WorkoutContextProvider: React.FC = ({ children }) => {
@@ -56,11 +56,12 @@ export const WorkoutContextProvider: React.FC = ({ children }) => {
     setSets((prev) => [{ id: nanoid(), createdAt: Date.now(), ...set }, ...prev]);
   }, []);
 
+  const value = useMemo(() => ({
+    sets, workouts, addWorkout, addSet,
+  }), [addSet, addWorkout, sets, workouts]);
+
   return (
-    <WorkoutContext.Provider value={{
-      sets, workouts, addWorkout, addSet,
-    }}
-    >
+    <WorkoutContext.Provider value={value}>
       { children }
     </WorkoutContext.Provider>
   );
