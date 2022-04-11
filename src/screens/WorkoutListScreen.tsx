@@ -52,6 +52,15 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
     });
   }, [navigation]);
 
+  const renderItem = useCallback(({ item }) => (
+    <List.Item
+      onPress={() => {
+        navigation.navigate('Modal', { workout: item });
+      }}
+      title={item.name}
+    />
+  ), [navigation]);
+
   return (
     <View>
       {/* onIconPress={addWorkout({ searchQuery })} */}
@@ -76,14 +85,7 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
       <FlatList
         data={workoutsToShow}
         style={{ width: '100%' }}
-        renderItem={({ item }) => (
-          <List.Item
-            onPress={() => {
-              navigation.navigate('Modal', { workout: item });
-            }}
-            title={item.name}
-          />
-        )}
+        renderItem={renderItem}
         keyExtractor={(item) => item.id}
       />
       {/*    { item.name !==  searchQuery ? (
