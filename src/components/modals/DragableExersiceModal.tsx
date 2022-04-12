@@ -7,10 +7,11 @@ import {
 import { IconButton } from 'react-native-paper';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 
+const ICONSIZE = 30;
+
 const ExerciseModal = () => {
   // ref
   const bottomSheetRef = useRef<BottomSheet>(null);
-
   // variables
   const snapPoints = useMemo(() => [100, '95%'], []);
   // callbacks
@@ -29,16 +30,16 @@ const ExerciseModal = () => {
     <View style={styles.container}>
       <BottomSheet
         ref={bottomSheetRef}
-        index={0}
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
-        enableContentPanningGesture
-        enableHandlePanningGesture
-        enableOverDrag
-        animateOnMount
+
       >
         <BottomSheetView style={styles.contentContainer}>
-          <Text>hello</Text>
+          <View style={styles.colapsedNavContainer}>
+            <IconButton animated size={ICONSIZE} icon='pause' onPress={() => console.log('Pressed')} />
+            <IconButton animated size={ICONSIZE} icon='qrcode' onPress={() => console.log('Pressed')} />
+            <IconButton animated size={ICONSIZE} icon='arrow-right' onPress={() => console.log('Pressed')} />
+          </View>
         </BottomSheetView>
       </BottomSheet>
 
@@ -53,6 +54,11 @@ const styles = StyleSheet.create({
     padding: 24,
     position: 'absolute',
     bottom: 0,
+  },
+  colapsedNavContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
   },
   contentContainer: {
     flex: 1,

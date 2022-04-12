@@ -43,17 +43,17 @@ const Stepper: React.FC<{ readonly minValue?: number, readonly value: number, re
       flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%',
     }}
     >
-      <IconButton size={35} disabled={minValue === value} animated icon='minus' onPress={() => onValueUpdated((p) => Math.max(minValue, p - 1))} />
+      <IconButton size={25} style={{ flex: 1 }} disabled={minValue === value} animated icon='minus' onPress={() => onValueUpdated((p) => Math.max(minValue, p - 1))} />
       {/* <Text style={{
         width: 50, fontSize: 30, fontVariant: ['tabular-nums'], textAlign: 'center', alignSelf: 'center',
       }}
       >
         { value.toString() }
       </Text> */}
-      <View style={{ width: 50, flexDirection: 'row' }}>
+      <View style={{ width: 100, flexDirection: 'row', justifyContent: 'center' }}>
         <TextInput
           style={{
-            fontSize: 20, fontVariant: ['tabular-nums'], textAlign: 'center', alignSelf: 'center',
+            fontSize: 16, fontVariant: ['tabular-nums'], textAlign: 'center', alignSelf: 'center',
           }}
           value={value.toString()}
           // onBlur={}
@@ -66,7 +66,7 @@ const Stepper: React.FC<{ readonly minValue?: number, readonly value: number, re
           {textTitle}
         </Text>
       </View>
-      <IconButton size={35} animated icon='plus' onPress={() => onValueUpdated((p) => Math.max(minValue, p + 1))} />
+      <IconButton size={25} style={{ flex: 1 }} animated icon='plus' onPress={() => onValueUpdated((p) => Math.max(minValue, p + 1))} />
     </View>
   );
 };
@@ -151,14 +151,14 @@ export default function ModalScreen({ navigation, route: { params: { workout } }
         bottom: 100,
       }}
       >
-        <Stepper minValue={1} value={reps} onValueUpdated={setReps} textTitle='REPS' />
+        <Stepper value={weight} onValueUpdated={setWeight} textTitle='KG' />
         <Pressable
           style={styles.saveSetBtn}
           onPressIn={() => saveSet({ reps, weight, workoutId })}
         >
           <Text>SAVE SET</Text>
         </Pressable>
-        <Stepper value={weight} onValueUpdated={setWeight} textTitle='KG' />
+        <Stepper minValue={1} value={reps} onValueUpdated={setReps} textTitle='REPS' />
       </View>
       <ExerciseModal />
     </View>
@@ -182,11 +182,11 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   saveSetBtn: {
-    width: 140,
-    height: 140,
-    borderRadius: 10000,
+    width: 100,
+    height: 100,
+    borderRadius: 20,
     borderColor: 'black',
-    borderWidth: 3,
+    borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
   },
