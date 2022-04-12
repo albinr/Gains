@@ -14,7 +14,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { View } from '../components/Themed';
 import { RootTabScreenProps } from '../../types';
 import useBoolState from '../hooks/useBoolState';
-import { useAddWorkout, useWorkouts } from '../contexts/WorkoutDataContext';
+import { useAddExercise, useExercises } from '../contexts/WorkoutDataContext';
 import { AuthContext } from '../contexts/AuthContext';
 import { WorkoutExerciseType } from '../../clients/__generated__/schema';
 
@@ -88,8 +88,8 @@ const CreateWorkoutDialog: React.FC<{ readonly title?: string, readonly isVisibl
 };
 
 export default function TabScreen({ navigation }: RootTabScreenProps<'WorkoutListTab'>) {
-  const workouts = useWorkouts();
-  const addWorkout = useAddWorkout();
+  const workouts = useExercises();
+  const addWorkout = useAddExercise();
   const { logout } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [isCreateWorkoutDialogVisible, showWorkoutDialog, hideWorkoutDialog] = useBoolState(false);

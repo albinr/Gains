@@ -42,7 +42,7 @@ const Stepper: React.FC<{ readonly minValue?: number, readonly value: number, re
       flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%',
     }}
     >
-      <IconButton size={40} disabled={minValue === value} animated icon='minus' onPress={() => onValueUpdated((p) => Math.max(minValue, p - 1))} />
+      <IconButton size={35} disabled={minValue === value} animated icon='minus' onPress={() => onValueUpdated((p) => Math.max(minValue, p - 1))} />
       {/* <Text style={{
         width: 50, fontSize: 30, fontVariant: ['tabular-nums'], textAlign: 'center', alignSelf: 'center',
       }}
@@ -65,7 +65,7 @@ const Stepper: React.FC<{ readonly minValue?: number, readonly value: number, re
           {textTitle}
         </Text>
       </View>
-      <IconButton size={40} animated icon='plus' onPress={() => onValueUpdated((p) => Math.max(minValue, p + 1))} />
+      <IconButton size={35} animated icon='plus' onPress={() => onValueUpdated((p) => Math.max(minValue, p + 1))} />
     </View>
   );
 };
@@ -156,21 +156,23 @@ export default function ModalScreen({ navigation, route: { params: { workout } }
         <Stepper value={weight} onValueUpdated={setWeight} textTitle='KG' />
       </View>
       <View style={{
-        width: '100%', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row',
+        width: '100%', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', backgroundColor: 'gray',
       }}
       >
         <View style={{
           justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row-reverse',
         }}
         >
-          <Text style={{ padding: 20 }}>00:00</Text>
+
+          <Text style={{ padding: 10 }}>00:00</Text>
+          <IconButton icon='pause' color='black' size={35} onPress={() => console.log('Pressed')} />
         </View>
         <View style={{
           justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row-reverse',
         }}
         >
           <IconButton icon='arrow-right' color='black' size={35} onPress={() => console.log('Pressed')} />
-          <IconButton icon='pause' color='black' size={35} onPress={() => console.log('Pressed')} />
+
         </View>
       </View>
     </View>
@@ -193,8 +195,8 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   saveSetBtn: {
-    width: 100,
-    height: 100,
+    width: 140,
+    height: 140,
     borderRadius: 10000,
     borderColor: 'black',
     borderWidth: 3,

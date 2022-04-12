@@ -7,7 +7,7 @@ import {
 import { View } from '../components/Themed';
 import { RootTabScreenProps } from '../../types';
 import useBoolState from '../hooks/useBoolState';
-import { useAddWorkout, useWorkouts } from '../contexts/WorkoutDataContext';
+import { useAddExercise, useExercises } from '../contexts/WorkoutDataContext';
 import { AuthContext } from '../contexts/AuthContext';
 
 export default function ProflieScreen({ navigation }: RootTabScreenProps<'ProfileTab'>) {

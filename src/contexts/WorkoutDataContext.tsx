@@ -2,20 +2,33 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { nanoid } from 'nanoid';
 
-import { ExerciseSet, Workout } from '../../types';
+import { ExerciseSet, Exercise } from '../../types';
 import { WorkoutExerciseType } from '../../clients/__generated__/schema';
 
-const WorkoutContext = React.createContext<{
-  readonly sets: readonly ExerciseSet[],
-  readonly workouts: readonly Workout[], readonly addWorkout:(workout: Omit<Workout, 'id'>) => void, readonly addSet: (set: Omit<ExerciseSet, 'id' | 'createdAt'>
-  ) => void }>({
-      workouts: [],
-      sets: [],
-      addWorkout: () => {},
-      addSet: () => {},
-    });
+// void AsyncStorage.clear();
 
-const originalWorkouts: readonly Workout[] = [{
+type Workout = {
+  readonly id: string;
+  readonly exercises: readonly Exercise[];
+  readonly startTime: Date;
+  readonly endTime?: Date;
+}
+
+type WorkoutContextType = {
+  readonly sets: readonly ExerciseSet[],
+  readonly exercises: readonly Exercise[],
+  readonly addExercise:(workout: Omit<Exercise, 'id'>) => void,
+  readonly addSet: (set: Omit<ExerciseSet, 'id' | 'createdAt'>
+  ) => void }
+
+const WorkoutContext = React.createContext<WorkoutContextType>({
+  exercises: [],
+  sets: [],
+  addExercise: () => {},
+  addSet: () => {},
+});
+
+const originalExercises: readonly Exercise[] = [{
   id: 'press_bench',
   workoutExerciseType: WorkoutExerciseType.PRESS_BENCH,
   name: 'Bench Press',
@@ -78,7 +91,7 @@ const originalWorkouts: readonly Workout[] = [{
 }];
 
 export const WorkoutContextProvider: React.FC = ({ children }) => {
-  const [workouts, setWorkouts] = React.useState<readonly Workout[]>(originalWorkouts);
+  const [exercises, setWorkouts] = React.useState<readonly Exercise[]>(originalExercises);
   const [sets, setSets] = React.useState<readonly ExerciseSet[]>([]);
 
   useEffect(() => {
@@ -100,10 +113,10 @@ export const WorkoutContextProvider: React.FC = ({ children }) => {
   }, [sets]);
 
   useEffect(() => {
-    void AsyncStorage.setItem('workouts', JSON.stringify(workouts));
-  }, [workouts]);
+    void AsyncStorage.setItem('workouts', JSON.stringify(exercises));
+  }, [exercises]);
 
-  const addWorkout = useCallback((workout: Omit<Workout, 'id'>) => {
+  const addExercise = useCallback((workout: Omit<Exercise, 'id'>) => {
     setWorkouts((prev) => [{ id: nanoid(), ...workout }, ...prev]);
   }, []);
 
@@ -112,8 +125,8 @@ export const WorkoutContextProvider: React.FC = ({ children }) => {
   }, []);
 
   const value = useMemo(() => ({
-    sets, workouts, addWorkout, addSet,
-  }), [addSet, addWorkout, sets, workouts]);
+    sets, exercises, addExercise, addSet,
+  }), [addSet, addExercise, sets, exercises]);
 
   return (
     <WorkoutContext.Provider value={value}>
@@ -122,7 +135,7 @@ export const WorkoutContextProvider: React.FC = ({ children }) => {
   );
 };
 
-export const useWorkouts = () => React.useContext(WorkoutContext).workouts;
+export const useExercises = () => React.useContext(WorkoutContext).exercises;
 
 export const useSetsForWorkout = (workoutId: string) => {
   const { sets } = React.useContext(WorkoutContext);
@@ -132,7 +145,7 @@ export const useSetsForWorkout = (workoutId: string) => {
   return setsForWorkout;
 };
 
-export const useAddWorkout = () => React.useContext(WorkoutContext).addWorkout;
+export const useAddExercise = () => React.useContext(WorkoutContext).addExercise;
 
 export const useSaveSet = () => React.useContext(WorkoutContext).addSet;
 
