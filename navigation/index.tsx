@@ -46,12 +46,12 @@ function BottomTabNavigator() {
 
   return (
     <BottomTab.Navigator
-      initialRouteName='WorkoutListTab'
+      initialRouteName='ExerciseListTab'
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint,
       }}
     >
-      <BottomTab.Screen
+      {/*  <BottomTab.Screen
         name='WorkoutListTab'
         component={TabScreen}
         options={({ navigation }: RootTabScreenProps<'WorkoutListTab'>) => ({
@@ -72,7 +72,7 @@ function BottomTabNavigator() {
             </Pressable>
           ),
         })}
-      />
+      /> */}
 
       <BottomTab.Screen
         name='ExerciseListTab'

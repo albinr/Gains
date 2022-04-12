@@ -17,6 +17,7 @@ import { Text } from '../components/Themed';
 import { useSaveSet, useSetsForWorkout } from '../contexts/WorkoutDataContext';
 import { RootStackScreenProps, ExerciseSet } from '../../types';
 import Colors from '../../constants/Colors';
+import ExerciseModal from '../components/modals/DragableExersiceModal';
 
 dayjs.extend(calendar, {
   sameDay: '[Today at] h:mm A', // The same day (Today at 2:30 AM)
@@ -103,45 +104,41 @@ export default function ModalScreen({ navigation, route: { params: { workout } }
     });
   }, [navigation, workout]);
   return (
-
     <View style={styles.container}>
-      <ScrollView>
-        {/* Use a light status bar on iOS to account for the black space above the modal */}
-        <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
+      {/* Use a light status bar on iOS to account for the black space above the modal */}
+      <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
 
-        <VictoryChart>
-          <VictoryScatter
-            style={{ data: { fill: '#c43a31' } }}
-            bubbleProperty='amount'
-            maxBubbleSize={10}
-            domainPadding={{ x: 10, y: 10 }}
-            minBubbleSize={5}
-            height={200}
-            data={sets.map((s) => ({ x: s.createdAt, y: s.weight, amount: s.reps }))}
-
-          />
-          <VictoryAxis dependentAxis crossAxis domainPadding={{ x: 10, y: 10 }} orientation='left' />
-          <VictoryAxis tickFormat={() => ''} domainPadding={{ x: 10, y: 10 }} orientation='bottom' />
-        </VictoryChart>
-        <SectionList
-          sections={setsPerDay}
-          style={{ width: '100%' }}
-          renderSectionHeader={({ section: { title } }) => (
-            <Headline style={{ paddingHorizontal: 10 }}>{title}</Headline>
-          )}
-          renderItem={({ item }) => (
-            <List.Item
-              title={(
-                <Text>
-                  { `${item.reps} reps @ `}
-                  <Text style={{ fontWeight: 'bold' }}>{`${item.weight} kg`}</Text>
-                </Text>
-              )}
-              description={dayjs(item.createdAt).format('hh:mm')}
-            />
-          )}
+      {/* <VictoryChart>
+        <VictoryScatter
+          style={{ data: { fill: '#c43a31' } }}
+          bubbleProperty='amount'
+          maxBubbleSize={10}
+          domainPadding={{ x: 10, y: 10 }}
+          minBubbleSize={5}
+          height={200}
+          data={sets.map((s) => ({ x: s.createdAt, y: s.weight, amount: s.reps }))}
         />
-      </ScrollView>
+        <VictoryAxis dependentAxis crossAxis domainPadding={{ x: 10, y: 10 }} orientation='left' />
+        <VictoryAxis tickFormat={() => ''} domainPadding={{ x: 10, y: 10 }} orientation='bottom' />
+      </VictoryChart>
+      <SectionList
+        sections={setsPerDay}
+        style={{ width: '100%' }}
+        renderSectionHeader={({ section: { title } }) => (
+          <Headline style={{ paddingHorizontal: 10 }}>{title}</Headline>
+        )}
+        renderItem={({ item }) => (
+          <List.Item
+            title={(
+              <Text>
+                { `${item.reps} reps @ `}
+                <Text style={{ fontWeight: 'bold' }}>{`${item.weight} kg`}</Text>
+              </Text>
+            )}
+            description={dayjs(item.createdAt).format('hh:mm')}
+          />
+        )}
+      />
       <View style={{
         width: '100%', justifyContent: 'center', alignItems: 'center', padding: 10, backgroundColor: 'lightgray', borderTopLeftRadius: 20, borderTopRightRadius: 20,
       }}
@@ -154,36 +151,18 @@ export default function ModalScreen({ navigation, route: { params: { workout } }
           <Text>SAVE SET</Text>
         </Pressable>
         <Stepper value={weight} onValueUpdated={setWeight} textTitle='KG' />
-      </View>
-      <View style={{
-        width: '100%', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', backgroundColor: 'gray',
-      }}
-      >
-        <View style={{
-          justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row-reverse',
-        }}
-        >
-
-          <Text style={{ padding: 10 }}>00:00</Text>
-          <IconButton icon='pause' color='black' size={35} onPress={() => console.log('Pressed')} />
-        </View>
-        <View style={{
-          justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row-reverse',
-        }}
-        >
-          <IconButton icon='arrow-right' color='black' size={35} onPress={() => console.log('Pressed')} />
-
-        </View>
-      </View>
+      </View> */}
+      <ExerciseModal />
     </View>
+
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    // alignItems: 'center',
+    // justifyContent: 'space-between',
   },
   title: {
     fontSize: 20,
@@ -204,3 +183,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+/* <View style={{
+        width: '100%', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', backgroundColor: 'gray',
+      }}
+      >
+        <View style={{
+          justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row-reverse',
+        }}
+        >
+
+          <Text style={{ padding: 10 }}>00:00</Text>
+          <IconButton icon='pause' color='black' size={35} onPress={() => console.log('Pressed')} />
+        </View>
+        <View style={{
+          justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row-reverse',
+        }}
+        >
+          <IconButton icon='arrow-right' color='black' size={35} onPress={() => console.log('Pressed')} />
+
+        </View>
+      </View> */
