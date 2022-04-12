@@ -10,41 +10,57 @@ import {
 import useBoolState from '../hooks/useBoolState';
 import { RootTabScreenProps } from '../../types';
 import { AuthContext } from '../contexts/AuthContext';
-import { useWorkouts, useAddWorkout } from '../contexts/WorkoutDataContext';
+import { useExercises, useAddExercise } from '../contexts/WorkoutDataContext';
 import { WorkoutExerciseType } from '../../clients/__generated__/schema';
 
-/* const CreateExercises: React.FC<{ readonly searchQuery: string, readonly onCreate: (name: string) => void }> = ({
+const CreateExercises: React.FC<{ readonly searchQuery: string, readonly onCreate: (name: string) => void }> = ({
   searchQuery, onCreate,
 }) => {
   const workoutName = useRef('');
 
   const onCreateExercises = useCallback(() => {
-    if (searchQuery.length > 0) {
-      workoutName.current = searchQuery;
-    }
-  }, [searchQuery]);
+    onCreate(searchQuery);
+  }, [onCreate, searchQuery]);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     if (searchQuery.length < 0) {
-      workoutName.current = '';
+      searchQuery = '';
     }
-  }, [searchQuery.length]);
+  }, [searchQuery.length]); */
+  const right = ({ ...props }) => (
+    <IconButton
+      {...props}
+      icon='plus'
+      onPress={onCreateExercises}
+    />
+  );
 
   return (
-    <View>
-      hello
-    </View>
+    <List.Item
+      title={searchQuery}
+      description='Add Custom Exercise'
+      right={right}
+    />
   );
-}; */
+};
+
+const normalizeString = (str: string) => {
+  const normalized = str.toLocaleLowerCase().trim();
+  console.log('normalized', normalized);
+  return normalized;
+};
 
 export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'WorkoutListTab'>) {
-  const workouts = useWorkouts();
-  const addWorkout = useAddWorkout();
+  const exercises = useExercises();
+  const addExercise = useAddExercise();
   const { logout } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = useState('');
   const workoutsToShow = useMemo(() => (searchQuery.length > 0
-    ? workouts.filter((w) => w.name.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase()))
-    : workouts), [searchQuery, workouts]);
+    ? exercises.filter((w) => w.name.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase()))
+    : exercises), [searchQuery, exercises]);
+
+  const shouldShowAdd = useMemo(() => searchQuery.length > 0
+    && !workoutsToShow.find((w) => normalizeString(searchQuery) === normalizeString(w.name)), [searchQuery, workoutsToShow]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -66,35 +82,20 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
       {/* onIconPress={addWorkout({ searchQuery })} */}
       {/* <Searchbar placeholder='Add or search exercises..' value={searchQuery} onChangeText={setSearchQuery} autoFocus /> */}
       <TextInput placeholder='Add or search exercises..' value={searchQuery} onChangeText={(text) => { setSearchQuery(text); }} />
-      {searchQuery.length > 0 ? (
-        <List.Item
-          title={searchQuery}
-          description='Add Exercise'
-          right={(props) => (
-            <IconButton
-              {...props}
-              icon='plus'
-              onPress={() => {
-                const associatedCodes = {};
-                addWorkout({ name: searchQuery, associatedCodes, workoutExerciseType: WorkoutExerciseType.GOOD_MORNING });
-              }}
-            />
-          )}
+      {/* {searchQuery.length > 0 ? (
+        <CreateExercises
+          searchQuery={searchQuery}
+          onCreate={(name) => {
+            const associatedCodes = {};
+            addExercise({ name, associatedCodes, workoutExerciseType: WorkoutExerciseType.GOOD_MORNING });
+          }}
         />
-      ) : null }
+      ) : null } */}
+      {/*
       <FlatList
         data={workoutsToShow}
         style={{ width: '100%' }}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-      />
-      {/*    { item.name !==  searchQuery ? (
-            <Button style={{ backgroundColor: 'red' }} onPress={() => (addOrSearchExercises)}>+</Button>
-          ) : null} */}
-      {/*  <FlatList
-        data={workoutsToShow}
-        style={{ width: '100%' }}
-        renderItem={({ item }) => (
+        renderItem={(
           <List.Item
             onPress={() => {
               navigation.navigate('Modal', { workout: item });
@@ -103,7 +104,21 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
           />
         )}
       /> */}
-      {/* <Button onPress={() => addOrSearchExercises}>+</Button> */}
+      <FlatList
+        data={workoutsToShow}
+        style={{ width: '100%' }}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+      />
+      { shouldShowAdd ? (
+        <CreateExercises
+          searchQuery={searchQuery}
+          onCreate={(name) => {
+            const associatedCodes = {};
+            addExercise({ name, associatedCodes, workoutExerciseType: WorkoutExerciseType.GOOD_MORNING });
+          }}
+        />
+      ) : null }
     </View>
   );
 }

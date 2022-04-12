@@ -6,6 +6,7 @@
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+
 import { WorkoutExerciseType } from './clients/__generated__/schema';
 
 declare global {
@@ -20,7 +21,7 @@ declare global {
 export type RootStackParamList = {
   readonly Root: NavigatorScreenParams<RootTabParamList> | undefined;
   readonly Modal: {
-    readonly workout: Workout
+    readonly workout: Exercise
   };
   readonly NotFound: undefined;
 };
@@ -54,7 +55,7 @@ BottomTabScreenProps<RootTabParamList, Screen>,
 NativeStackScreenProps<RootStackParamList>
 >;
 
-export type Workout = {
+export type Exercise = {
   readonly id: string;
   readonly name: string;
   readonly associatedCodes: Record<string, string>;
