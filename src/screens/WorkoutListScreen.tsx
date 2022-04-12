@@ -7,6 +7,7 @@ import {
   Searchbar, Text, TextInput, Title, useTheme, IconButton,
 } from 'react-native-paper';
 
+import ExerciseModal from '../components/modals/DragableExersiceModal';
 import useBoolState from '../hooks/useBoolState';
 import { RootTabScreenProps } from '../../types';
 import { AuthContext } from '../contexts/AuthContext';
@@ -64,7 +65,6 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
 
   useEffect(() => {
     navigation.setOptions({
-
     });
   }, [navigation]);
 

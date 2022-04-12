@@ -4,6 +4,7 @@ import React from 'react';
 import { Provider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { SnackbarProvider } from 'react-native-telegraph';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import AuthProvider from './src/contexts/AuthContext';
 import { WorkoutContextProvider } from './src/contexts/WorkoutDataContext';
@@ -19,17 +20,21 @@ export default function App() {
     return null;
   }
   return (
+
     <AuthProvider>
       <Provider>
         <SnackbarProvider>
           <WorkoutContextProvider>
             <SafeAreaProvider>
-              <Navigation colorScheme={colorScheme} />
+              <GestureHandlerRootView style={{ flex: 1 }}>
+                <Navigation colorScheme={colorScheme} />
+              </GestureHandlerRootView>
               <StatusBar />
             </SafeAreaProvider>
           </WorkoutContextProvider>
         </SnackbarProvider>
       </Provider>
     </AuthProvider>
+
   );
 }

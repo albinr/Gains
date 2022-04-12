@@ -108,7 +108,7 @@ export default function ModalScreen({ navigation, route: { params: { workout } }
       {/* Use a light status bar on iOS to account for the black space above the modal */}
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
 
-      {/* <VictoryChart>
+      <VictoryChart>
         <VictoryScatter
           style={{ data: { fill: '#c43a31' } }}
           bubbleProperty='amount'
@@ -121,7 +121,7 @@ export default function ModalScreen({ navigation, route: { params: { workout } }
         <VictoryAxis dependentAxis crossAxis domainPadding={{ x: 10, y: 10 }} orientation='left' />
         <VictoryAxis tickFormat={() => ''} domainPadding={{ x: 10, y: 10 }} orientation='bottom' />
       </VictoryChart>
-      <SectionList
+      {/* <SectionList
         sections={setsPerDay}
         style={{ width: '100%' }}
         renderSectionHeader={({ section: { title } }) => (
@@ -138,9 +138,17 @@ export default function ModalScreen({ navigation, route: { params: { workout } }
             description={dayjs(item.createdAt).format('hh:mm')}
           />
         )}
-      />
+      /> */}
       <View style={{
-        width: '100%', justifyContent: 'center', alignItems: 'center', padding: 10, backgroundColor: 'lightgray', borderTopLeftRadius: 20, borderTopRightRadius: 20,
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 10,
+        backgroundColor: 'lightgray',
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        position: 'absolute',
+        bottom: 100,
       }}
       >
         <Stepper minValue={1} value={reps} onValueUpdated={setReps} textTitle='REPS' />
@@ -151,7 +159,7 @@ export default function ModalScreen({ navigation, route: { params: { workout } }
           <Text>SAVE SET</Text>
         </Pressable>
         <Stepper value={weight} onValueUpdated={setWeight} textTitle='KG' />
-      </View> */}
+      </View>
       <ExerciseModal />
     </View>
 

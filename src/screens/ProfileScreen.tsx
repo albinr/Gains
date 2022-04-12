@@ -9,6 +9,7 @@ import { RootTabScreenProps } from '../../types';
 import useBoolState from '../hooks/useBoolState';
 import { useAddExercise, useExercises } from '../contexts/WorkoutDataContext';
 import { AuthContext } from '../contexts/AuthContext';
+import ExerciseModal from '../components/modals/DragableExersiceModal';
 
 export default function ProflieScreen({ navigation }: RootTabScreenProps<'ProfileTab'>) {
   const { logout } = useContext(AuthContext);

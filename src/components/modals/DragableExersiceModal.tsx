@@ -12,7 +12,7 @@ const ExerciseModal = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   // variables
-  const snapPoints = useMemo(() => [100, '80%'], []);
+  const snapPoints = useMemo(() => [100, '95%'], []);
   // callbacks
   const handleSheetChanges = useCallback((index: number) => {
     console.log('handleSheetChanges', index);
@@ -27,9 +27,6 @@ const ExerciseModal = () => {
   // renders
   return (
     <View style={styles.container}>
-      <Button title='Snap To 50%' onPress={() => handleSnapPress(1)} />
-      <Button title='Snap To 25%' onPress={() => handleSnapPress(0)} />
-      <Button title='Expand' onPress={handleExpandPress} />
       <BottomSheet
         ref={bottomSheetRef}
         index={0}
@@ -39,13 +36,9 @@ const ExerciseModal = () => {
         enableHandlePanningGesture
         enableOverDrag
         animateOnMount
-        enablePanDownToClose
       >
         <BottomSheetView style={styles.contentContainer}>
-          <View style={{ flexDirection: 'row' }}>
-            <IconButton icon='arrow-up' onPress={() => handleSnapPress(1)} />
-            <IconButton icon='arrow-down' onPress={() => handleSnapPress(0)} />
-          </View>
+          <Text>hello</Text>
         </BottomSheetView>
       </BottomSheet>
 
@@ -55,9 +48,11 @@ const ExerciseModal = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: '100%',
+    width: '100%',
     padding: 24,
-    backgroundColor: 'grey',
+    position: 'absolute',
+    bottom: 0,
   },
   contentContainer: {
     flex: 1,
