@@ -18,10 +18,10 @@ import useColorScheme from '../src/hooks/useColorScheme';
 // import ModalScreen from '../src/screens/WorkoutDetails';
 import ModalScreen from '../src/screens/ExerciseDetails';
 import NotFoundScreen from '../src/screens/NotFoundScreen';
-import TabScreen from '../src/screens/TabScreen';
+// import TabScreen from '../src/screens/TabScreen';
 import ProflieScreen from '../src/screens/ProfileScreen';
 import WorkoutListScreen from '../src/screens/WorkoutListScreen';
-import TabTwoScreen from '../src/screens/TabTwoScreen';
+// import TabTwoScreen from '../src/screens/TabTwoScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 
