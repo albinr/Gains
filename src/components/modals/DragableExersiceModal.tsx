@@ -5,7 +5,7 @@ import {
   View, Text, StyleSheet, Button, Pressable,
 } from 'react-native';
 import { IconButton } from 'react-native-paper';
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetView, BottomSheetFooter } from '@gorhom/bottom-sheet';
 
 const ICONSIZE = 30;
 
@@ -13,7 +13,7 @@ const ExerciseModal = () => {
   // ref
   const bottomSheetRef = useRef<BottomSheet>(null);
   // variables
-  const snapPoints = useMemo(() => [100, '95%'], []);
+  const snapPoints = useMemo(() => [100, '100%'], []);
   // callbacks
   const handleSheetChanges = useCallback((index: number) => {
     console.log('handleSheetChanges', index);
@@ -25,6 +25,20 @@ const ExerciseModal = () => {
   const handleExpandPress = useCallback(() => {
     bottomSheetRef.current?.expand();
   }, []);
+
+  const renderFooter = useCallback(
+    (props) => (
+      <BottomSheetFooter {...props} bottomInset={24}>
+        <View style={styles.colapsedNavContainer}>
+          <IconButton animated size={ICONSIZE} icon='pause' onPress={() => console.log('Pressed')} />
+          <IconButton animated size={ICONSIZE} icon='qrcode' onPress={() => console.log('Pressed')} />
+          <IconButton animated size={ICONSIZE} icon='arrow-right' onPress={() => console.log('Pressed')} />
+        </View>
+      </BottomSheetFooter>
+    ),
+    [],
+  );
+
   // renders
   return (
     <View style={styles.container}>
@@ -32,13 +46,11 @@ const ExerciseModal = () => {
         ref={bottomSheetRef}
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
-
+        footerComponent={renderFooter}
       >
         <BottomSheetView style={styles.contentContainer}>
-          <View style={styles.colapsedNavContainer}>
-            <IconButton animated size={ICONSIZE} icon='pause' onPress={() => console.log('Pressed')} />
-            <IconButton animated size={ICONSIZE} icon='qrcode' onPress={() => console.log('Pressed')} />
-            <IconButton animated size={ICONSIZE} icon='arrow-right' onPress={() => console.log('Pressed')} />
+          <View>
+            <Text>Hello</Text>
           </View>
         </BottomSheetView>
       </BottomSheet>
@@ -55,9 +67,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
   },
+  footerContainer: {
+    padding: 12,
+    margin: 12,
+    borderRadius: 12,
+    backgroundColor: '#80f',
+  },
   colapsedNavContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    backgroundColor: 'white',
     width: '100%',
   },
   contentContainer: {

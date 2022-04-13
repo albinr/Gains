@@ -7,7 +7,8 @@ import { SnackbarProvider } from 'react-native-telegraph';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import AuthProvider from './src/contexts/AuthContext';
-import { WorkoutContextProvider } from './src/contexts/WorkoutDataContext';
+import { GainsContextProvider } from './src/contexts/GainsDataContext';
+import { CurrentWorkoutContextProvider } from './src/contexts/CurrentWorkoutDataContext';
 import useCachedResources from './src/hooks/useCachedResources';
 import useColorScheme from './src/hooks/useColorScheme';
 import Navigation from './navigation';
@@ -24,14 +25,16 @@ export default function App() {
     <AuthProvider>
       <Provider>
         <SnackbarProvider>
-          <WorkoutContextProvider>
-            <SafeAreaProvider>
-              <GestureHandlerRootView style={{ flex: 1 }}>
-                <Navigation colorScheme={colorScheme} />
-              </GestureHandlerRootView>
-              <StatusBar />
-            </SafeAreaProvider>
-          </WorkoutContextProvider>
+          <GainsContextProvider>
+            <CurrentWorkoutContextProvider>
+              <SafeAreaProvider>
+                <GestureHandlerRootView style={{ flex: 1 }}>
+                  <Navigation colorScheme={colorScheme} />
+                </GestureHandlerRootView>
+                <StatusBar />
+              </SafeAreaProvider>
+            </CurrentWorkoutContextProvider>
+          </GainsContextProvider>
         </SnackbarProvider>
       </Provider>
     </AuthProvider>

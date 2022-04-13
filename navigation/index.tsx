@@ -3,7 +3,7 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import { Button } from 'react-native-paper';
+import { Button, IconButton } from 'react-native-paper';
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
@@ -78,8 +78,32 @@ function BottomTabNavigator() {
         name='ExerciseListTab'
         component={WorkoutListScreen}
         options={({ navigation }: RootTabScreenProps<'ExerciseListTab'>) => ({
-          title: 'Workouts',
-          tabBarIcon: ({ color }) => <TabBarIcon name='account-child' color={color} />,
+          title: 'Your Workout',
+          tabBarIcon: ({ color }) => <TabBarIcon name='dumbbell' color={color} />,
+          headerRight: () => (
+            // <Pressable
+            //   style={({ pressed }) => ({
+            //     opacity: pressed ? 0.5 : 1,
+            //   })}
+            // >
+            //   <FontAwesome
+            //     name='info-circle'
+            //     size={25}
+            //     color={Colors[colorScheme].text}
+            //     style={{ marginRight: 15 }}
+            //   />
+            // </Pressable>
+            <IconButton icon='dumbbell' onPress={() => {}} />
+          ),
+        })}
+      />
+
+      <BottomTab.Screen
+        name='ProfileTab'
+        component={ProflieScreen}
+        options={({ navigation }: RootTabScreenProps<'ProfileTab'>) => ({
+          title: 'Utils',
+          tabBarIcon: ({ color }) => <TabBarIcon name='cog' color={color} />,
           headerRight: () => (
             <Pressable
               style={({ pressed }) => ({
@@ -87,7 +111,7 @@ function BottomTabNavigator() {
               })}
             >
               <FontAwesome
-                name='info-circle'
+                name='cog'
                 size={25}
                 color={Colors[colorScheme].text}
                 style={{ marginRight: 15 }}
@@ -97,28 +121,6 @@ function BottomTabNavigator() {
         })}
       />
 
-      <BottomTab.Screen
-        name='ProfileTab'
-        component={ProflieScreen}
-        options={({ navigation }: RootTabScreenProps<'ProfileTab'>) => ({
-          title: 'Profile',
-          tabBarIcon: ({ color }) => <TabBarIcon name='account' color={color} />,
-          headerRight: () => (
-            <Pressable
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}
-            >
-              <FontAwesome
-                name='user'
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
-          ),
-        })}
-      />
     </BottomTab.Navigator>
   );
 }

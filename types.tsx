@@ -21,7 +21,7 @@ declare global {
 export type RootStackParamList = {
   readonly Root: NavigatorScreenParams<RootTabParamList> | undefined;
   readonly Modal: {
-    readonly workout: Exercise
+    readonly exercise: Exercise
   };
   readonly NotFound: undefined;
 };
@@ -67,5 +67,23 @@ export type ExerciseSet = {
   readonly reps: number;
   readonly weight: number;
   readonly createdAt: number;
-  readonly workoutId: string;
+  readonly exerciseId: string;
+}
+
+export type WorkoutTemplate = {
+  readonly id: string;
+  readonly name: string;
+  readonly exerciseIds: readonly string[];
+}
+
+export type Timer = {
+  readonly startTime: Date;
+  readonly endTime?: Date;
+}
+
+export type Workout = {
+  readonly id: string;
+  readonly templateId?: string;
+  readonly exerciseIds: readonly string[];
+  readonly timers: readonly Timer[];
 }

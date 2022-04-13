@@ -14,7 +14,7 @@ import {
 
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text } from '../components/Themed';
-import { useSaveSet, useSetsForWorkout } from '../contexts/WorkoutDataContext';
+import { useSaveSet, useSetsForExercise } from '../contexts/GainsDataContext';
 import { RootStackScreenProps, ExerciseSet } from '../../types';
 import Colors from '../../constants/Colors';
 import ExerciseModal from '../components/modals/DragableExersiceModal';
@@ -71,9 +71,9 @@ const Stepper: React.FC<{ readonly minValue?: number, readonly value: number, re
   );
 };
 
-export default function ModalScreen({ navigation, route: { params: { workout } } }: RootStackScreenProps<'Modal'>) {
-  const workoutId = workout.id;
-  const sets = useSetsForWorkout(workoutId);
+export default function ModalScreen({ navigation, route: { params: { exercise } } }: RootStackScreenProps<'Modal'>) {
+  const exerciseId = exercise.id;
+  const sets = useSetsForExercise(exerciseId);
   const [reps, setReps] = useState(10);
   const [weight, setWeight] = useState(10);
   const saveSet = useSaveSet();
@@ -100,14 +100,13 @@ export default function ModalScreen({ navigation, route: { params: { workout } }
 
   useEffect(() => {
     navigation.setOptions({
-      title: `${workout.name}`,
+      title: `${exercise.name}`,
     });
-  }, [navigation, workout]);
+  }, [navigation, exercise]);
   return (
     <View style={styles.container}>
       {/* Use a light status bar on iOS to account for the black space above the modal */}
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
-
       <VictoryChart>
         <VictoryScatter
           style={{ data: { fill: '#c43a31' } }}
@@ -121,9 +120,9 @@ export default function ModalScreen({ navigation, route: { params: { workout } }
         <VictoryAxis dependentAxis crossAxis domainPadding={{ x: 10, y: 10 }} orientation='left' />
         <VictoryAxis tickFormat={() => ''} domainPadding={{ x: 10, y: 10 }} orientation='bottom' />
       </VictoryChart>
-      {/* <SectionList
+      <SectionList
         sections={setsPerDay}
-        style={{ width: '100%' }}
+        style={{ width: '100%', flex: 1 }}
         renderSectionHeader={({ section: { title } }) => (
           <Headline style={{ paddingHorizontal: 10 }}>{title}</Headline>
         )}
@@ -138,7 +137,7 @@ export default function ModalScreen({ navigation, route: { params: { workout } }
             description={dayjs(item.createdAt).format('hh:mm')}
           />
         )}
-      /> */}
+      />
       <View style={{
         width: '100%',
         justifyContent: 'center',
@@ -154,7 +153,7 @@ export default function ModalScreen({ navigation, route: { params: { workout } }
         <Stepper value={weight} onValueUpdated={setWeight} textTitle='KG' />
         <Pressable
           style={styles.saveSetBtn}
-          onPressIn={() => saveSet({ reps, weight, workoutId })}
+          onPressIn={() => saveSet({ reps, weight, exerciseId })}
         >
           <Text>SAVE SET</Text>
         </Pressable>
@@ -183,7 +182,7 @@ const styles = StyleSheet.create({
   },
   saveSetBtn: {
     width: 100,
-    height: 100,
+    height: 80,
     borderRadius: 20,
     borderColor: 'black',
     borderWidth: 2,
