@@ -37,18 +37,26 @@ const ExerciseModal = () => {
     <List.Item
       style={{ backgroundColor: 'white' }}
       title={item.name}
+      onPress={() => console.log('pressed', item)}
     />
   ), []);
   const renderFooter = useCallback(
     (props) => (
       <BottomSheetFooter {...props}>
         <View style={styles.colapsedNavContainer}>
-          <IconButton style={styles.iconBtn} animated size={ICONSIZE} icon='qrcode' onPress={() => console.log('Pressed')} />
+          <View style={{ flex: 1 }}>
+            <IconButton style={styles.iconBtn} animated size={ICONSIZE} icon='qrcode' onPress={() => console.log('Pressed')} />
+          </View>
           <View style={{ alignItems: 'center', justifyContent: 'center' }}>
             <IconButton style={styles.iconBtn} animated size={ICONSIZE} icon='pause' onPress={timer} />
-            { timer ? <Text>{ timer }</Text> : null }
           </View>
-          <IconButton style={styles.iconBtn} animated size={ICONSIZE} icon='arrow-right' onPress={() => console.log('Pressed')} />
+          <View style={{
+            flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'flex-end',
+          }}
+          >
+            <Text style={{ fontSize: 8 }}>Next:</Text>
+            <IconButton style={styles.iconBtn} animated size={ICONSIZE} icon='arrow-right' onPress={() => console.log('Pressed')} />
+          </View>
         </View>
       </BottomSheetFooter>
     ),
@@ -65,7 +73,12 @@ const ExerciseModal = () => {
         footerComponent={renderFooter}
       >
         <BottomSheetView style={styles.contentContainer}>
-          <Text>{ timer }</Text>
+          <View style={{ width: '100%' }}>
+            <View>
+              <Text>00:00</Text>
+              { timer ? <Text>{ timer }</Text> : null }
+            </View>
+          </View>
           <TextInput placeholder='Search for exercises...' dense />
           <FlatList
             data={exercisesInActiveWorkout}
@@ -91,8 +104,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: 'white',
-    width: '100%',
-    height: '100%',
   },
   iconBtn: {
     borderColor: 'black',

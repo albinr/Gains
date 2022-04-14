@@ -1,19 +1,19 @@
 import React, {
-  useContext, useEffect, useMemo, useState, useRef, useCallback,
+  useEffect, useMemo, useState, useRef, useCallback,
 } from 'react';
 import { StyleSheet, View, FlatList } from 'react-native';
 import {
-  Button, Dialog, List, Portal,
-  Searchbar, Text, TextInput, Title, useTheme, IconButton,
+  List, Text, TextInput, IconButton,
 } from 'react-native-paper';
 import AsyncStorageLib from '@react-native-async-storage/async-storage/jest/async-storage-mock';
+import { ThemeProvider } from '@react-navigation/native';
 
 import ExerciseModal from '../components/modals/DragableExersiceModal';
 import useBoolState from '../hooks/useBoolState';
 import { RootTabScreenProps } from '../../types';
 import { AuthContext } from '../contexts/AuthContext';
 import {
-  useExercises, useAddExercise, useWorkouts,
+  useExercises, useAddExercise, useWorkouts, useSearchForExercises,
 } from '../contexts/GainsDataContext';
 import CurrentWorkoutContext, {
   useStartTimer, useStartWorkout, useAddExerciseToWorkout, useRemoveExercise,
@@ -36,7 +36,6 @@ const CreateExercises: React.FC<{ readonly searchQuery: string, readonly onCreat
       // onPress={onCreateExercises}
     />
   );
-
   return (
     <List.Item
       title={searchQuery}
@@ -61,12 +60,12 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
   const removeExercise = useRemoveExercise();
   const timer = useStartTimer();
   const { activeWorkout } = React.useContext(CurrentWorkoutContext);
-  const { logout } = useContext(AuthContext);
+  const searchForExercises = useSearchForExercises();
   const [searchQuery, setSearchQuery] = useState('');
 
   const workoutsToShow = useMemo(() => (searchQuery.length > 0
-    ? exercises.filter((w) => w.name.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase()))
-    : exercises), [searchQuery, exercises]);
+    ? searchForExercises(searchQuery)
+    : exercises), [searchQuery, exercises, searchForExercises]);
 
   const shouldShowAdd = useMemo(() => searchQuery.length > 0
     && !workoutsToShow.find((w) => normalizeString(searchQuery) === normalizeString(w.name)), [searchQuery, workoutsToShow]);
@@ -77,7 +76,7 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
     startWorkout();
   }, [startWorkout]);
 
-  console.log('Workout: ', [workout], 'activeWorkout: ', activeWorkout?.exerciseIds);
+  // console.log('Workout: ', [workout], 'activeWorkout: ', activeWorkout?.exerciseIds);
 
   useEffect(() => {
     navigation.setOptions({
@@ -89,17 +88,23 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
       icon='plus'
     />
   );
+  const onPress = useCallback((item) => {
+    if (activeWorkout && !activeWorkout.exerciseIds.find((id) => id === item.id)) {
+      addExerciseToWorkout(item.id);
+    }
+  }, [addExerciseToWorkout, activeWorkout]);
 
   const renderItem = useCallback(({ item }) => (
     <List.Item
       onPress={() => {
-        addExerciseToWorkout(item.id);
+        onPress(item);
+        console.log(item.name, 'item has been pressed');
         // onBlurSearch();
       }}
       title={item.name}
       right={right}
     />
-  ), [addExerciseToWorkout]);
+  ), [onPress]);
 
   const removeBtn = useCallback(({ item }) => (
     <IconButton
@@ -110,7 +115,7 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
 
   const renderActiveWorkoutItem = useCallback(({ item }) => (
     <List.Item
-      style={{ backgroundColor: 'white' }}
+      style={{ backgroundColor: 'white', borderBottomColor: '#ccc', borderBottomWidth: 0.5 }}
       onPress={() => {
         navigation.navigate('Modal', { exercise: item });
       }}
@@ -121,7 +126,13 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
 
   return (
     <View style={styles.container}>
-      <TextInput placeholder='Add or search exercises...' value={searchQuery} onChangeText={(text) => { setSearchQuery(text); }} />
+      <TextInput
+        placeholder='Add or search exercises...'
+        value={searchQuery}
+        onChangeText={(text) => { setSearchQuery(text); }}
+        onSubmitEditing={() => setSearchQuery('')}
+        onBlur={() => console.log('you have been blured')}
+      />
       {/* onBlur={onBlurSearch} */}
       <View style={styles.searchSuggestionContainer}>
         { searchQuery.length > 0 ? (
@@ -161,14 +172,13 @@ const styles = StyleSheet.create({
   },
   searchSuggestionContainer: {
     alignItems: 'center',
+    zIndex: 2,
   },
   searchSuggestion: {
     width: '90%',
     top: 0,
     zIndex: 15,
     position: 'absolute',
-    backgroundColor: 'lightgray',
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
+    backgroundColor: '#ccc',
   },
 });

@@ -14,10 +14,9 @@ export type GainsContextType = {
   readonly workoutTemplates: readonly WorkoutTemplate[],
   readonly sets: readonly ExerciseSet[],
   readonly exercises: readonly Exercise[],
-  // readonly query: readonly Exercise[],
-  // readonly getExercisesById(exerciseIds: string[]): readonly Exercise[],
-  // readonly getExerciseAutosuggestions(): readonly Exercise[],
-  // readonly searchForExercises(query: string): readonly Exercise[],
+  // getExercisesById(exerciseIds: string[]): readonly Exercise[],
+  // getExerciseAutosuggestions(): readonly Exercise[],
+  searchForExercises(query: string): readonly Exercise[],
   readonly addWorkout: (workout: Workout) => void,
   readonly upsertWorkoutTemplate:(exercises: readonly string[], name: string, workoutTemplateId?: string) => void,
   readonly addExercise:(exercise: Omit<Exercise, 'id'>) => void,
@@ -29,9 +28,7 @@ export const GainsContext = React.createContext<GainsContextType>({
   exercises: [],
   workoutTemplates: [],
   sets: [],
-  // searchForExercises: () => [],
-  // query: [],
-  // searchForExercises: () => [],
+  searchForExercises: () => [],
   addWorkout: () => {},
   addExercise: () => {},
   upsertWorkoutTemplate: () => {},
@@ -167,9 +164,7 @@ export const GainsContextProvider: React.FC = ({ children }) => {
     addSet,
     addWorkout,
     workoutTemplates,
-    // exerciseToShow,
-    // searchForExercises: (query: string) => exercises.filter((exercise) => exercise.name.toLocaleLowerCase().includes(query.toLocaleLowerCase())),
-    // removeExercise: (exerciseId: string) => { setExercises((prev) => prev.filter((exercise) => exercise.id !== exerciseId)); },
+    searchForExercises: (query) => exercises.filter((exercise) => exercise.name.toLocaleLowerCase().includes(query.toLocaleLowerCase())),
     upsertWorkoutTemplate: (exercises, name, workoutTemplateId) => {
       setWorkoutTemplates((prev) => {
         const workoutTemplate = prev.find((template) => template.id === workoutTemplateId);
@@ -188,13 +183,12 @@ export const GainsContextProvider: React.FC = ({ children }) => {
   );
 };
 
-/* export const useSearchForExercises = () => {
+export const useSearchForExercises = () => {
+  // eslint-disable-next-line
   const { searchForExercises } = React.useContext(GainsContext);
 
-  const workoutsToShow = useMemo(() => (searchForExercises.length > 0
-    ? exercises.filter((w) => w.name.toLocaleLowerCase().includes(searchForExercises.toLocaleLowerCase()))
-    : exercises), [searchForExercises, exercises]);
-} */
+  return searchForExercises;
+};
 
 export const useExercises = () => React.useContext(GainsContext).exercises;
 

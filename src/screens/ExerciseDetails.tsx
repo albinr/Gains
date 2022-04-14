@@ -120,6 +120,7 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
         <VictoryAxis dependentAxis crossAxis domainPadding={{ x: 10, y: 10 }} orientation='left' />
         <VictoryAxis tickFormat={() => ''} domainPadding={{ x: 10, y: 10 }} orientation='bottom' />
       </VictoryChart>
+      <Text>Set Log</Text>
       <SectionList
         sections={setsPerDay}
         style={{ width: '100%', flex: 1 }}
