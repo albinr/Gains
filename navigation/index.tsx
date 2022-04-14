@@ -3,7 +3,7 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import { Button } from 'react-native-paper';
+import { Button, IconButton } from 'react-native-paper';
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
@@ -18,7 +18,7 @@ import useColorScheme from '../src/hooks/useColorScheme';
 // import ModalScreen from '../src/screens/WorkoutDetails';
 import ModalScreen from '../src/screens/ExerciseDetails';
 import NotFoundScreen from '../src/screens/NotFoundScreen';
-import TabScreen from '../src/screens/TabScreen';
+// import TabScreen from '../src/screens/TabScreen';
 import ProflieScreen from '../src/screens/ProfileScreen';
 import WorkoutListScreen from '../src/screens/WorkoutListScreen';
 import TabTwoScreen from '../src/screens/TabTwoScreen';
@@ -46,12 +46,12 @@ function BottomTabNavigator() {
 
   return (
     <BottomTab.Navigator
-      initialRouteName='WorkoutListTab'
+      initialRouteName='ExerciseListTab'
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint,
       }}
     >
-      <BottomTab.Screen
+      {/*  <BottomTab.Screen
         name='WorkoutListTab'
         component={TabScreen}
         options={({ navigation }: RootTabScreenProps<'WorkoutListTab'>) => ({
@@ -72,27 +72,28 @@ function BottomTabNavigator() {
             </Pressable>
           ),
         })}
-      />
+      /> */}
 
       <BottomTab.Screen
         name='ExerciseListTab'
         component={WorkoutListScreen}
         options={({ navigation }: RootTabScreenProps<'ExerciseListTab'>) => ({
-          title: 'Workouts',
-          tabBarIcon: ({ color }) => <TabBarIcon name='account-child' color={color} />,
+          title: 'Your Workout',
+          tabBarIcon: ({ color }) => <TabBarIcon name='arm-flex' color={color} />,
           headerRight: () => (
-            <Pressable
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}
-            >
-              <FontAwesome
-                name='info-circle'
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
+            // <Pressable
+            //   style={({ pressed }) => ({
+            //     opacity: pressed ? 0.5 : 1,
+            //   })}
+            // >
+            //   <FontAwesome
+            //     name='info-circle'
+            //     size={25}
+            //     color={Colors[colorScheme].text}
+            //     style={{ marginRight: 15 }}
+            //   />
+            // </Pressable>
+            <IconButton icon='arm-flex' onPress={() => {}} />
           ),
         })}
       />
@@ -101,8 +102,8 @@ function BottomTabNavigator() {
         name='ProfileTab'
         component={ProflieScreen}
         options={({ navigation }: RootTabScreenProps<'ProfileTab'>) => ({
-          title: 'Profile',
-          tabBarIcon: ({ color }) => <TabBarIcon name='account' color={color} />,
+          title: 'Utils',
+          tabBarIcon: ({ color }) => <TabBarIcon name='cog' color={color} />,
           headerRight: () => (
             <Pressable
               style={({ pressed }) => ({
@@ -110,7 +111,7 @@ function BottomTabNavigator() {
               })}
             >
               <FontAwesome
-                name='user'
+                name='cog'
                 size={25}
                 color={Colors[colorScheme].text}
                 style={{ marginRight: 15 }}
@@ -119,6 +120,7 @@ function BottomTabNavigator() {
           ),
         })}
       />
+
     </BottomTab.Navigator>
   );
 }
@@ -134,9 +136,7 @@ function RootNavigator() {
     <Stack.Navigator>
       <Stack.Screen name='Root' component={BottomTabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name='NotFound' component={NotFoundScreen} options={{ title: 'Oops!' }} />
-      <Stack.Group screenOptions={{ presentation: 'modal' }}>
-        <Stack.Screen name='Modal' component={ModalScreen} />
-      </Stack.Group>
+      <Stack.Screen name='Modal' component={ModalScreen} options={{ gestureEnabled: false, fullScreenGestureEnabled: false }} />
     </Stack.Navigator>
   );
 }

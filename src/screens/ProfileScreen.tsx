@@ -3,12 +3,13 @@ import { StyleSheet } from 'react-native';
 import {
   Button, useTheme,
 } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { View } from '../components/Themed';
 import { RootTabScreenProps } from '../../types';
 import useBoolState from '../hooks/useBoolState';
-import { useAddExercise, useExercises } from '../contexts/WorkoutDataContext';
 import { AuthContext } from '../contexts/AuthContext';
+import ExerciseModal from '../components/modals/DragableExersiceModal';
 
 export default function ProflieScreen({ navigation }: RootTabScreenProps<'ProfileTab'>) {
   const { logout } = useContext(AuthContext);
@@ -16,6 +17,7 @@ export default function ProflieScreen({ navigation }: RootTabScreenProps<'Profil
   return (
     <View style={styles.container}>
       <Button onPress={logout}>Log out</Button>
+      <Button onPress={() => AsyncStorage.clear()}>Clear Async Storage</Button>
     </View>
   );
 }

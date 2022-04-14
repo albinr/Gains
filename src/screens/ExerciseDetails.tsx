@@ -14,9 +14,10 @@ import {
 
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text } from '../components/Themed';
-import { useSaveSet, useSetsForWorkout } from '../contexts/WorkoutDataContext';
+import { useSaveSet, useSetsForExercise } from '../contexts/GainsDataContext';
 import { RootStackScreenProps, ExerciseSet } from '../../types';
 import Colors from '../../constants/Colors';
+import ExerciseModal from '../components/modals/DragableExersiceModal';
 
 dayjs.extend(calendar, {
   sameDay: '[Today at] h:mm A', // The same day (Today at 2:30 AM)
@@ -42,17 +43,17 @@ const Stepper: React.FC<{ readonly minValue?: number, readonly value: number, re
       flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%',
     }}
     >
-      <IconButton size={35} disabled={minValue === value} animated icon='minus' onPress={() => onValueUpdated((p) => Math.max(minValue, p - 1))} />
+      <IconButton size={25} style={{ flex: 1 }} disabled={minValue === value} animated icon='minus' onPress={() => onValueUpdated((p) => Math.max(minValue, p - 1))} />
       {/* <Text style={{
         width: 50, fontSize: 30, fontVariant: ['tabular-nums'], textAlign: 'center', alignSelf: 'center',
       }}
       >
         { value.toString() }
       </Text> */}
-      <View style={{ width: 50, flexDirection: 'row' }}>
+      <View style={{ width: 100, flexDirection: 'row', justifyContent: 'center' }}>
         <TextInput
           style={{
-            fontSize: 20, fontVariant: ['tabular-nums'], textAlign: 'center', alignSelf: 'center',
+            fontSize: 16, fontVariant: ['tabular-nums'], textAlign: 'center', alignSelf: 'center',
           }}
           value={value.toString()}
           // onBlur={}
@@ -65,14 +66,14 @@ const Stepper: React.FC<{ readonly minValue?: number, readonly value: number, re
           {textTitle}
         </Text>
       </View>
-      <IconButton size={35} animated icon='plus' onPress={() => onValueUpdated((p) => Math.max(minValue, p + 1))} />
+      <IconButton size={25} style={{ flex: 1 }} animated icon='plus' onPress={() => onValueUpdated((p) => Math.max(minValue, p + 1))} />
     </View>
   );
 };
 
-export default function ModalScreen({ navigation, route: { params: { workout } } }: RootStackScreenProps<'Modal'>) {
-  const workoutId = workout.id;
-  const sets = useSetsForWorkout(workoutId);
+export default function ModalScreen({ navigation, route: { params: { exercise } } }: RootStackScreenProps<'Modal'>) {
+  const exerciseId = exercise.id;
+  const sets = useSetsForExercise(exerciseId);
   const [reps, setReps] = useState(10);
   const [weight, setWeight] = useState(10);
   const saveSet = useSaveSet();
@@ -99,63 +100,98 @@ export default function ModalScreen({ navigation, route: { params: { workout } }
 
   useEffect(() => {
     navigation.setOptions({
-      title: `${workout.name}`,
+      title: `${exercise.name}`,
     });
-  }, [navigation, workout]);
+  }, [navigation, exercise]);
   return (
-
     <View style={styles.container}>
-      <ScrollView>
-        {/* Use a light status bar on iOS to account for the black space above the modal */}
-        <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
-
-        <VictoryChart>
-          <VictoryScatter
-            style={{ data: { fill: '#c43a31' } }}
-            bubbleProperty='amount'
-            maxBubbleSize={10}
-            domainPadding={{ x: 10, y: 10 }}
-            minBubbleSize={5}
-            height={200}
-            data={sets.map((s) => ({ x: s.createdAt, y: s.weight, amount: s.reps }))}
-
-          />
-          <VictoryAxis dependentAxis crossAxis domainPadding={{ x: 10, y: 10 }} orientation='left' />
-          <VictoryAxis tickFormat={() => ''} domainPadding={{ x: 10, y: 10 }} orientation='bottom' />
-        </VictoryChart>
-        <SectionList
-          sections={setsPerDay}
-          style={{ width: '100%' }}
-          renderSectionHeader={({ section: { title } }) => (
-            <Headline style={{ paddingHorizontal: 10 }}>{title}</Headline>
-          )}
-          renderItem={({ item }) => (
-            <List.Item
-              title={(
-                <Text>
-                  { `${item.reps} reps @ `}
-                  <Text style={{ fontWeight: 'bold' }}>{`${item.weight} kg`}</Text>
-                </Text>
-              )}
-              description={dayjs(item.createdAt).format('hh:mm')}
-            />
-          )}
+      {/* Use a light status bar on iOS to account for the black space above the modal */}
+      <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
+      <VictoryChart>
+        <VictoryScatter
+          style={{ data: { fill: '#c43a31' } }}
+          bubbleProperty='amount'
+          maxBubbleSize={10}
+          domainPadding={{ x: 10, y: 10 }}
+          minBubbleSize={5}
+          height={200}
+          data={sets.map((s) => ({ x: s.createdAt, y: s.weight, amount: s.reps }))}
         />
-      </ScrollView>
-      <View style={{
-        width: '100%', justifyContent: 'center', alignItems: 'center', padding: 10, backgroundColor: 'lightgray', borderTopLeftRadius: 20, borderTopRightRadius: 20,
-      }}
-      >
-        <Stepper minValue={1} value={reps} onValueUpdated={setReps} textTitle='REPS' />
+        <VictoryAxis dependentAxis crossAxis domainPadding={{ x: 10, y: 10 }} orientation='left' />
+        <VictoryAxis tickFormat={() => ''} domainPadding={{ x: 10, y: 10 }} orientation='bottom' />
+      </VictoryChart>
+      <Text>Set Log</Text>
+      <SectionList
+        sections={setsPerDay}
+        style={{ width: '100%', flex: 1 }}
+        renderSectionHeader={({ section: { title } }) => (
+          <Headline style={{ paddingHorizontal: 10 }}>{title}</Headline>
+        )}
+        renderItem={({ item }) => (
+          <List.Item
+            title={(
+              <Text>
+                { `${item.reps} reps @ `}
+                <Text style={{ fontWeight: 'bold' }}>{`${item.weight} kg`}</Text>
+              </Text>
+            )}
+            description={dayjs(item.createdAt).format('hh:mm')}
+          />
+        )}
+      />
+      <View style={styles.stepperContainer}>
+        <Stepper value={weight} onValueUpdated={setWeight} textTitle='KG' />
         <Pressable
           style={styles.saveSetBtn}
-          onPressIn={() => saveSet({ reps, weight, workoutId })}
+          onPressIn={() => saveSet({ reps, weight, exerciseId })}
         >
           <Text>SAVE SET</Text>
         </Pressable>
-        <Stepper value={weight} onValueUpdated={setWeight} textTitle='KG' />
+        <Stepper minValue={1} value={reps} onValueUpdated={setReps} textTitle='REPS' />
       </View>
-      <View style={{
+      <ExerciseModal />
+    </View>
+
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    // alignItems: 'center',
+    // justifyContent: 'space-between',
+  },
+  stepperContainer: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: 'lightgray',
+    borderTopLeftRadius: 14,
+    borderTopRightRadius: 14,
+    position: 'absolute',
+    bottom: 80,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  separator: {
+    marginVertical: 30,
+    height: 1,
+    width: '80%',
+  },
+  saveSetBtn: {
+    width: 100,
+    height: 80,
+    borderRadius: 20,
+    borderColor: 'black',
+    borderWidth: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
+/* <View style={{
         width: '100%', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', backgroundColor: 'gray',
       }}
       >
@@ -174,33 +210,4 @@ export default function ModalScreen({ navigation, route: { params: { workout } }
           <IconButton icon='arrow-right' color='black' size={35} onPress={() => console.log('Pressed')} />
 
         </View>
-      </View>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
-  saveSetBtn: {
-    width: 140,
-    height: 140,
-    borderRadius: 10000,
-    borderColor: 'black',
-    borderWidth: 3,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+      </View> */
