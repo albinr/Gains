@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { nanoid } from 'nanoid';
 
 import {
@@ -18,9 +17,11 @@ import { GainsContext, GainsContextType } from './GainsDataContext';
     readonly hasActiveWorkout: boolean,
     readonly startTimer: () => void,
     readonly pauseTimer: () => void
+    readonly removeExercise: (exerciseId: string) => void,
   }
 
 const CurrentWorkoutContext = React.createContext<CurrentWorkoutContextType>({
+  removeExercise: () => {},
   addExerciseToWorkout: () => {},
   activeWorkout: null,
   startTimer: () => {},
@@ -61,10 +62,19 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
     return finishedWorkout;
   }, [activeWorkout, addWorkout]);
 
+  const removeExercise = useCallback((exerciseId: string) => {
+    if (!activeWorkout) {
+      return;
+    }
+    const newExerciseIds = activeWorkout.exerciseIds.filter((id) => id !== exerciseId);
+    setActiveWorkout({ ...activeWorkout, exerciseIds: newExerciseIds });
+  }, [activeWorkout]);
+
   const value = useMemo<CurrentWorkoutContextType>(() => ({
     activeWorkout,
     startWorkout,
     finishWorkout,
+    removeExercise,
     addExerciseToWorkout: (exerciseId: string) => {
       if (activeWorkout) {
         setActiveWorkout((prev) => ({
@@ -97,7 +107,7 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
       }
     },
     hasActiveWorkout: !!activeWorkout,
-  }), [activeWorkout, startWorkout, finishWorkout]);
+  }), [activeWorkout, startWorkout, finishWorkout, removeExercise]);
 
   return (
     <CurrentWorkoutContext.Provider value={value}>
@@ -106,14 +116,16 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
   );
 };
 
-export const useAddExerciseToWorkout = () => {
-  const { addExerciseToWorkout } = React.useContext(CurrentWorkoutContext);
-  return addExerciseToWorkout;
-};
+export const useRemoveExercise = () => React.useContext(CurrentWorkoutContext).removeExercise;
 
 export const useStartWorkout = () => {
   const { startWorkout } = React.useContext(CurrentWorkoutContext);
   return startWorkout;
+};
+
+export const useAddExerciseToWorkout = () => {
+  const { addExerciseToWorkout } = React.useContext(CurrentWorkoutContext);
+  return addExerciseToWorkout;
 };
 
 export const useStartTimer = () => {

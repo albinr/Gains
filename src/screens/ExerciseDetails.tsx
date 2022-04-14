@@ -138,18 +138,7 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
           />
         )}
       />
-      <View style={{
-        width: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 10,
-        backgroundColor: 'lightgray',
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-        position: 'absolute',
-        bottom: 100,
-      }}
-      >
+      <View style={styles.stepperContainer}>
         <Stepper value={weight} onValueUpdated={setWeight} textTitle='KG' />
         <Pressable
           style={styles.saveSetBtn}
@@ -170,6 +159,17 @@ const styles = StyleSheet.create({
     flex: 1,
     // alignItems: 'center',
     // justifyContent: 'space-between',
+  },
+  stepperContainer: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: 'lightgray',
+    borderTopLeftRadius: 14,
+    borderTopRightRadius: 14,
+    position: 'absolute',
+    bottom: 80,
   },
   title: {
     fontSize: 20,

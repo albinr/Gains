@@ -21,7 +21,7 @@ import NotFoundScreen from '../src/screens/NotFoundScreen';
 // import TabScreen from '../src/screens/TabScreen';
 import ProflieScreen from '../src/screens/ProfileScreen';
 import WorkoutListScreen from '../src/screens/WorkoutListScreen';
-// import TabTwoScreen from '../src/screens/TabTwoScreen';
+import TabTwoScreen from '../src/screens/TabTwoScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 
@@ -79,7 +79,7 @@ function BottomTabNavigator() {
         component={WorkoutListScreen}
         options={({ navigation }: RootTabScreenProps<'ExerciseListTab'>) => ({
           title: 'Your Workout',
-          tabBarIcon: ({ color }) => <TabBarIcon name='dumbbell' color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name='arm-flex' color={color} />,
           headerRight: () => (
             // <Pressable
             //   style={({ pressed }) => ({
@@ -93,7 +93,7 @@ function BottomTabNavigator() {
             //     style={{ marginRight: 15 }}
             //   />
             // </Pressable>
-            <IconButton icon='dumbbell' onPress={() => {}} />
+            <IconButton icon='arm-flex' onPress={() => {}} />
           ),
         })}
       />

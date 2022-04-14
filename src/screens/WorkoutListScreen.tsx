@@ -6,6 +6,7 @@ import {
   Button, Dialog, List, Portal,
   Searchbar, Text, TextInput, Title, useTheme, IconButton,
 } from 'react-native-paper';
+import AsyncStorageLib from '@react-native-async-storage/async-storage/jest/async-storage-mock';
 
 import ExerciseModal from '../components/modals/DragableExersiceModal';
 import useBoolState from '../hooks/useBoolState';
@@ -14,11 +15,10 @@ import { AuthContext } from '../contexts/AuthContext';
 import {
   useExercises, useAddExercise, useWorkouts,
 } from '../contexts/GainsDataContext';
-import CurrentWorkoutContext, { useStartTimer, useStartWorkout, useAddExerciseToWorkout } from '../contexts/CurrentWorkoutDataContext';
+import CurrentWorkoutContext, {
+  useStartTimer, useStartWorkout, useAddExerciseToWorkout, useRemoveExercise,
+} from '../contexts/CurrentWorkoutDataContext';
 import { WorkoutExerciseType } from '../../clients/__generated__/schema';
-
-// const AddOriginalExercise React.FC<{ }> = ({,
-// }) => {};
 
 const CreateExercises: React.FC<{ readonly searchQuery: string, readonly onCreate: (name: string) => void }> = ({
   searchQuery, onCreate,
@@ -33,7 +33,7 @@ const CreateExercises: React.FC<{ readonly searchQuery: string, readonly onCreat
     <IconButton
       {...props}
       icon='plus'
-      onPress={onCreateExercises}
+      // onPress={onCreateExercises}
     />
   );
 
@@ -58,11 +58,12 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
   const addExercise = useAddExercise();
   const workout = useWorkouts();
   const startWorkout = useStartWorkout();
+  const removeExercise = useRemoveExercise();
   const timer = useStartTimer();
   const { activeWorkout } = React.useContext(CurrentWorkoutContext);
   const { logout } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isDialogVisible, setDialogVisible] = useBoolState(false);
+
   const workoutsToShow = useMemo(() => (searchQuery.length > 0
     ? exercises.filter((w) => w.name.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase()))
     : exercises), [searchQuery, exercises]);
@@ -78,15 +79,6 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
 
   console.log('Workout: ', [workout], 'activeWorkout: ', activeWorkout?.exerciseIds);
 
-  /*  const onBlurSearch = useCallback(() => setDialogVisible, [setDialogVisible]);
-
-  useEffect(() => {
-    if (isDialogVisible === true && searchQuery.length > 0) {
-      setSearchQuery('');
-      setDialogVisible();
-    }
-  }, [isDialogVisible, setSearchQuery, setDialogVisible]); */
-
   useEffect(() => {
     navigation.setOptions({
     });
@@ -97,18 +89,24 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
       icon='plus'
     />
   );
+
   const renderItem = useCallback(({ item }) => (
     <List.Item
       onPress={() => {
-        // const associatedCodes = {};
         addExerciseToWorkout(item.id);
         // onBlurSearch();
-        // addExerciseToWorkout({ name: item.name, associatedCodes, workoutExerciseType: item.WorkoutExerciseType });
       }}
       title={item.name}
       right={right}
     />
   ), [addExerciseToWorkout]);
+
+  const removeBtn = useCallback(({ item }) => (
+    <IconButton
+      icon='close'
+      onPress={(() => { console.log('remove', item.id); removeExercise(item.id); })}
+    />
+  ), [removeExercise]);
 
   const renderActiveWorkoutItem = useCallback(({ item }) => (
     <List.Item
@@ -117,19 +115,13 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
         navigation.navigate('Modal', { exercise: item });
       }}
       title={item.name}
+      right={() => removeBtn({ item })}
     />
-  ), [navigation]);
-
-  const left = ({ ...props }) => (
-    <IconButton
-      {...props}
-      icon='search'
-    />
-  );
+  ), [navigation, removeBtn]);
 
   return (
-    <View>
-      <TextInput left={left} placeholder='Add or search exercises...' value={searchQuery} onChangeText={(text) => { setSearchQuery(text); }} autoFocus />
+    <View style={styles.container}>
+      <TextInput placeholder='Add or search exercises...' value={searchQuery} onChangeText={(text) => { setSearchQuery(text); }} />
       {/* onBlur={onBlurSearch} */}
       <View style={styles.searchSuggestionContainer}>
         { searchQuery.length > 0 ? (
@@ -143,6 +135,7 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
               <CreateExercises
                 searchQuery={searchQuery}
                 onCreate={(name) => {
+                  // addExerciseToWorkout(item.id);
                   const associatedCodes = {};
                   addExercise({ name, associatedCodes, workoutExerciseType: WorkoutExerciseType.GOOD_MORNING });
                 }}
@@ -153,23 +146,26 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
       </View>
       {exercisesInActiveWorkout && exercisesInActiveWorkout.length > 0 ? (
         <FlatList
+          style={{ zIndex: 1 }}
           data={exercisesInActiveWorkout}
           renderItem={renderActiveWorkoutItem}
         />
-      ) : <Text style={{ zIndex: 1, padding: 20, color: 'gray' }}>You have not added any exercises...</Text>}
+      ) : <Text style={{ padding: 20, color: 'gray' }}>You have not added any exercises...</Text>}
     </View>
   );
 }
 /* { timer ? <Text>{ timer }</Text> : null } */
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   searchSuggestionContainer: {
     alignItems: 'center',
-    zIndex: 10,
   },
   searchSuggestion: {
-    width: '95%',
+    width: '90%',
     top: 0,
-    zIndex: 10,
+    zIndex: 15,
     position: 'absolute',
     backgroundColor: 'lightgray',
     borderBottomLeftRadius: 10,

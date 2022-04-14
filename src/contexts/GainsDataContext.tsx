@@ -14,6 +14,7 @@ export type GainsContextType = {
   readonly workoutTemplates: readonly WorkoutTemplate[],
   readonly sets: readonly ExerciseSet[],
   readonly exercises: readonly Exercise[],
+  // readonly query: readonly Exercise[],
   // readonly getExercisesById(exerciseIds: string[]): readonly Exercise[],
   // readonly getExerciseAutosuggestions(): readonly Exercise[],
   // readonly searchForExercises(query: string): readonly Exercise[],
@@ -28,6 +29,9 @@ export const GainsContext = React.createContext<GainsContextType>({
   exercises: [],
   workoutTemplates: [],
   sets: [],
+  // searchForExercises: () => [],
+  // query: [],
+  // searchForExercises: () => [],
   addWorkout: () => {},
   addExercise: () => {},
   upsertWorkoutTemplate: () => {},
@@ -96,6 +100,8 @@ export const GainsContextProvider: React.FC = ({ children }) => {
   const [exercises, setExercises] = React.useState<readonly Exercise[]>(originalExercises);
   const [workoutTemplates, setWorkoutTemplates] = React.useState<readonly WorkoutTemplate[]>([]);
   const [sets, setSets] = React.useState<readonly ExerciseSet[]>([]);
+  const [searchQuery, setSearchQuery] = React.useState('');
+  // const [searchQuery, setSeachQuery] = React.useState<readonly Exercise[]>([]);
 
   useEffect(() => {
     void AsyncStorage.getItem('workouts').then((value) => {
@@ -138,7 +144,6 @@ export const GainsContextProvider: React.FC = ({ children }) => {
   useEffect(() => {
     void AsyncStorage.setItem('workouts', JSON.stringify(workouts));
   }, [workouts]);
-
   const addWorkout = useCallback((workout: Omit<Workout, 'id'>) => {
     setWorkouts((prev) => [{ id: nanoid(), ...workout }, ...prev]);
   }, []);
@@ -150,6 +155,9 @@ export const GainsContextProvider: React.FC = ({ children }) => {
   const addSet = useCallback((set: Omit<ExerciseSet, 'id' | 'createdAt'>) => {
     setSets((prev) => [{ id: nanoid(), createdAt: Date.now(), ...set }, ...prev]);
   }, []);
+  /* const exerciseToShow = useMemo(() => (search.length > 0
+    ? exercises.filter((w) => w.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+    : exercises), [search, exercises]); */
 
   const value = useMemo<GainsContextType>(() => ({
     sets,
@@ -159,6 +167,9 @@ export const GainsContextProvider: React.FC = ({ children }) => {
     addSet,
     addWorkout,
     workoutTemplates,
+    // exerciseToShow,
+    // searchForExercises: (query: string) => exercises.filter((exercise) => exercise.name.toLocaleLowerCase().includes(query.toLocaleLowerCase())),
+    // removeExercise: (exerciseId: string) => { setExercises((prev) => prev.filter((exercise) => exercise.id !== exerciseId)); },
     upsertWorkoutTemplate: (exercises, name, workoutTemplateId) => {
       setWorkoutTemplates((prev) => {
         const workoutTemplate = prev.find((template) => template.id === workoutTemplateId);
@@ -176,6 +187,14 @@ export const GainsContextProvider: React.FC = ({ children }) => {
     </GainsContext.Provider>
   );
 };
+
+/* export const useSearchForExercises = () => {
+  const { searchForExercises } = React.useContext(GainsContext);
+
+  const workoutsToShow = useMemo(() => (searchForExercises.length > 0
+    ? exercises.filter((w) => w.name.toLocaleLowerCase().includes(searchForExercises.toLocaleLowerCase()))
+    : exercises), [searchForExercises, exercises]);
+} */
 
 export const useExercises = () => React.useContext(GainsContext).exercises;
 
