@@ -1,7 +1,9 @@
 import React, {
   useEffect, useMemo, useState, useRef, useCallback,
 } from 'react';
-import { StyleSheet, View, FlatList } from 'react-native';
+import {
+  StyleSheet, View, FlatList, Pressable,
+} from 'react-native';
 import {
   List, Text, TextInput, IconButton,
 } from 'react-native-paper';
@@ -131,9 +133,16 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
         value={searchQuery}
         onChangeText={(text) => { setSearchQuery(text); }}
         onSubmitEditing={() => setSearchQuery('')}
-        onBlur={() => console.log('you have been blured')}
+        // onBlur={() => console.log('you have been blured')}
       />
-      {/* onBlur={onBlurSearch} */}
+      {searchQuery.length > 0 ? (
+        <Pressable
+          onPress={() => setSearchQuery('')}
+          style={{
+            flex: 1, top: 0, bottom: 0, right: 0, left: 0, position: 'absolute', zIndex: 1,
+          }}
+        />
+      ) : null}
       <View style={styles.searchSuggestionContainer}>
         { searchQuery.length > 0 ? (
           <View style={styles.searchSuggestion}>
@@ -157,7 +166,7 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
       </View>
       {exercisesInActiveWorkout && exercisesInActiveWorkout.length > 0 ? (
         <FlatList
-          style={{ zIndex: 1 }}
+          // style={{ zIndex: 1 }}
           data={exercisesInActiveWorkout}
           renderItem={renderActiveWorkoutItem}
         />
@@ -175,10 +184,11 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   searchSuggestion: {
+    // position: 'absolute',
+    flexDirection: 'column',
     width: '90%',
     top: 0,
     zIndex: 15,
-    position: 'absolute',
     backgroundColor: '#ccc',
   },
 });
