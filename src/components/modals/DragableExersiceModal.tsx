@@ -75,8 +75,7 @@ const ExerciseModal = () => {
         <BottomSheetView style={styles.contentContainer}>
           <View style={{ width: '100%' }}>
             <View>
-              <Text>00:00</Text>
-              { timer ? <Text>{ timer }</Text> : null }
+              <Text>{ timer }</Text>
             </View>
           </View>
           <TextInput placeholder='Search for exercises...' dense />

@@ -47,6 +47,49 @@ const CreateExercises: React.FC<{ readonly searchQuery: string, readonly onCreat
   );
 };
 
+const StartWorkoutButton: React.FC<{ readonly startingExercise: any, readonly onStart: (item: any) => void }> = ({
+  startingExercise, onStart,
+}) => {
+  const timer = useStartTimer();
+  /* const onstartTimer = useEffect(() => {
+    if (timer) {
+      timer();
+    }
+  }, [timer]); */
+  const onStartWorkout = useCallback(() => {
+    if (timer && timer !== null && startingExercise > 0) {
+      timer();
+      onStart(startingExercise[0]);
+    }
+    console.log('starting workout', startingExercise[0]);
+  }, [onStart, timer, startingExercise]);
+
+  return (
+    <View style={{ position: 'absolute', bottom: 20, right: 20 }}>
+      {timer && timer !== null ? (
+        <IconButton icon='play' style={{ backgroundColor: 'lightgreen' }} size={50} onPress={onStartWorkout} />
+      ) : (null)}
+    </View>
+  );
+};
+
+// const StartWorkoutButton = ({ navigation }) => {
+//   const timer = useStartTimer();
+
+//   return (
+//     <View style={{ position: 'absolute', bottom: 20, right: 20 }}>
+//       {timer ? (
+//         <IconButton
+//           icon='play'
+//           style={{ backgroundColor: 'lightgreen' }}
+//           size={50}
+//           onPress={() => navigation.navigate('modal', { exercise: item })}
+//         />
+//       ) : (null)}
+//     </View>
+//   );
+// };
+
 const normalizeString = (str: string) => {
   const normalized = str.toLocaleLowerCase().trim();
   // console.log('normalized', normalized);
@@ -119,6 +162,7 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
     <List.Item
       style={{ backgroundColor: 'white', borderBottomColor: '#ccc', borderBottomWidth: 0.5 }}
       onPress={() => {
+        console.log(item, 'item has been pressed');
         navigation.navigate('Modal', { exercise: item });
       }}
       title={item.name}
@@ -171,6 +215,7 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
           renderItem={renderActiveWorkoutItem}
         />
       ) : <Text style={{ padding: 20, color: 'gray' }}>You have not added any exercises...</Text>}
+      {/* <StartWorkoutButton startingExercise={exercisesInActiveWorkout} onStart={(item: typeof exercisesInActiveWorkout) => { navigation.navigate('Modal', { exercise: exercisesInActiveWorkout }); }} /> */}
     </View>
   );
 }
