@@ -13,6 +13,7 @@ import { GainsContext, GainsContextType } from './GainsDataContext';
     readonly startWorkout:(workoutTemplateId?: string) => Workout,
     readonly finishWorkout:() => Workout | null,
     readonly addExerciseToWorkout:(exerciseId: string) => void,
+    // readonly setsForWorkout:(exerciseId: string, sets: number) => void,
     readonly activeWorkout: Workout | null,
     readonly hasActiveWorkout: boolean,
     readonly startTimer: () => void,
@@ -24,6 +25,7 @@ const CurrentWorkoutContext = React.createContext<CurrentWorkoutContextType>({
   removeExercise: () => {},
   addExerciseToWorkout: () => {},
   activeWorkout: null,
+  // setsForWorkout: () => {},
   startTimer: () => {},
   pauseTimer: () => {},
   finishWorkout: () => ({} as Workout),
@@ -70,11 +72,24 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
     setActiveWorkout({ ...activeWorkout, exerciseIds: newExerciseIds });
   }, [activeWorkout]);
 
+  // const setsForWorkout = useCallback((exerciseId: string, sets: number) => {
+  //   if (!activeWorkout) {
+  //     return;
+  //   }
+  //   const newExerciseSets = activeWorkout.exerciseSets.map((set) => {
+  //     if (set.exerciseId === exerciseId) {
+  //       return { ...set, sets };
+  //     }
+  //     return set;
+  //   });
+  // }, [activeWorkout]);
+
   const value = useMemo<CurrentWorkoutContextType>(() => ({
     activeWorkout,
     startWorkout,
     finishWorkout,
     removeExercise,
+    // setsForWorkout,
     addExerciseToWorkout: (exerciseId: string) => {
       if (activeWorkout) {
         setActiveWorkout((prev) => ({
@@ -131,6 +146,11 @@ export const useAddExerciseToWorkout = () => {
 export const useStartTimer = () => {
   const { startTimer } = React.useContext(CurrentWorkoutContext);
   return startTimer;
+};
+
+export const usePauseTimer = () => {
+  const { pauseTimer } = React.useContext(CurrentWorkoutContext);
+  return pauseTimer;
 };
 
 export const useCurrentWorkoutTime = () => {

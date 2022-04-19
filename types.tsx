@@ -60,6 +60,7 @@ export type Exercise = {
   readonly name: string;
   readonly associatedCodes: Record<string, string>;
   readonly workoutExerciseType: WorkoutExerciseType;
+  readonly sets?: number;
 }
 
 export type ExerciseSet = {

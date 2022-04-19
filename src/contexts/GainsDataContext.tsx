@@ -97,7 +97,6 @@ export const GainsContextProvider: React.FC = ({ children }) => {
   const [exercises, setExercises] = React.useState<readonly Exercise[]>(originalExercises);
   const [workoutTemplates, setWorkoutTemplates] = React.useState<readonly WorkoutTemplate[]>([]);
   const [sets, setSets] = React.useState<readonly ExerciseSet[]>([]);
-  const [searchQuery, setSearchQuery] = React.useState('');
   // const [searchQuery, setSeachQuery] = React.useState<readonly Exercise[]>([]);
 
   useEffect(() => {

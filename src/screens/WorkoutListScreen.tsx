@@ -7,13 +7,9 @@ import {
 import {
   List, Text, TextInput, IconButton,
 } from 'react-native-paper';
-import AsyncStorageLib from '@react-native-async-storage/async-storage/jest/async-storage-mock';
 import { ThemeProvider } from '@react-navigation/native';
 
-import ExerciseModal from '../components/modals/DragableExersiceModal';
-import useBoolState from '../hooks/useBoolState';
 import { RootTabScreenProps } from '../../types';
-import { AuthContext } from '../contexts/AuthContext';
 import {
   useExercises, useAddExercise, useWorkouts, useSearchForExercises,
 } from '../contexts/GainsDataContext';
@@ -21,6 +17,7 @@ import CurrentWorkoutContext, {
   useStartTimer, useStartWorkout, useAddExerciseToWorkout, useRemoveExercise,
 } from '../contexts/CurrentWorkoutDataContext';
 import { WorkoutExerciseType } from '../../clients/__generated__/schema';
+import { StartWorkoutButton } from '../components/StartWorkout';
 
 const CreateExercises: React.FC<{ readonly searchQuery: string, readonly onCreate: (name: string) => void }> = ({
   searchQuery, onCreate,
@@ -46,49 +43,6 @@ const CreateExercises: React.FC<{ readonly searchQuery: string, readonly onCreat
     />
   );
 };
-
-const StartWorkoutButton: React.FC<{ readonly startingExercise: any, readonly onStart: (item: any) => void }> = ({
-  startingExercise, onStart,
-}) => {
-  const timer = useStartTimer();
-  /* const onstartTimer = useEffect(() => {
-    if (timer) {
-      timer();
-    }
-  }, [timer]); */
-  const onStartWorkout = useCallback(() => {
-    if (timer && startingExercise.length > 0) {
-      timer();
-      onStart(startingExercise[0]);
-    }
-    console.log('starting workout', timer);
-  }, [onStart, timer, startingExercise]);
-
-  return (
-    <View style={{ position: 'absolute', bottom: 20, right: 20 }}>
-      {/* {timer ? ( */}
-      <IconButton icon='play' style={{ backgroundColor: 'lightgreen' }} size={50} onPress={onStartWorkout} />
-      {/*  ) : (null)} */}
-    </View>
-  );
-};
-
-// const StartWorkoutButton = ({ navigation }) => {
-//   const timer = useStartTimer();
-
-//   return (
-//     <View style={{ position: 'absolute', bottom: 20, right: 20 }}>
-//       {timer ? (
-//         <IconButton
-//           icon='play'
-//           style={{ backgroundColor: 'lightgreen' }}
-//           size={50}
-//           onPress={() => navigation.navigate('modal', { exercise: item })}
-//         />
-//       ) : (null)}
-//     </View>
-//   );
-// };
 
 const normalizeString = (str: string) => {
   const normalized = str.toLocaleLowerCase().trim();
@@ -162,7 +116,6 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
     <List.Item
       style={{ backgroundColor: 'white', borderBottomColor: '#ccc', borderBottomWidth: 0.5 }}
       onPress={() => {
-        console.log(item, 'item has been pressed');
         navigation.navigate('Modal', { exercise: item });
       }}
       title={item.name}
@@ -214,11 +167,14 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
           data={exercisesInActiveWorkout}
           renderItem={renderActiveWorkoutItem}
         />
+
       ) : <Text style={{ padding: 20, color: 'gray' }}>You have not added any exercises...</Text>}
-      {/*  <StartWorkoutButton
-        startingExercise={exercisesInActiveWorkout}
-        onStart={(item: typeof exercisesInActiveWorkout) => { navigation.navigate('Modal', { exercise: item }); console.log('final result: ', item); }}
-      /> */}
+      {exercisesInActiveWorkout && exercisesInActiveWorkout.length > 0 ? (
+        <StartWorkoutButton
+          startingExercise={exercisesInActiveWorkout}
+          onStart={(item) => { navigation.navigate('Modal', { exercise: item }); }}
+        />
+      ) : null}
     </View>
   );
 }
@@ -234,7 +190,7 @@ const styles = StyleSheet.create({
   searchSuggestion: {
     // position: 'absolute',
     flexDirection: 'column',
-    width: '80%',
+    width: '90%',
     top: 0,
     zIndex: 15,
     backgroundColor: '#ccc',
