@@ -57,18 +57,18 @@ const StartWorkoutButton: React.FC<{ readonly startingExercise: any, readonly on
     }
   }, [timer]); */
   const onStartWorkout = useCallback(() => {
-    if (timer && timer !== null && startingExercise > 0) {
+    if (timer && startingExercise.length > 0) {
       timer();
       onStart(startingExercise[0]);
     }
-    console.log('starting workout', startingExercise[0]);
+    console.log('starting workout', timer);
   }, [onStart, timer, startingExercise]);
 
   return (
     <View style={{ position: 'absolute', bottom: 20, right: 20 }}>
-      {timer && timer !== null ? (
-        <IconButton icon='play' style={{ backgroundColor: 'lightgreen' }} size={50} onPress={onStartWorkout} />
-      ) : (null)}
+      {/* {timer ? ( */}
+      <IconButton icon='play' style={{ backgroundColor: 'lightgreen' }} size={50} onPress={onStartWorkout} />
+      {/*  ) : (null)} */}
     </View>
   );
 };
@@ -215,7 +215,10 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
           renderItem={renderActiveWorkoutItem}
         />
       ) : <Text style={{ padding: 20, color: 'gray' }}>You have not added any exercises...</Text>}
-      {/* <StartWorkoutButton startingExercise={exercisesInActiveWorkout} onStart={(item: typeof exercisesInActiveWorkout) => { navigation.navigate('Modal', { exercise: exercisesInActiveWorkout }); }} /> */}
+      {/*  <StartWorkoutButton
+        startingExercise={exercisesInActiveWorkout}
+        onStart={(item: typeof exercisesInActiveWorkout) => { navigation.navigate('Modal', { exercise: item }); console.log('final result: ', item); }}
+      /> */}
     </View>
   );
 }
@@ -231,7 +234,7 @@ const styles = StyleSheet.create({
   searchSuggestion: {
     // position: 'absolute',
     flexDirection: 'column',
-    width: '90%',
+    width: '80%',
     top: 0,
     zIndex: 15,
     backgroundColor: '#ccc',

@@ -6,7 +6,7 @@ import {
   Platform, Pressable, ScrollView, SectionList, StyleSheet, TextInput, View,
 } from 'react-native';
 import {
-  Headline, IconButton, List, ThemeProvider,
+  Headline, IconButton, List, ThemeProvider, Portal,
 } from 'react-native-paper';
 import {
   Background, VictoryAxis, VictoryChart, VictoryScatter,
@@ -104,6 +104,7 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
     });
   }, [navigation, exercise]);
   return (
+
     <View style={styles.container}>
       {/* Use a light status bar on iOS to account for the black space above the modal */}
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
@@ -139,6 +140,7 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
           />
         )}
       />
+      {/* <Portal.Host> */}
       <View style={styles.stepperContainer}>
         <Stepper value={weight} onValueUpdated={setWeight} textTitle='KG' />
         <Pressable
@@ -148,7 +150,9 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
           <Text>SAVE SET</Text>
         </Pressable>
         <Stepper minValue={1} value={reps} onValueUpdated={setReps} textTitle='REPS' />
+        <View style={{ height: 90 }} />
       </View>
+      {/* </Portal.Host> */}
       <ExerciseModal />
     </View>
 
@@ -169,8 +173,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightgray',
     borderTopLeftRadius: 14,
     borderTopRightRadius: 14,
-    position: 'absolute',
-    bottom: 80,
+    // position: 'absolute',
+    // bottom: 80,
   },
   title: {
     fontSize: 20,

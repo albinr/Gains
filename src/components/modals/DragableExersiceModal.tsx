@@ -71,11 +71,12 @@ const ExerciseModal = () => {
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
         footerComponent={renderFooter}
+        index={0}
       >
         <BottomSheetView style={styles.contentContainer}>
-          <View style={{ width: '100%' }}>
+          <View style={{ width: '100%', alignItems: 'center' }}>
             <View>
-              <Text>{ timer }</Text>
+              <Text>00:00</Text>
             </View>
           </View>
           <TextInput placeholder='Search for exercises...' dense />
