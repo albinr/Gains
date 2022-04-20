@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useMemo, useRef, useState,
+  useCallback, useMemo, useRef, useState, useEffect,
 } from 'react';
 import {
   View, Text, StyleSheet, Button, Pressable,
@@ -9,25 +9,28 @@ import BottomSheet, { BottomSheetView, BottomSheetFooter } from '@gorhom/bottom-
 import { FlatList } from 'react-native-gesture-handler';
 
 import CurrentWorkoutContext, {
-  useStartTimer, useStartWorkout, useAddExerciseToWorkout, useRemoveExercise,
+  useStartTimer, useStartWorkout, useAddExerciseToWorkout, useRemoveExercise, useCurrentWorkoutTime, usePauseTimer,
 } from '../../contexts/CurrentWorkoutDataContext';
 import {
   useExercises, useAddExercise, useWorkouts,
 } from '../../contexts/GainsDataContext';
 import { WorkoutExerciseType } from '../../clients/__generated__/schema';
 
-const ICONSIZE = 35;
+const ICONSIZE = 40;
 const ExerciseModal = () => {
   // ref
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const timer = useStartTimer();
+  const startTimer = useStartTimer();
+  const pauseTimer = usePauseTimer();
+  const showTimer = useCurrentWorkoutTime();
   const exercises = useExercises();
+  const [togglePause, setTogglePause] = useState(false);
   const { activeWorkout } = React.useContext(CurrentWorkoutContext);
+
   // variables
-  const snapPoints = useMemo(() => [90, '99%'], []);
+  const snapPoints = useMemo(() => [100, '99%'], []);
   // callbacks
   const handleSheetChanges = useCallback((index: number) => {
-    console.log('handleSheetChanges', index);
     // handleSnapPress(1);
   }, []);
 
@@ -40,6 +43,16 @@ const ExerciseModal = () => {
       onPress={() => console.log('pressed', item)}
     />
   ), []);
+  const pauseAndResume = useCallback(() => {
+    if (togglePause === true) {
+      pauseTimer();
+      setTogglePause(false);
+    } else {
+      startTimer();
+      setTogglePause(true);
+    }
+  }, [startTimer, pauseTimer, togglePause]);
+
   const renderFooter = useCallback(
     (props) => (
       <BottomSheetFooter {...props}>
@@ -48,7 +61,7 @@ const ExerciseModal = () => {
             <IconButton style={styles.iconBtn} animated size={ICONSIZE} icon='qrcode' onPress={() => console.log('Pressed')} />
           </View>
           <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-            <IconButton style={styles.iconBtn} animated size={ICONSIZE} icon='pause' onPress={timer} />
+            <IconButton style={styles.iconBtn} animated size={ICONSIZE} icon={togglePause === true ? ('pause') : ('play')} onPress={() => { pauseAndResume(); }} />
           </View>
           <View style={{
             flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'flex-end',
@@ -60,7 +73,7 @@ const ExerciseModal = () => {
         </View>
       </BottomSheetFooter>
     ),
-    [timer],
+    [pauseAndResume, togglePause],
   );
 
   // renders
@@ -71,19 +84,23 @@ const ExerciseModal = () => {
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
         footerComponent={renderFooter}
+        index={0}
       >
         <BottomSheetView style={styles.contentContainer}>
-          <View style={{ width: '100%' }}>
+          <View style={{ width: '100%', alignItems: 'center' }}>
             <View>
-              <Text>00:00</Text>
-              { timer ? <Text>{ timer }</Text> : null }
+              <Text>{showTimer}</Text>
             </View>
           </View>
-          <TextInput placeholder='Search for exercises...' dense />
-          <FlatList
-            data={exercisesInActiveWorkout}
-            renderItem={renderActiveWorkoutItem}
-          />
+          <Text>Active Workout</Text>
+
+          <View style={{ height: '50%' }}>
+            <FlatList
+              data={exercisesInActiveWorkout}
+              renderItem={renderActiveWorkoutItem}
+            />
+          </View>
+          <Text>Completed Exercises</Text>
         </BottomSheetView>
       </BottomSheet>
 
@@ -115,3 +132,7 @@ const styles = StyleSheet.create({
 });
 
 export default ExerciseModal;
+
+// if (exerciseinWorkoutSetsThatYouaddtoit !== setsDoneForExercisethatisAddtoYourWorkout) {
+// show exercise in list
+// }

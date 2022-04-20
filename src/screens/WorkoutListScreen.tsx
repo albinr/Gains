@@ -7,13 +7,9 @@ import {
 import {
   List, Text, TextInput, IconButton,
 } from 'react-native-paper';
-import AsyncStorageLib from '@react-native-async-storage/async-storage/jest/async-storage-mock';
 import { ThemeProvider } from '@react-navigation/native';
 
-import ExerciseModal from '../components/modals/DragableExersiceModal';
-import useBoolState from '../hooks/useBoolState';
 import { RootTabScreenProps } from '../../types';
-import { AuthContext } from '../contexts/AuthContext';
 import {
   useExercises, useAddExercise, useWorkouts, useSearchForExercises,
 } from '../contexts/GainsDataContext';
@@ -21,6 +17,7 @@ import CurrentWorkoutContext, {
   useStartTimer, useStartWorkout, useAddExerciseToWorkout, useRemoveExercise,
 } from '../contexts/CurrentWorkoutDataContext';
 import { WorkoutExerciseType } from '../../clients/__generated__/schema';
+import { StartWorkoutButton } from '../components/StartWorkout';
 
 const CreateExercises: React.FC<{ readonly searchQuery: string, readonly onCreate: (name: string) => void }> = ({
   searchQuery, onCreate,
@@ -170,7 +167,14 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
           data={exercisesInActiveWorkout}
           renderItem={renderActiveWorkoutItem}
         />
+
       ) : <Text style={{ padding: 20, color: 'gray' }}>You have not added any exercises...</Text>}
+      {exercisesInActiveWorkout && exercisesInActiveWorkout.length > 0 ? (
+        <StartWorkoutButton
+          startingExercise={exercisesInActiveWorkout}
+          onStart={(item) => { navigation.navigate('Modal', { exercise: item }); }}
+        />
+      ) : null}
     </View>
   );
 }

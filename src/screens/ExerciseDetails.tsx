@@ -6,7 +6,7 @@ import {
   Platform, Pressable, ScrollView, SectionList, StyleSheet, TextInput, View,
 } from 'react-native';
 import {
-  Headline, IconButton, List, ThemeProvider,
+  Headline, IconButton, List, ThemeProvider, Portal,
 } from 'react-native-paper';
 import {
   Background, VictoryAxis, VictoryChart, VictoryScatter,
@@ -44,12 +44,6 @@ const Stepper: React.FC<{ readonly minValue?: number, readonly value: number, re
     }}
     >
       <IconButton size={25} style={{ flex: 1 }} disabled={minValue === value} animated icon='minus' onPress={() => onValueUpdated((p) => Math.max(minValue, p - 1))} />
-      {/* <Text style={{
-        width: 50, fontSize: 30, fontVariant: ['tabular-nums'], textAlign: 'center', alignSelf: 'center',
-      }}
-      >
-        { value.toString() }
-      </Text> */}
       <View style={{ width: 100, flexDirection: 'row', justifyContent: 'center' }}>
         <TextInput
           style={{
@@ -101,12 +95,14 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
   useEffect(() => {
     navigation.setOptions({
       title: `${exercise.name}`,
+
     });
   }, [navigation, exercise]);
   return (
+
     <View style={styles.container}>
       {/* Use a light status bar on iOS to account for the black space above the modal */}
-      <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
+      {/* <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} /> */}
       <VictoryChart>
         <VictoryScatter
           style={{ data: { fill: '#c43a31' } }}
@@ -139,6 +135,7 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
           />
         )}
       />
+      {/* <Portal.Host> */}
       <View style={styles.stepperContainer}>
         <Stepper value={weight} onValueUpdated={setWeight} textTitle='KG' />
         <Pressable
@@ -148,13 +145,21 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
           <Text>SAVE SET</Text>
         </Pressable>
         <Stepper minValue={1} value={reps} onValueUpdated={setReps} textTitle='REPS' />
+        <View style={{ height: 100 }} />
       </View>
+      {/* </Portal.Host> */}
       <ExerciseModal />
     </View>
 
   );
 }
-
+/* <View style={{
+        width: '100%', height: 100, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#ccc',
+      }}
+      >
+        <IconButton icon='arrow-left' onPress={() => { navigation.navigate('Root'); }} />
+        <Text>{exercise.name}</Text>
+      </View> */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -169,8 +174,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightgray',
     borderTopLeftRadius: 14,
     borderTopRightRadius: 14,
-    position: 'absolute',
-    bottom: 80,
+    // position: 'absolute',
+    // bottom: 80,
   },
   title: {
     fontSize: 20,
