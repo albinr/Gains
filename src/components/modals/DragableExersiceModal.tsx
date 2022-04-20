@@ -47,17 +47,17 @@ const ExerciseModal = () => {
       {exampleData1}
     </Text>
   );
-  const renderActiveWorkoutItem = useCallback(({ item }) => (
+  /*  const renderActiveWorkoutItem = useCallback(({ item }) => (
     <List.Item
       style={{ backgroundColor: 'white' }}
       title={item.name}
       // onPress={() => console.log('pressed', item)}
       onPress={() => {
-        navigation.navigate('Modal', { exercise: item });
+        navigation.navigate('Modal', { exercise: item, workout: activeWorkout?.templateId || [] });
       }}
       right={right}
     />
-  ), [navigation]);
+  ), [navigation, activeWorkout]); */
   const pauseAndResume = useCallback(() => {
     if (togglePause === true) {
       pauseTimer();
@@ -108,19 +108,19 @@ const ExerciseModal = () => {
             </View>
           </View>
           <Text>Active Workout</Text>
-          <View style={{ height: '40%' }}>
+          {/*    <View style={{ height: '40%' }}>
             <FlatList
               data={exercisesInActiveWorkout}
               renderItem={renderActiveWorkoutItem}
             />
-          </View>
+          </View> */}
           <Text>Completed Exercises</Text>
-          <View style={{ height: '40%' }}>
+          {/* <View style={{ height: '40%' }}>
             <FlatList
               data={exercisesInActiveWorkout}
               renderItem={renderActiveWorkoutItem}
             />
-          </View>
+          </View> */}
           <Divider />
         </BottomSheetView>
       </BottomSheet>
