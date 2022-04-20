@@ -4,9 +4,12 @@ import React, {
 import {
   View, Text, StyleSheet, Button, Pressable,
 } from 'react-native';
-import { IconButton, List, TextInput } from 'react-native-paper';
+import {
+  IconButton, List, TextInput, Divider,
+} from 'react-native-paper';
 import BottomSheet, { BottomSheetView, BottomSheetFooter } from '@gorhom/bottom-sheet';
 import { FlatList } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 
 import CurrentWorkoutContext, {
   useStartTimer, useStartWorkout, useAddExerciseToWorkout, useRemoveExercise, useCurrentWorkoutTime, usePauseTimer,
@@ -17,15 +20,19 @@ import {
 import { WorkoutExerciseType } from '../../clients/__generated__/schema';
 
 const ICONSIZE = 40;
+const exampleData0 = '0';
+const exampleData1 = '3';
 const ExerciseModal = () => {
   // ref
+  const navigation = useNavigation();
+
   const bottomSheetRef = useRef<BottomSheet>(null);
   const startTimer = useStartTimer();
   const pauseTimer = usePauseTimer();
   const showTimer = useCurrentWorkoutTime();
   const exercises = useExercises();
   const [togglePause, setTogglePause] = useState(false);
-  const { activeWorkout } = React.useContext(CurrentWorkoutContext);
+  const { activeWorkout, exercisesInActiveWorkout } = React.useContext(CurrentWorkoutContext);
 
   // variables
   const snapPoints = useMemo(() => [100, '99%'], []);
@@ -33,16 +40,24 @@ const ExerciseModal = () => {
   const handleSheetChanges = useCallback((index: number) => {
     // handleSnapPress(1);
   }, []);
-
-  const exercisesInActiveWorkout = useMemo(() => (activeWorkout?.exerciseIds || []).map((id) => exercises.find((e) => e.id === id)), [exercises, activeWorkout]);
-
+  const right = ({ ...props }) => (
+    <Text style={{ color: '#ccc' }}>
+      {exampleData0}
+      /
+      {exampleData1}
+    </Text>
+  );
   const renderActiveWorkoutItem = useCallback(({ item }) => (
     <List.Item
       style={{ backgroundColor: 'white' }}
       title={item.name}
-      onPress={() => console.log('pressed', item)}
+      // onPress={() => console.log('pressed', item)}
+      onPress={() => {
+        navigation.navigate('Modal', { exercise: item });
+      }}
+      right={right}
     />
-  ), []);
+  ), [navigation]);
   const pauseAndResume = useCallback(() => {
     if (togglePause === true) {
       pauseTimer();
@@ -93,14 +108,20 @@ const ExerciseModal = () => {
             </View>
           </View>
           <Text>Active Workout</Text>
-
-          <View style={{ height: '50%' }}>
+          <View style={{ height: '40%' }}>
             <FlatList
               data={exercisesInActiveWorkout}
               renderItem={renderActiveWorkoutItem}
             />
           </View>
           <Text>Completed Exercises</Text>
+          <View style={{ height: '40%' }}>
+            <FlatList
+              data={exercisesInActiveWorkout}
+              renderItem={renderActiveWorkoutItem}
+            />
+          </View>
+          <Divider />
         </BottomSheetView>
       </BottomSheet>
 

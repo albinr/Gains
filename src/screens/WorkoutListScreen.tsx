@@ -58,7 +58,7 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
   const startWorkout = useStartWorkout();
   const removeExercise = useRemoveExercise();
   const timer = useStartTimer();
-  const { activeWorkout } = React.useContext(CurrentWorkoutContext);
+  const { activeWorkout, exercisesInActiveWorkout } = React.useContext(CurrentWorkoutContext);
   const searchForExercises = useSearchForExercises();
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -68,8 +68,6 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
 
   const shouldShowAdd = useMemo(() => searchQuery.length > 0
     && !workoutsToShow.find((w) => normalizeString(searchQuery) === normalizeString(w.name)), [searchQuery, workoutsToShow]);
-
-  const exercisesInActiveWorkout = useMemo(() => (activeWorkout?.exerciseIds || []).map((id) => exercises.find((e) => e.id === id)), [exercises, activeWorkout]);
 
   useEffect(() => {
     startWorkout();
@@ -116,7 +114,7 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
     <List.Item
       style={{ backgroundColor: 'white', borderBottomColor: '#ccc', borderBottomWidth: 0.5 }}
       onPress={() => {
-        navigation.navigate('Modal', { exercise: item });
+        navigation.navigate('Modal', { exercise: item, workout: item.workout });
       }}
       title={item.name}
       right={() => removeBtn({ item })}
@@ -172,7 +170,7 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
       {exercisesInActiveWorkout && exercisesInActiveWorkout.length > 0 ? (
         <StartWorkoutButton
           startingExercise={exercisesInActiveWorkout}
-          onStart={(item) => { navigation.navigate('Modal', { exercise: item }); }}
+          onStart={(item) => { navigation.navigate('Modal', { exercise: item, workout: item.workout }); }}
         />
       ) : null}
     </View>

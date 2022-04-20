@@ -14,13 +14,15 @@ export type GainsContextType = {
   readonly workoutTemplates: readonly WorkoutTemplate[],
   readonly sets: readonly ExerciseSet[],
   readonly exercises: readonly Exercise[],
+  // getCompletedSetCountForExercise(exercisesWithStatus:Workout[]): number,
   // getExercisesById(exerciseIds: string[]): readonly Exercise[],
   // getExerciseAutosuggestions(): readonly Exercise[],
   searchForExercises(query: string): readonly Exercise[],
   readonly addWorkout: (workout: Workout) => void,
   readonly upsertWorkoutTemplate:(exercises: readonly string[], name: string, workoutTemplateId?: string) => void,
   readonly addExercise:(exercise: Omit<Exercise, 'id'>) => void,
-  readonly addSet: (set: Omit<ExerciseSet, 'id' | 'createdAt'>) => void
+  readonly addSet: (set: Omit<ExerciseSet, 'id' | 'createdAt'>) => void,
+  getTotalSetCountForExercise(exerciseId: string): number,
 }
 
 export const GainsContext = React.createContext<GainsContextType>({
@@ -33,7 +35,10 @@ export const GainsContext = React.createContext<GainsContextType>({
   addExercise: () => {},
   upsertWorkoutTemplate: () => {},
   addSet: () => {},
+  getTotalSetCountForExercise: () => 0,
 });
+
+const DEFAULT_SET_COUNT = 3;
 
 const originalExercises: readonly Exercise[] = [{
   id: 'press_bench',
@@ -151,10 +156,6 @@ export const GainsContextProvider: React.FC = ({ children }) => {
   const addSet = useCallback((set: Omit<ExerciseSet, 'id' | 'createdAt'>) => {
     setSets((prev) => [{ id: nanoid(), createdAt: Date.now(), ...set }, ...prev]);
   }, []);
-  /* const exerciseToShow = useMemo(() => (search.length > 0
-    ? exercises.filter((w) => w.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
-    : exercises), [search, exercises]); */
-
   const value = useMemo<GainsContextType>(() => ({
     sets,
     exercises,
@@ -162,6 +163,13 @@ export const GainsContextProvider: React.FC = ({ children }) => {
     addExercise,
     addSet,
     addWorkout,
+    getTotalSetCountForExercise: (exerciseId: string) => {
+      const exercise = exercises.find((e) => e.id === exerciseId);
+      if (exercise && exercise.setCount) {
+        return exercise.setCount;
+      }
+      return DEFAULT_SET_COUNT;
+    },
     workoutTemplates,
     searchForExercises: (query) => exercises.filter((exercise) => exercise.name.toLocaleLowerCase().includes(query.toLocaleLowerCase())),
     upsertWorkoutTemplate: (exercises, name, workoutTemplateId) => {

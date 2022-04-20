@@ -65,8 +65,9 @@ const Stepper: React.FC<{ readonly minValue?: number, readonly value: number, re
   );
 };
 
-export default function ModalScreen({ navigation, route: { params: { exercise } } }: RootStackScreenProps<'Modal'>) {
+export default function ModalScreen({ navigation, route: { params: { exercise, workout } } }: RootStackScreenProps<'Modal'>) {
   const exerciseId = exercise.id;
+  const workoutId = workout.id;
   const sets = useSetsForExercise(exerciseId);
   const [reps, setReps] = useState(10);
   const [weight, setWeight] = useState(10);
@@ -140,7 +141,9 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
         <Stepper value={weight} onValueUpdated={setWeight} textTitle='KG' />
         <Pressable
           style={styles.saveSetBtn}
-          onPressIn={() => saveSet({ reps, weight, exerciseId })}
+          onPressIn={() => saveSet({
+            reps, weight, exerciseId, workoutId,
+          })}
         >
           <Text>SAVE SET</Text>
         </Pressable>

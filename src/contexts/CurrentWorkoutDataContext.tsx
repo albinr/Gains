@@ -13,28 +13,37 @@ import { GainsContext, GainsContextType } from './GainsDataContext';
     readonly startWorkout:(workoutTemplateId?: string) => Workout,
     readonly finishWorkout:() => Workout | null,
     readonly addExerciseToWorkout:(exerciseId: string) => void,
-    // readonly setsForWorkout:(exerciseId: string, sets: number) => void,
+    // getCompletedExercisesFromWorkout:(exercisesWithStatus:{}) => Workout | null,
     readonly activeWorkout: Workout | null,
     readonly hasActiveWorkout: boolean,
     readonly startTimer: () => void,
     readonly pauseTimer: () => void
     readonly removeExercise: (exerciseId: string) => void,
+    getCompletedSetCountForExercise(exerciseId: string): number,
+    readonly exercisesInActiveWorkout: readonly Exercise[],
+    readonly nextWorkout: () => void
   }
 
 const CurrentWorkoutContext = React.createContext<CurrentWorkoutContextType>({
   removeExercise: () => {},
   addExerciseToWorkout: () => {},
   activeWorkout: null,
+  // getCompletedExercisesFromWorkout: () => ({} as Workout),
   // setsForWorkout: () => {},
   startTimer: () => {},
   pauseTimer: () => {},
   finishWorkout: () => ({} as Workout),
   hasActiveWorkout: false,
   startWorkout: () => ({} as Workout),
+  getCompletedSetCountForExercise: () => 0,
+  exercisesInActiveWorkout: [],
+  nextWorkout: () => {},
 });
 
 export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
-  const { workoutTemplates, addWorkout } = React.useContext<GainsContextType>(GainsContext);
+  const {
+    workoutTemplates, addWorkout, sets, exercises,
+  } = React.useContext<GainsContextType>(GainsContext);
 
   const [activeWorkout, setActiveWorkout] = React.useState<Workout | null>(null);
 
@@ -47,7 +56,8 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
       id: nanoid(),
       timers: [],
       startTime: new Date(),
-    };
+      exercisesWithStatus: [],
+    }; // { exerciseId: workoutTemplates.find((t) => t.id === workoutTemplateId)?.exerciseIds || [], isCompleted: false, completedSetCount: 0 }
     setActiveWorkout(newWorkout);
     return newWorkout;
   }, [activeWorkout, workoutTemplates]);
@@ -84,11 +94,38 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
   //   });
   // }, [activeWorkout]);
 
+  const exercisesInActiveWorkout = useMemo(() => exercises.filter((e) => activeWorkout?.exerciseIds.includes(e.id)), [activeWorkout, exercises]);
+
   const value = useMemo<CurrentWorkoutContextType>(() => ({
     activeWorkout,
     startWorkout,
     finishWorkout,
     removeExercise,
+    // getCompletedExercisesFromWorkout: (exercisesWithStatus:{readonly exerciseId: string,  readonly isCompleted: boolean, readonly completedSetCount: number}[]) => {
+    //   if (!activeWorkout) {
+    //     return [];
+    //   }
+    //   const completedExercises = exercisesWithStatus.filter((e) => activeWorkout.exerciseIds.includes(e.exerciseId) && !e.isCompleted);
+    //   return completedExercises;
+    // },
+    nextWorkout: () => {
+      // 1. Change navigation to next workout (useNavigation)
+      // 2. Update order of exercices (handle if completed or just switching exercises)
+
+      // switch exercice (if less than exercise set count)
+      // a (current), b, c, d -> b (current), a, c, d
+
+      // if completed, switch to next workout
+      // a (current), b, c, d -> b (current), c, d
+    },
+    exercisesInActiveWorkout,
+    getCompletedSetCountForExercise: (exerciseId: string) => {
+      if (!activeWorkout) {
+        return 0;
+      }
+      const completedSetCount = sets.filter((set) => set.exerciseId === exerciseId && set.workoutId === activeWorkout?.id).length;
+      return completedSetCount;
+    },
     // setsForWorkout,
     addExerciseToWorkout: (exerciseId: string) => {
       if (activeWorkout) {
@@ -122,7 +159,7 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
       }
     },
     hasActiveWorkout: !!activeWorkout,
-  }), [activeWorkout, startWorkout, finishWorkout, removeExercise]);
+  }), [activeWorkout, startWorkout, finishWorkout, removeExercise, sets, exercisesInActiveWorkout]);
 
   return (
     <CurrentWorkoutContext.Provider value={value}>

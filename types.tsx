@@ -60,7 +60,7 @@ export type Exercise = {
   readonly name: string;
   readonly associatedCodes: Record<string, string>;
   readonly workoutExerciseType: WorkoutExerciseType;
-  readonly sets?: number;
+  readonly setCount?: number;
 }
 
 export type ExerciseSet = {
@@ -69,6 +69,7 @@ export type ExerciseSet = {
   readonly weight: number;
   readonly createdAt: number;
   readonly exerciseId: string;
+  readonly workoutId: string;
 }
 
 export type WorkoutTemplate = {
@@ -86,5 +87,7 @@ export type Workout = {
   readonly id: string;
   readonly templateId?: string;
   readonly exerciseIds: readonly string[];
+  // readonly completedExerciseIds: readonly string[];
+  readonly exercisesWithStatus: readonly { readonly exerciseId: string, readonly isCompleted: boolean, readonly completedSetCount: number }[]
   readonly timers: readonly Timer[];
 }
