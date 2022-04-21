@@ -57,7 +57,7 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
       timers: [],
       startTime: new Date(),
       exercisesWithStatus: [],
-    }; // { exerciseId: workoutTemplates.find((t) => t.id === workoutTemplateId)?.exerciseIds || [], isCompleted: false, completedSetCount: 0 }
+    };
     setActiveWorkout(newWorkout);
     return newWorkout;
   }, [activeWorkout, workoutTemplates]);
@@ -78,8 +78,8 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
     if (!activeWorkout) {
       return;
     }
-    const newExerciseIds = activeWorkout.exerciseIds.filter((id) => id !== exerciseId);
-    setActiveWorkout({ ...activeWorkout, exerciseIds: newExerciseIds });
+    const exercisesWithStatus = activeWorkout.exercisesWithStatus.filter((e) => e.exerciseId !== exerciseId);
+    setActiveWorkout({ ...activeWorkout, exercisesWithStatus });
   }, [activeWorkout]);
 
   // const setsForWorkout = useCallback((exerciseId: string, sets: number) => {
@@ -94,29 +94,25 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
   //   });
   // }, [activeWorkout]);
 
-  const exercisesInActiveWorkout = useMemo(() => exercises.filter((e) => activeWorkout?.exerciseIds.includes(e.id)), [activeWorkout, exercises]);
+  const exercisesInActiveWorkout = useMemo(() => {
+    const exerciseIds = activeWorkout?.exercisesWithStatus.map((e) => e.exerciseId) || [];
+    return exercises.filter((e) => exerciseIds.includes(e.id));
+  }, [activeWorkout, exercises]);
 
   const value = useMemo<CurrentWorkoutContextType>(() => ({
     activeWorkout,
     startWorkout,
     finishWorkout,
     removeExercise,
-    // getCompletedExercisesFromWorkout: (exercisesWithStatus:{readonly exerciseId: string,  readonly isCompleted: boolean, readonly completedSetCount: number}[]) => {
-    //   if (!activeWorkout) {
-    //     return [];
-    //   }
-    //   const completedExercises = exercisesWithStatus.filter((e) => activeWorkout.exerciseIds.includes(e.exerciseId) && !e.isCompleted);
-    //   return completedExercises;
-    // },
     nextWorkout: () => {
       // 1. Change navigation to next workout (useNavigation)
-      // 2. Update order of exercices (handle if completed or just switching exercises)
+      // 2. Set current exercise to completed
 
-      // switch exercice (if less than exercise set count)
-      // a (current), b, c, d -> b (current), a, c, d
-
-      // if completed, switch to next workout
+      // set
       // a (current), b, c, d -> b (current), c, d
+
+      // BONUS: switch exercice (if less than exercise set count)
+      // a (current), b, c, d -> b (current), a, c, d
     },
     exercisesInActiveWorkout,
     getCompletedSetCountForExercise: (exerciseId: string) => {
@@ -131,7 +127,7 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
       if (activeWorkout) {
         setActiveWorkout((prev) => ({
           ...prev!,
-          exerciseIds: [...prev!.exerciseIds, exerciseId],
+          exercisesWithStatus: [...prev!.exercisesWithStatus, { completedSetCount: 0, exerciseId, isCompleted: false }],
         }));
       }
     },
@@ -167,6 +163,8 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
     </CurrentWorkoutContext.Provider>
   );
 };
+
+export const useGetCompletedSetCountForExercise = () => React.useContext(CurrentWorkoutContext).getCompletedSetCountForExercise;
 
 export const useRemoveExercise = () => React.useContext(CurrentWorkoutContext).removeExercise;
 

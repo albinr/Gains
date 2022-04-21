@@ -1,7 +1,9 @@
 import dayjs from 'dayjs';
 import calendar from 'dayjs/plugin/calendar';
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, {
+  useEffect, useState, useCallback, useMemo,
+} from 'react';
 import {
   Platform, Pressable, ScrollView, SectionList, StyleSheet, TextInput, View,
 } from 'react-native';
@@ -14,10 +16,11 @@ import {
 
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text } from '../components/Themed';
-import { useSaveSet, useSetsForExercise } from '../contexts/GainsDataContext';
+import { useSaveSet, useSetsForExercise, useGetTotalSetCountForExercise } from '../contexts/GainsDataContext';
 import { RootStackScreenProps, ExerciseSet } from '../../types';
 import Colors from '../../constants/Colors';
 import ExerciseModal from '../components/modals/DragableExersiceModal';
+import CurrentWorkoutContext, { useGetCompletedSetCountForExercise } from '../contexts/CurrentWorkoutDataContext';
 
 dayjs.extend(calendar, {
   sameDay: '[Today at] h:mm A', // The same day (Today at 2:30 AM)
@@ -65,14 +68,19 @@ const Stepper: React.FC<{ readonly minValue?: number, readonly value: number, re
   );
 };
 
-export default function ModalScreen({ navigation, route: { params: { exercise, workout } } }: RootStackScreenProps<'Modal'>) {
+export default function ModalScreen({ navigation, route: { params: { exercise } } }: RootStackScreenProps<'Modal'>) {
   const exerciseId = exercise.id;
-  const workoutId = workout.id;
+  const workoutId = React.useContext(CurrentWorkoutContext).activeWorkout?.id;
   const sets = useSetsForExercise(exerciseId);
   const [reps, setReps] = useState(10);
   const [weight, setWeight] = useState(10);
   const saveSet = useSaveSet();
+  const activeWorkoutSetCount = React.useContext(CurrentWorkoutContext).activeWorkout?.exercisesWithStatus;
+  const getCompletedSetCountForExercise = useGetCompletedSetCountForExercise();
+  const getTotalSetCountForExercise = useGetTotalSetCountForExercise();
 
+  const setCount = useMemo(() => getCompletedSetCountForExercise(exercise.id), [getCompletedSetCountForExercise, exercise.id]);
+  const totalSetCount = useMemo(() => getTotalSetCountForExercise(exercise.id), [getTotalSetCountForExercise, exercise.id]);
   useEffect(() => {
     if (sets[0]) {
       setReps(sets[0].reps);
@@ -141,11 +149,24 @@ export default function ModalScreen({ navigation, route: { params: { exercise, w
         <Stepper value={weight} onValueUpdated={setWeight} textTitle='KG' />
         <Pressable
           style={styles.saveSetBtn}
-          onPressIn={() => saveSet({
-            reps, weight, exerciseId, workoutId,
-          })}
+          onPressIn={() => {
+            if (workoutId) {
+              saveSet({
+                reps, weight, exerciseId, workoutId,
+              });
+            }
+          }}
         >
-          <Text>SAVE SET</Text>
+          <Text>
+            SAVE SET
+
+          </Text>
+          <Text>
+            {setCount}
+            /
+            {' '}
+            {totalSetCount}
+          </Text>
         </Pressable>
         <Stepper minValue={1} value={reps} onValueUpdated={setReps} textTitle='REPS' />
         <View style={{ height: 100 }} />
@@ -185,16 +206,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   separator: {
-    marginVertical: 30,
+    marginVertical: 20,
     height: 1,
     width: '80%',
   },
   saveSetBtn: {
     width: 100,
     height: 80,
-    borderRadius: 20,
+    borderRadius: 30,
     borderColor: 'black',
     borderWidth: 2,
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -14,7 +14,6 @@ export type GainsContextType = {
   readonly workoutTemplates: readonly WorkoutTemplate[],
   readonly sets: readonly ExerciseSet[],
   readonly exercises: readonly Exercise[],
-  // getCompletedSetCountForExercise(exercisesWithStatus:Workout[]): number,
   // getExercisesById(exerciseIds: string[]): readonly Exercise[],
   // getExerciseAutosuggestions(): readonly Exercise[],
   searchForExercises(query: string): readonly Exercise[],
@@ -189,6 +188,8 @@ export const GainsContextProvider: React.FC = ({ children }) => {
     </GainsContext.Provider>
   );
 };
+
+export const useGetTotalSetCountForExercise = () => React.useContext(GainsContext).getTotalSetCountForExercise;
 
 export const useSearchForExercises = () => {
   // eslint-disable-next-line

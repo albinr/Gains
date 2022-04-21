@@ -5,7 +5,7 @@ import {
   StyleSheet, View, FlatList, Pressable,
 } from 'react-native';
 import {
-  List, Text, TextInput, IconButton,
+  List, Text, TextInput, IconButton, Portal,
 } from 'react-native-paper';
 import { ThemeProvider } from '@react-navigation/native';
 
@@ -86,8 +86,9 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
     />
   );
   const onPress = useCallback((item) => {
-    if (activeWorkout && !activeWorkout.exerciseIds.find((id) => id === item.id)) {
+    if (activeWorkout && !activeWorkout.exercisesWithStatus.find((id) => id === item.id)) {
       addExerciseToWorkout(item.id);
+      console.log('added', item.id);
     }
   }, [addExerciseToWorkout, activeWorkout]);
 
@@ -114,7 +115,7 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
     <List.Item
       style={{ backgroundColor: 'white', borderBottomColor: '#ccc', borderBottomWidth: 0.5 }}
       onPress={() => {
-        navigation.navigate('Modal', { exercise: item, workout: item.workout });
+        navigation.navigate('Modal', { exercise: item });
       }}
       title={item.name}
       right={() => removeBtn({ item })}
@@ -134,14 +135,16 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
         <Pressable
           onPress={() => setSearchQuery('')}
           style={{
-            flex: 1, top: 0, bottom: 0, right: 0, left: 0, position: 'absolute', zIndex: 1,
+            flex: 1, top: 0, bottom: 0, right: 0, left: 0, position: 'absolute', zIndex: 5,
           }}
         />
       ) : null}
+
       <View style={styles.searchSuggestionContainer}>
         { searchQuery.length > 0 ? (
           <View style={styles.searchSuggestion}>
             <FlatList
+              style={{ maxHeight: 200 }}
               data={workoutsToShow}
               renderItem={renderItem}
               keyExtractor={(item) => item.id}
@@ -159,6 +162,7 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
           </View>
         ) : null }
       </View>
+
       {exercisesInActiveWorkout && exercisesInActiveWorkout.length > 0 ? (
         <FlatList
           // style={{ zIndex: 1 }}
@@ -170,7 +174,7 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
       {exercisesInActiveWorkout && exercisesInActiveWorkout.length > 0 ? (
         <StartWorkoutButton
           startingExercise={exercisesInActiveWorkout}
-          onStart={(item) => { navigation.navigate('Modal', { exercise: item, workout: item.workout }); }}
+          onStart={(item) => { navigation.navigate('Modal', { exercise: item }); }}
         />
       ) : null}
     </View>
@@ -183,11 +187,11 @@ const styles = StyleSheet.create({
   },
   searchSuggestionContainer: {
     alignItems: 'center',
-    zIndex: 2,
+    zIndex: 10,
+    elevation: 10,
   },
   searchSuggestion: {
     // position: 'absolute',
-    flexDirection: 'column',
     width: '90%',
     top: 0,
     zIndex: 15,

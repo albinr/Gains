@@ -7,25 +7,24 @@ import {
 import {
   IconButton, List, TextInput, Divider,
 } from 'react-native-paper';
-import BottomSheet, { BottomSheetView, BottomSheetFooter } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetView, BottomSheetFooter, BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { FlatList } from 'react-native-gesture-handler';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 import CurrentWorkoutContext, {
   useStartTimer, useStartWorkout, useAddExerciseToWorkout, useRemoveExercise, useCurrentWorkoutTime, usePauseTimer,
 } from '../../contexts/CurrentWorkoutDataContext';
-import {
+import GainsDataContext, {
   useExercises, useAddExercise, useWorkouts,
 } from '../../contexts/GainsDataContext';
 import { WorkoutExerciseType } from '../../clients/__generated__/schema';
+import { Exercise, RootStackParamList } from '../../../types';
 
 const ICONSIZE = 40;
-const exampleData0 = '0';
-const exampleData1 = '3';
 const ExerciseModal = () => {
   // ref
-  const navigation = useNavigation();
-
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  // const exercisesId = React.useContext(CurrentWorkoutContext).activeWorkout?.exercisesWithStatus?.find((exercise) => exercise.exerciseId);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const startTimer = useStartTimer();
   const pauseTimer = usePauseTimer();
@@ -33,6 +32,8 @@ const ExerciseModal = () => {
   const exercises = useExercises();
   const [togglePause, setTogglePause] = useState(false);
   const { activeWorkout, exercisesInActiveWorkout } = React.useContext(CurrentWorkoutContext);
+  const { getCompletedSetCountForExercise } = React.useContext(CurrentWorkoutContext);
+  const { getTotalSetCountForExercise } = React.useContext(GainsDataContext);
 
   // variables
   const snapPoints = useMemo(() => [100, '99%'], []);
@@ -40,24 +41,32 @@ const ExerciseModal = () => {
   const handleSheetChanges = useCallback((index: number) => {
     // handleSnapPress(1);
   }, []);
-  const right = ({ ...props }) => (
-    <Text style={{ color: '#ccc' }}>
-      {exampleData0}
-      /
-      {exampleData1}
-    </Text>
-  );
-  /*  const renderActiveWorkoutItem = useCallback(({ item }) => (
-    <List.Item
-      style={{ backgroundColor: 'white' }}
-      title={item.name}
-      // onPress={() => console.log('pressed', item)}
-      onPress={() => {
-        navigation.navigate('Modal', { exercise: item, workout: activeWorkout?.templateId || [] });
-      }}
-      right={right}
-    />
-  ), [navigation, activeWorkout]); */
+
+  const renderActiveWorkoutItem = useCallback(({ item }: { readonly item: Exercise }) => {
+    const setCount = getCompletedSetCountForExercise(item.id);
+    const totalSetCount = getTotalSetCountForExercise(item.id);
+    const right = ({ ...props }) => (
+      <Text style={{ color: 'gray' }}>
+        {setCount}
+        {' '}
+        /
+        {' '}
+        {totalSetCount}
+      </Text>
+    );
+    return (
+      <List.Item
+        style={{ backgroundColor: 'white' }}
+        title={item.name}
+        // onPress={() => console.log('pressed', item)}
+        onPress={() => {
+          navigation.navigate('Modal', { exercise: item });
+        // navigation.setParams({ exercise: item });
+        }}
+        right={right}
+      />
+    );
+  }, [getCompletedSetCountForExercise, getTotalSetCountForExercise, navigation]);
   const pauseAndResume = useCallback(() => {
     if (togglePause === true) {
       pauseTimer();
@@ -107,20 +116,24 @@ const ExerciseModal = () => {
               <Text>{showTimer}</Text>
             </View>
           </View>
+          <Divider />
           <Text>Active Workout</Text>
-          {/*    <View style={{ height: '40%' }}>
-            <FlatList
+          <Divider />
+          <View style={{ height: '30%' }}>
+            <BottomSheetFlatList
               data={exercisesInActiveWorkout}
               renderItem={renderActiveWorkoutItem}
             />
-          </View> */}
+          </View>
+          <Divider />
           <Text>Completed Exercises</Text>
-          {/* <View style={{ height: '40%' }}>
-            <FlatList
+          <Divider />
+          <View>
+            <BottomSheetFlatList
               data={exercisesInActiveWorkout}
               renderItem={renderActiveWorkoutItem}
             />
-          </View> */}
+          </View>
           <Divider />
         </BottomSheetView>
       </BottomSheet>

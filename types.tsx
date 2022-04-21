@@ -86,8 +86,8 @@ export type Timer = {
 export type Workout = {
   readonly id: string;
   readonly templateId?: string;
-  readonly exerciseIds: readonly string[];
+  // readonly exerciseIds: readonly string[];
   // readonly completedExerciseIds: readonly string[];
-  readonly exercisesWithStatus: readonly { readonly exerciseId: string, readonly isCompleted: boolean, readonly completedSetCount: number }[]
+  readonly exercisesWithStatus: readonly { readonly exerciseId: string, readonly isCompleted: boolean}[];/* , readonly completedSetCount: number */
   readonly timers: readonly Timer[];
 }
