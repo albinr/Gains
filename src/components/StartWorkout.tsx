@@ -20,13 +20,12 @@ export const StartWorkoutButton: React.FC<{ readonly startingExercise: any, read
       timer();
       onStart(startingExercise[0]);
     }
-    console.log('starting workout', timer);
   }, [onStart, timer, startingExercise]);
 
   return (
-    <View style={{ position: 'absolute', bottom: 20, right: 20 }}>
+    <View style={{ position: 'absolute', bottom: 15, right: 15 }}>
       {/* {timer ? ( */}
-      <IconButton icon='play' style={{ backgroundColor: 'lightgreen' }} size={50} onPress={onStartWorkout} />
+      <IconButton icon='play' style={{ backgroundColor: 'lightgreen' }} size={40} onPress={onStartWorkout} />
       {/*  ) : (null)} */}
     </View>
   );

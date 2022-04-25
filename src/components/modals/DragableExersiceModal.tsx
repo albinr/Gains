@@ -4,28 +4,36 @@ import React, {
 import {
   View, Text, StyleSheet, Button, Pressable,
 } from 'react-native';
-import { IconButton, List, TextInput } from 'react-native-paper';
-import BottomSheet, { BottomSheetView, BottomSheetFooter } from '@gorhom/bottom-sheet';
+import {
+  IconButton, List, TextInput, Divider,
+} from 'react-native-paper';
+import BottomSheet, { BottomSheetView, BottomSheetFooter, BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { FlatList } from 'react-native-gesture-handler';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 import CurrentWorkoutContext, {
   useStartTimer, useStartWorkout, useAddExerciseToWorkout, useRemoveExercise, useCurrentWorkoutTime, usePauseTimer,
 } from '../../contexts/CurrentWorkoutDataContext';
-import {
+import GainsDataContext, {
   useExercises, useAddExercise, useWorkouts,
 } from '../../contexts/GainsDataContext';
 import { WorkoutExerciseType } from '../../clients/__generated__/schema';
+import { Exercise, RootStackParamList } from '../../../types';
 
 const ICONSIZE = 40;
 const ExerciseModal = () => {
   // ref
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  // const exercisesId = React.useContext(CurrentWorkoutContext).activeWorkout?.exercisesWithStatus?.find((exercise) => exercise.exerciseId);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const startTimer = useStartTimer();
   const pauseTimer = usePauseTimer();
   const showTimer = useCurrentWorkoutTime();
   const exercises = useExercises();
   const [togglePause, setTogglePause] = useState(false);
-  const { activeWorkout } = React.useContext(CurrentWorkoutContext);
+  const { activeWorkout, exercisesInActiveWorkout } = React.useContext(CurrentWorkoutContext);
+  const { getCompletedSetCountForExercise } = React.useContext(CurrentWorkoutContext);
+  const { getTotalSetCountForExercise } = React.useContext(GainsDataContext);
 
   // variables
   const snapPoints = useMemo(() => [100, '99%'], []);
@@ -34,15 +42,31 @@ const ExerciseModal = () => {
     // handleSnapPress(1);
   }, []);
 
-  const exercisesInActiveWorkout = useMemo(() => (activeWorkout?.exerciseIds || []).map((id) => exercises.find((e) => e.id === id)), [exercises, activeWorkout]);
-
-  const renderActiveWorkoutItem = useCallback(({ item }) => (
-    <List.Item
-      style={{ backgroundColor: 'white' }}
-      title={item.name}
-      onPress={() => console.log('pressed', item)}
-    />
-  ), []);
+  const renderActiveWorkoutItem = useCallback(({ item }: { readonly item: Exercise }) => {
+    const setCount = getCompletedSetCountForExercise(item.id);
+    const totalSetCount = getTotalSetCountForExercise(item.id);
+    const right = ({ ...props }) => (
+      <Text style={{ color: 'gray' }}>
+        {setCount}
+        {' '}
+        /
+        {' '}
+        {totalSetCount}
+      </Text>
+    );
+    return (
+      <List.Item
+        style={{ backgroundColor: 'white' }}
+        title={item.name}
+        // onPress={() => console.log('pressed', item)}
+        onPress={() => {
+          navigation.navigate('Modal', { exercise: item });
+        // navigation.setParams({ exercise: item });
+        }}
+        right={right}
+      />
+    );
+  }, [getCompletedSetCountForExercise, getTotalSetCountForExercise, navigation]);
   const pauseAndResume = useCallback(() => {
     if (togglePause === true) {
       pauseTimer();
@@ -92,15 +116,25 @@ const ExerciseModal = () => {
               <Text>{showTimer}</Text>
             </View>
           </View>
+          <Divider />
           <Text>Active Workout</Text>
-
-          <View style={{ height: '50%' }}>
-            <FlatList
+          <Divider />
+          <View style={{ height: '30%' }}>
+            <BottomSheetFlatList
               data={exercisesInActiveWorkout}
               renderItem={renderActiveWorkoutItem}
             />
           </View>
+          <Divider />
           <Text>Completed Exercises</Text>
+          <Divider />
+          <View>
+            <BottomSheetFlatList
+              data={exercisesInActiveWorkout}
+              renderItem={renderActiveWorkoutItem}
+            />
+          </View>
+          <Divider />
         </BottomSheetView>
       </BottomSheet>
 

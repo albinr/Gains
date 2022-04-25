@@ -47,7 +47,7 @@
         "react/function-component-definition": 0,
         "@typescript-eslint/restrict-template-expressions": 0,
         "@typescript-eslint/no-unnecessary-type-assertion": 0,
-        "@typescript-eslint/unbound-method": ["error",
+        "@typescript-eslint/unbound-method": ["warn",
             {
               "ignoreStatic": true
             }],
