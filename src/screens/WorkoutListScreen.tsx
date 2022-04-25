@@ -125,6 +125,7 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
   return (
     <View style={styles.container}>
       <TextInput
+        style={{ zIndex: 15 }}
         placeholder='Add or search exercises...'
         value={searchQuery}
         onChangeText={(text) => { setSearchQuery(text); }}
