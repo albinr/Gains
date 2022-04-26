@@ -20,6 +20,7 @@ import ModalScreen from '../src/screens/ExerciseDetails';
 import NotFoundScreen from '../src/screens/NotFoundScreen';
 // import TabScreen from '../src/screens/TabScreen';
 import ProflieScreen from '../src/screens/ProfileScreen';
+import ExerciseListScreen from '../src/screens/ExerciseListScreen';
 import WorkoutListScreen from '../src/screens/WorkoutListScreen';
 import TabTwoScreen from '../src/screens/TabTwoScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
@@ -73,10 +74,32 @@ function BottomTabNavigator() {
           ),
         })}
       /> */}
-
+      {/* <BottomTab.Screen
+        name='WorkoutListTab'
+        component={WorkoutListScreen}
+        options={({ navigation }: RootTabScreenProps<'WorkoutListTab'>) => ({
+          title: 'Workouts',
+          tabBarIcon: ({ color }) => <TabBarIcon name='arm-flex' color={color} />,
+          headerRight: () => (
+            // <Pressable
+            //   style={({ pressed }) => ({
+            //     opacity: pressed ? 0.5 : 1,
+            //   })}
+            // >
+            //   <FontAwesome
+            //     name='info-circle'
+            //     size={25}
+            //     color={Colors[colorScheme].text}
+            //     style={{ marginRight: 15 }}
+            //   />
+            // </Pressable>
+            <IconButton icon='arm-flex' onPress={() => {}} />
+          ),
+        })}
+      /> */}
       <BottomTab.Screen
         name='ExerciseListTab'
-        component={WorkoutListScreen}
+        component={ExerciseListScreen}
         options={({ navigation }: RootTabScreenProps<'ExerciseListTab'>) => ({
           title: 'Your Workout',
           tabBarIcon: ({ color }) => <TabBarIcon name='arm-flex' color={color} />,

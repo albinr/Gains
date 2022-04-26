@@ -12,6 +12,7 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import { FlatList } from 'react-native-gesture-handler';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { set } from 'react-native-reanimated';
 
 import CurrentWorkoutContext, {
   useStartTimer, useStartWorkout, useAddExerciseToWorkout, useRemoveExercise, useCurrentWorkoutTime, usePauseTimer, useNextExercise,
@@ -34,6 +35,7 @@ const ExerciseModal = () => {
   const showTimer = useCurrentWorkoutTime();
   const exercises = useExercises();
   const nextExercise = useNextExercise();
+  const [selected, setSelected] = useState(0);
   const [togglePause, setTogglePause] = useState(false);
   const { activeWorkout, exercisesInActiveWorkout } = React.useContext(CurrentWorkoutContext);
   const { getCompletedSetCountForExercise } = React.useContext(CurrentWorkoutContext);
@@ -45,20 +47,41 @@ const ExerciseModal = () => {
   const handleSheetChanges = useCallback((index: number) => {
     // handleSnapPress(1);
   }, []);
-  const onNextExercise = useMemo(() => {
-    if (!activeWorkout) {
-      return '';
-    }
-    return activeWorkout?.exercisesWithStatus?.find((exercise) => exercise.exerciseId)?.exerciseId || '';
-  }, [activeWorkout]);
 
-  /*  const onPress = useCallback((exerciseId: string) => {
-    // const exercise = exercisesInActiveWorkout.find((exercise) => exercise.id === exerciseId);
-    if (activeWorkout) {
-      void nextExercise(exerciseId);
+  /*   const onPressExercise = useCallback(() => {
+    const exercise = exercises.find((exercise) => exercise.id === activeWorkout?.exercisesWithStatus?.find((exercise) => exercise.exerciseId)?.exerciseId);
+    if (exercise) {
+      console.log('exercise', exercise);
+      navigation.navigate('Modal', {
+        exercise,
+      });
     }
-  }, [activeWorkout, nextExercise]);
- */
+  }, [activeWorkout?.exercisesWithStatus, exercises, navigation]); */
+
+  const findExerciseIndex = useCallback((item: string) => {
+    if (!item) {
+      return setSelected(+1);
+    }
+    // console.log('find index: ', selected);
+    return setSelected(exercisesInActiveWorkout.findIndex((exercise) => exercise.id === item) + 1);
+  }, [exercisesInActiveWorkout]);
+  // const exerciseIndex = exercises.findIndex((exercise) => exercise.id === activeWorkout?.exercisesWithStatus?.find((exercise) => exercise.exerciseId)?.exerciseId);
+  const onPress = useCallback(() => {
+    const exerciceNext = activeWorkout?.exercisesWithStatus?.find((exercise) => exercise.exerciseId)?.exerciseId;
+    setSelected((prev) => {
+      if (prev === exercisesInActiveWorkout.length - 1) {
+        return 0;
+      }
+      return prev + 1;
+    });
+    if (!exerciceNext) {
+      return setSelected(0);
+    }
+    // navigation.setParams({ exercise: exercisesInActiveWorkout. });
+    // console.log('find index of active exercise: ', exercisesInActiveWorkout.findIndex((exercise) => exercise.id === exerciceNext));
+    return nextExercise(exerciceNext);
+  }, [activeWorkout?.exercisesWithStatus, exercisesInActiveWorkout, nextExercise]);
+
   const isExerciseCompleted = useCallback((exerciseId: string) => {
     const completedSetCount = getCompletedSetCountForExercise(exerciseId);
     const totalSetCount = getTotalSetCountForExercise(exerciseId);
@@ -86,6 +109,7 @@ const ExerciseModal = () => {
           // onPress={() => console.log('pressed', item)}
           onPress={() => {
             navigation.navigate('Modal', { exercise: item });
+            findExerciseIndex(item.id);
             // navigation.setParams({ exercise: item });
           }}
           right={right}
@@ -93,7 +117,7 @@ const ExerciseModal = () => {
       );
     }
     return null;
-  }, [getCompletedSetCountForExercise, getTotalSetCountForExercise, navigation, isExerciseCompleted]);
+  }, [getCompletedSetCountForExercise, getTotalSetCountForExercise, isExerciseCompleted, navigation, findExerciseIndex]);
 
   const renderCompletedActiveWorkoutItem = useCallback(({ item }: { readonly item: Exercise }) => {
     const setCount = getCompletedSetCountForExercise(item.id);
@@ -148,22 +172,26 @@ const ExerciseModal = () => {
             flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'flex-end',
           }}
           >
-            <Text style={{ fontSize: 8 }}>
-              Next:
-              {' '}
+            <Text style={{ fontSize: 16 }}>
+              { exercisesInActiveWorkout[selected]?.name}
             </Text>
             <IconButton
               style={styles.iconBtn}
               animated
               size={ICONSIZE}
               icon='arrow-right'
-              onPress={() => { nextExercise(onNextExercise); }}
+              onPress={() => {
+                // console.log('find index of active exercise: ', exercisesInActiveWorkout.findIndex((exercise) => exercise.id === exercisesInActiveWorkout[selected]?.id));
+                onPress();
+                navigation.setParams({ exercise: exercisesInActiveWorkout[selected] });
+                /* exercises.find((exercise) => exercise.id === onNextExercise); */
+              }}
             />
           </View>
         </View>
       </BottomSheetFooter>
     ),
-    [togglePause, pauseAndResume, nextExercise, onNextExercise],
+    [togglePause, exercisesInActiveWorkout, selected, pauseAndResume, onPress, navigation],
   );
 
   // renders
@@ -189,6 +217,7 @@ const ExerciseModal = () => {
             data={exercisesInActiveWorkout}
             renderItem={renderActiveWorkoutItem}
             contentContainerStyle={styles.flatListContent}
+            keyExtractor={(item) => item.id}
           />
           <Divider />
           <Text>Completed Exercises</Text>
