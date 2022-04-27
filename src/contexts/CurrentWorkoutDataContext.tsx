@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { nanoid } from 'nanoid';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 import {
-  ExerciseSet, Exercise, Workout, WorkoutTemplate,
+  ExerciseSet, Exercise, Workout, WorkoutTemplate, RootStackParamList,
 } from '../../types';
 import { WorkoutExerciseType } from '../../clients/__generated__/schema';
 import { GainsContext, GainsContextType } from './GainsDataContext';
@@ -13,7 +14,8 @@ import { GainsContext, GainsContextType } from './GainsDataContext';
     readonly startWorkout:(workoutTemplateId?: string) => Workout,
     readonly finishWorkout:() => Workout | null,
     readonly addExerciseToWorkout:(exerciseId: string) => void,
-    readonly nextExercise:(exerciseId: string) => void,
+    readonly nextExercise:() => void,
+    readonly findExerciseIndex:(exerciseId: string) => void,
     // getCompletedExercisesFromWorkout:(exercisesWithStatus:{}) => Workout | null,
     readonly activeWorkout: Workout | null,
     readonly hasActiveWorkout: boolean,
@@ -30,6 +32,7 @@ const CurrentWorkoutContext = React.createContext<CurrentWorkoutContextType>({
   addExerciseToWorkout: () => {},
   activeWorkout: null,
   nextExercise: () => {},
+  findExerciseIndex: () => {},
   // getCompletedExercisesFromWorkout: () => ({} as Workout),
   // setsForWorkout: () => {},
   startTimer: () => {},
@@ -46,8 +49,9 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
   const {
     workoutTemplates, addWorkout, sets, exercises,
   } = React.useContext<GainsContextType>(GainsContext);
-
+  // const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [activeWorkout, setActiveWorkout] = React.useState<Workout | null>(null);
+  const [selected, setSelected] = React.useState(1);
 
   const startWorkout = useCallback((workoutTemplateId?: string) => {
     if (activeWorkout) {
@@ -89,32 +93,80 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
     return exercises.filter((e) => exerciseIds.includes(e.id));
   }, [activeWorkout, exercises]);
 
+  const findExerciseIndex = useCallback((item: string) => {
+    if (!item) {
+      return setSelected(+1);
+    }
+    // console.log('find index: ', selected);
+    return setSelected(exercisesInActiveWorkout.findIndex((exercise) => exercise.id === item) + 1);
+  }, [exercisesInActiveWorkout]);
+
+  const nextExercise = useCallback(() => {
+    if (!activeWorkout) {
+      return;
+    }
+    const nextIndex = selected + 1;
+    if (nextIndex > exercisesInActiveWorkout.length) {
+      return;
+    }
+    setSelected(nextIndex);
+  }, [activeWorkout, selected, exercisesInActiveWorkout]);
+
+  const nextExerciseWithStatus = useCallback(() => {
+    const exerciceNext = activeWorkout?.exercisesWithStatus?.find((exercise) => exercise.exerciseId)?.exerciseId;
+    setSelected((prev) => {
+      if (prev === exercisesInActiveWorkout.length - 1) {
+        return 0;
+      }
+      return prev + 1;
+    });
+    const nextExerciseIndex = exercisesInActiveWorkout[selected];
+    // return navigation.setParams({ exercise: exercisesInActiveWorkout[selected] });
+  }, [activeWorkout, exercisesInActiveWorkout, selected]);
+
   const value = useMemo<CurrentWorkoutContextType>(() => ({
+    findExerciseIndex,
     activeWorkout,
     startWorkout,
     finishWorkout,
     removeExercise,
     // nextExercise,
-    nextExercise: (exerciseId: string) => {
+    nextExercise: () => {
       if (!activeWorkout) {
         return;
       }
-      const exerciseIds = activeWorkout?.exercisesWithStatus.map((e) => e.exerciseId).length;
-      const exercisesWithStatus = activeWorkout.exercisesWithStatus.filter((e) => e.exerciseId === exerciseId);
 
-      const currentexerciseId = activeWorkout.exercisesWithStatus.find((t) => t.exerciseId);
-      const exerciceIndex = activeWorkout.exercisesWithStatus.findIndex((t) => t.exerciseId === exerciseId);
-      if (currentexerciseId) {
-        setActiveWorkout((prev) => ({
-          ...prev!,
-          exercisesWithStatus: [...prev!.exercisesWithStatus],
-          // exercisesWithStatus: [...prev!.exercisesWithStatus.slice(0, exerciceIndex)], // , ...prev!.exercisesWithStatus.slice(exerciceIndex + 1)],
-          // exercisesWithStatus: [...prev!.exercisesWithStatus.slice(0, exerciceIndex), ...prev!.exercisesWithStatus.slice(exerciceIndex + 1)],
-        }));
-      }
+      // const exerciseIds = activeWorkout?.exercisesWithStatus.map((e) => e.exerciseId).length;
+      // const exercisesWithStatus = activeWorkout.exercisesWithStatus.filter((e) => e.exerciseId === exerciseId);
+
+      // const currentexerciseId = activeWorkout.exercisesWithStatus.find((t) => t.exerciseId);
+      // const exerciceIndex = activeWorkout.exercisesWithStatus.findIndex((t) => t.exerciseId === exerciseId);
+      // if (currentexerciseId) {
+      //   setActiveWorkout((prev) => ({
+      //     ...prev!,
+      //     exercisesWithStatus: [...prev!.exercisesWithStatus],
+      //     // exercisesWithStatus: [...prev!.exercisesWithStatus.slice(0, exerciceIndex), ...prev!.exercisesWithStatus.slice(exerciceIndex + 1)],
+      //   }));
+      // }
+
+      // ---------------------------tabort---------------------------------
+      // const exerciceNext = activeWorkout?.exercisesWithStatus?.find((exercise) => exercise.exerciseId)?.exerciseId;
+      // setSelected((prev) => {
+      //   if (prev === exercisesInActiveWorkout.length - 1) {
+      //     return 0;
+      //   }
+      //   return prev + 1;
+      // });
+      // const nextExerciseIndex = exercisesInActiveWorkout[selected];
+      // navigation.setParams({ exercise: exercisesInActiveWorkout[selected] });
+      /* if (!exerciceNext) {
+        setSelected(0);
+      } */
+      //--------------------------------------------------------------------
       // const nextExerciseId = exercisesInActiveWorkout[0];
       // const isCompleted = activeWorkout?.exercisesWithStatus.some((e) => e.exerciseId === nextExerciseId?.id);
       // const exerciseIds = activeWorkout?.exercisesWithStatus.map((e) => e.exerciseId) || [];
+      nextExerciseWithStatus();
 
       // 1. Change navigation to next workout (useNavigation)
       // 2. Set current exercise to completed
@@ -122,8 +174,8 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
       // set
       // a (current), b, c, d -> b (current), c, d
 
-    // BONUS: switch exercice (if less than exercise set count)
-    // a (current), b, c, d -> b (current), a, c, d
+      // BONUS: switch exercice (if less than exercise set count)
+      // a (current), b, c, d -> b (current), a, c, d
     },
     exercisesInActiveWorkout,
     getCompletedSetCountForExercise: (exerciseId: string) => {
@@ -166,7 +218,7 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
       }
     },
     hasActiveWorkout: !!activeWorkout,
-  }), [activeWorkout, startWorkout, finishWorkout, removeExercise, exercisesInActiveWorkout, sets]);
+  }), [findExerciseIndex, activeWorkout, startWorkout, finishWorkout, removeExercise, exercisesInActiveWorkout, nextExerciseWithStatus, sets]);
 
   return (
     <CurrentWorkoutContext.Provider value={value}>
@@ -174,6 +226,8 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
     </CurrentWorkoutContext.Provider>
   );
 };
+
+export const useFindExerciseIndex = () => React.useContext(CurrentWorkoutContext).findExerciseIndex;
 
 export const useNextExercise = () => React.useContext(CurrentWorkoutContext).nextExercise;
 
@@ -202,7 +256,7 @@ export const usePauseTimer = () => {
 };
 
 export const useCurrentWorkoutTime = () => {
-  const [currentTime, setCurrentTime] = React.useState<number | null>(null),
+  const [currentTime, setCurrentTime] = React.useState<string | null>(null),
         { activeWorkout } = React.useContext(CurrentWorkoutContext);
 
   useEffect(() => {
@@ -213,12 +267,23 @@ export const useCurrentWorkoutTime = () => {
         }
         return acc;
       }, 0);
+      // const date = new Date(0);
+      // date.setSeconds(45); // specify value for SECONDS here
+      // const timeString = date.toISOString();
+      // console.log(timeString);
 
       const updateTime = (startTime: number) => {
         const timeInMs = accumulatedTime + Date.now() - startTime,
-              seconds = Math.floor(timeInMs / 1000);
+              seconds = Math.floor(timeInMs / 1000),
+              minutes = Math.floor(seconds / 60),
+              hours = Math.floor(minutes / 60),
+              // time = `${hours}${minutes % 60}${seconds % 60}`;
+              time = [hours, minutes % 60, seconds % 60];
+        const timeShown = time.map((t) => (t < 10 ? `0${t}` : t)).join(' : ');
 
-        setCurrentTime(seconds);
+        const shouldShowHours = hours > 0;
+        setCurrentTime(shouldShowHours ? `${timeShown}` : `${timeShown.slice(3)}`);
+        // setCurrentTime(timeShown);
       };
 
       const activeTimer = activeWorkout.timers.find((t) => !t.endTime);
@@ -233,7 +298,6 @@ export const useCurrentWorkoutTime = () => {
     }
     return () => {};
   }, [activeWorkout]);
-
   return currentTime;
 };
 

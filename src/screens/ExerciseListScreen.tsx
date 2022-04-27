@@ -112,14 +112,17 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
   ), [removeExercise]);
 
   const renderActiveWorkoutItem = useCallback(({ item }) => (
-    <List.Item
-      style={{ backgroundColor: 'white', borderBottomColor: '#ccc', borderBottomWidth: 0.5 }}
-      onPress={() => {
-        navigation.navigate('Modal', { exercise: item });
-      }}
-      title={item.name}
-      right={() => removeBtn({ item })}
-    />
+    <View>
+      <List.Item
+        style={{ backgroundColor: 'white' }}
+        onPress={() => {
+          navigation.navigate('Modal', { exercise: item });
+        }}
+        title={item.name}
+        right={() => removeBtn({ item })}
+      />
+      <Divider />
+    </View>
   ), [navigation, removeBtn]);
 
   return (
