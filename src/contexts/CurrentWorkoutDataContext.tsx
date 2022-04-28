@@ -18,7 +18,6 @@ type ExerciseWithStatus = Exercise & { readonly isCompleted: boolean };
     readonly addExerciseToWorkout:(exerciseId: string) => void,
     readonly nextExercise:() => void,
     readonly selectExercise: (exerciseId: string) => void,
-    readonly findExerciseIndex:(exerciseId: string) => void,
     // getCompletedExercisesFromWorkout:(exercisesWithStatus:{}) => Workout | null,
     readonly activeWorkout: Workout | null,
     readonly currentExercise: Exercise | null,
@@ -39,7 +38,6 @@ const CurrentWorkoutContext = React.createContext<CurrentWorkoutContextType>({
   activeWorkout: null,
   nextExercise: () => {},
   selectExercise: () => {},
-  findExerciseIndex: () => {},
   // getCompletedExercisesFromWorkout: () => ({} as Workout),
   // setsForWorkout: () => {},
   startTimer: () => {},
@@ -116,14 +114,6 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
 
   const completedExercisesInActiveWorkout = useMemo(() => exercisesInActiveWorkout.filter((e) => e.isCompleted), [exercisesInActiveWorkout]);
 
-  const findExerciseIndex = useCallback((item: string) => {
-    if (!item) {
-      return setSelected(+1);
-    }
-    // console.log('find index: ', selected);
-    return setSelected(exercisesInActiveWorkout.findIndex((exercise) => exercise.id === item) + 1);
-  }, [exercisesInActiveWorkout]);
-
   const getCompletedSetCountForExercise = useCallback((exerciseId: string) => {
     if (!activeWorkout) {
       return 0;
@@ -131,17 +121,6 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
     const completedSetCount = sets.filter((set) => set.exerciseId === exerciseId && set.workoutId === activeWorkout?.id).length;
     return completedSetCount;
   }, [activeWorkout, sets]);
-
-  /* const nextExercise = useCallback(() => {
-    if (!activeWorkout) {
-      return;
-    }
-    const nextIndex = selected + 1;
-    if (nextIndex > exercisesInActiveWorkout.length) {
-      return;
-    }
-    setSelected(nextIndex);
-  }, [activeWorkout, selected, exercisesInActiveWorkout]); */
 
   const isExerciseCompleted = useCallback((exerciseId: string) => {
     const completedSetCount = getCompletedSetCountForExercise(exerciseId);
@@ -162,7 +141,6 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
   }, [activeWorkout, exercisesInActiveWorkout, selected]);
 
   const value = useMemo<CurrentWorkoutContextType>(() => ({
-    findExerciseIndex,
     activeWorkout,
     startWorkout,
     finishWorkout,
@@ -219,24 +197,6 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
         }));
       }
 
-      // ---------------------------tabort---------------------------------
-      // const exerciceNext = activeWorkout?.exercisesWithStatus?.find((exercise) => exercise.exerciseId)?.exerciseId;
-      // setSelected((prev) => {
-      //   if (prev === exercisesInActiveWorkout.length - 1) {
-      //     return 0;
-      //   }
-      //   return prev + 1;
-      // });
-      // const nextExerciseIndex = exercisesInActiveWorkout[selected];
-      // navigation.setParams({ exercise: exercisesInActiveWorkout[selected] });
-      /* if (!exerciceNext) {
-        setSelected(0);
-      } */
-      //--------------------------------------------------------------------
-      // const nextExerciseId = exercisesInActiveWorkout[0];
-      // const isCompleted = activeWorkout?.exercisesWithStatus.some((e) => e.exerciseId === nextExerciseId?.id);
-      // const exerciseIds = activeWorkout?.exercisesWithStatus.map((e) => e.exerciseId) || [];
-
       // 1. Change navigation to next workout (useNavigation)
       // 2. Set current exercise to completed
 
@@ -282,7 +242,7 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
       }
     },
     hasActiveWorkout: !!activeWorkout,
-  }), [findExerciseIndex, activeWorkout, startWorkout, finishWorkout, removeExercise, completedExercisesInActiveWorkout, nonCompletedExercisesInActiveWorkout, exercisesInActiveWorkout,
+  }), [activeWorkout, startWorkout, finishWorkout, removeExercise, completedExercisesInActiveWorkout, nonCompletedExercisesInActiveWorkout, exercisesInActiveWorkout,
     getCompletedSetCountForExercise, isExerciseCompleted]);
 
   return (
@@ -291,8 +251,6 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
     </CurrentWorkoutContext.Provider>
   );
 };
-
-export const useFindExerciseIndex = () => React.useContext(CurrentWorkoutContext).findExerciseIndex;
 
 export const useNextExercise = () => React.useContext(CurrentWorkoutContext).nextExercise;
 
