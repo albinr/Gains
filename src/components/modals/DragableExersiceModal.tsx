@@ -32,14 +32,16 @@ const ExerciseModal = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const startTimer = useStartTimer();
   const pauseTimer = usePauseTimer();
-  const findExerciseIndex = useFindExerciseIndex();
+  // const findExerciseIndex = useFindExerciseIndex();
   const showTimer = useCurrentWorkoutTime();
   const exercises = useExercises();
   const nextExercise = useNextExercise();
   const [selected, setSelected] = useState(1);
   const [togglePause, setTogglePause] = useState(false);
   const { activeWorkout, exercisesInActiveWorkout } = React.useContext(CurrentWorkoutContext);
-  const { getCompletedSetCountForExercise } = React.useContext(CurrentWorkoutContext);
+  const {
+    getCompletedSetCountForExercise, nonCompletedExercisesInActiveWorkout, currentExercise, selectExercise,
+  } = React.useContext(CurrentWorkoutContext);
   const { getTotalSetCountForExercise } = React.useContext(GainsDataContext);
 
   // variables
@@ -60,30 +62,31 @@ const ExerciseModal = () => {
   }, [activeWorkout?.exercisesWithStatus, exercises, navigation]); */
 
   // --------------export to context--------------------
-  /* const findExerciseIndex = useCallback((item: string) => {
+  const findExerciseIndex = useCallback((item: string) => {
     if (!item) {
       return setSelected(+1);
     }
     // console.log('find index: ', selected);
     return setSelected(exercisesInActiveWorkout.findIndex((exercise) => exercise.id === item) + 1);
   }, [exercisesInActiveWorkout]);
- */
-  const onPress = useCallback(
-    nextExercise,
-    // navigation.setParams({ exercise: exercisesInActiveWorkout[nextExercise] }),
-    // const exerciceNext = activeWorkout?.exercisesWithStatus?.find((exercise) => exercise.exerciseId)?.exerciseId;
-    // setSelected((prev) => {
-    //   if (prev === exercisesInActiveWorkout.length - 1) {
-    //     return 0;
-    //   }
-    //   return prev + 1;
-    // });
-    // if (!exerciceNext) {
-    //   return setSelected(0);
-    // }
+
+  const onPress = useCallback(() => {
+    setSelected((prev) => {
+      if (prev === exercisesInActiveWorkout.length - 1) {
+        return 0;
+      }
+      return prev + 1;
+    });
+
+    // return navigation.setParams({ exercise: exercisesInActiveWorkout[selected] });
     // return nextExercise(exerciceNext);
-    [nextExercise],
-  );
+  }, [exercisesInActiveWorkout]);
+
+  useEffect(() => {
+    if (currentExercise) {
+      navigation.setParams({ exercise: currentExercise });
+    }
+  }, [currentExercise, navigation]);
 
   const isExerciseCompleted = useCallback((exerciseId: string) => {
     const completedSetCount = getCompletedSetCountForExercise(exerciseId);
@@ -111,8 +114,7 @@ const ExerciseModal = () => {
           title={item.name}
           // onPress={() => console.log('pressed', item)}
           onPress={() => {
-            navigation.navigate('Modal', { exercise: item });
-            findExerciseIndex(item.id);
+            selectExercise(item.id);
             // navigation.setParams({ exercise: item });
           }}
           right={right}
@@ -120,7 +122,7 @@ const ExerciseModal = () => {
       );
     }
     return null;
-  }, [findExerciseIndex, getCompletedSetCountForExercise, getTotalSetCountForExercise, isExerciseCompleted, navigation]);
+  }, [getCompletedSetCountForExercise, getTotalSetCountForExercise, isExerciseCompleted, selectExercise]);
 
   const renderCompletedActiveWorkoutItem = useCallback(({ item }: { readonly item: Exercise }) => {
     const setCount = getCompletedSetCountForExercise(item.id);
@@ -183,18 +185,13 @@ const ExerciseModal = () => {
               animated
               size={ICONSIZE}
               icon='arrow-right'
-              onPress={() => {
-                // console.log('find index of active exercise: ', exercisesInActiveWorkout.findIndex((exercise) => exercise.id === exercisesInActiveWorkout[selected]?.id));
-                onPress();
-                // navigation.setParams({ exercise: exercisesInActiveWorkout[selected] });
-                /* exercises.find((exercise) => exercise.id === onNextExercise); */
-              }}
+              onPress={nextExercise}
             />
           </View>
         </View>
       </BottomSheetFooter>
     ),
-    [togglePause, pauseAndResume, onPress],
+    [togglePause, pauseAndResume, nextExercise],
   );
 
   // renders
