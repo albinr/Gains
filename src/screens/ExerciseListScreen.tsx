@@ -128,7 +128,7 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
   return (
     <View style={styles.container}>
       <TextInput
-        style={{ zIndex: 15 }}
+        style={{ zIndex: 15, elevation: 2 }}
         placeholder='Add or search exercises...'
         value={searchQuery}
         onChangeText={(text) => { setSearchQuery(text); }}
@@ -139,18 +139,19 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
         <Pressable
           onPress={() => setSearchQuery('')}
           style={{
-            flex: 1, top: 0, bottom: 0, right: 0, left: 0, position: 'absolute', zIndex: 5,
+            flex: 1, top: 0, bottom: 0, right: 0, left: 0, position: 'absolute', zIndex: 10, elevation: 2,
           }}
         />
       ) : null}
-      <View style={styles.searchSuggestionContainer}>
-        { searchQuery.length > 0 ? (
+      { searchQuery.length > 0 ? (
+        <View style={styles.searchSuggestionContainer}>
+
           <View style={styles.searchSuggestion}>
             <FlatList
-              style={{ maxHeight: 200 }}
               data={workoutsToShow}
               renderItem={renderItem}
               keyExtractor={(item) => item.id}
+              style={{ maxHeight: 200 }}
             />
 
             {shouldShowAdd ? (
@@ -159,7 +160,7 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
                 <CreateExercises
                   searchQuery={searchQuery}
                   onCreate={(name) => {
-                  // addExerciseToWorkout(item.id);
+                    // addExerciseToWorkout(item.id);
                     const associatedCodes = {};
                     addExercise({ name, associatedCodes, workoutExerciseType: WorkoutExerciseType.GOOD_MORNING });
                   }}
@@ -168,21 +169,23 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
               </View>
             ) : null}
           </View>
-        ) : null }
-      </View>
+
+        </View>
+      ) : null }
       {exercisesInActiveWorkout && exercisesInActiveWorkout.length > 0 ? (
         <FlatList
           data={exercisesInActiveWorkout}
           renderItem={renderActiveWorkoutItem}
         />
 
-      ) : <Text style={{ padding: 20, color: 'gray' }}>You have not added any exercises...</Text>}
+      ) : <Text style={{ padding: 20, color: 'gray', zIndex: 5 }}>You have not added any exercises...</Text>}
       {exercisesInActiveWorkout && exercisesInActiveWorkout.length > 0 ? (
         <StartWorkoutButton
           startingExercise={exercisesInActiveWorkout}
           onStart={(item) => { navigation.navigate('Modal', { exercise: item }); }}
         />
       ) : null}
+
     </View>
   );
 }
@@ -193,13 +196,15 @@ const styles = StyleSheet.create({
   },
   searchSuggestionContainer: {
     alignItems: 'center',
-    zIndex: 10,
   },
   searchSuggestion: {
-    // position: 'absolute',
+    position: 'absolute',
     width: '85%',
     zIndex: 15,
+    elevation: 5,
     top: 0,
     backgroundColor: '#ccc',
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
   },
 });
