@@ -140,6 +140,22 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
     // return navigation.setParams({ exercise: exercisesInActiveWorkout[selected] });
   }, [activeWorkout, exercisesInActiveWorkout, selected]);
 
+  const selectExercise = useCallback((exerciseId: string) => {
+    if (!activeWorkout) {
+      return;
+    }
+
+    const exerciceIndex = activeWorkout.exercisesWithStatus.findIndex((t) => t.exerciseId === exerciseId);
+
+    if (exerciceIndex > -1) {
+      const exercise = activeWorkout.exercisesWithStatus[exerciceIndex]!;
+      setActiveWorkout((prev) => ({
+        ...prev!,
+        exercisesWithStatus: [exercise, ...prev!.exercisesWithStatus.slice(0, exerciceIndex), ...prev!.exercisesWithStatus.slice(exerciceIndex + 1)],
+      }));
+    }
+  }, [activeWorkout]);
+
   const value = useMemo<CurrentWorkoutContextType>(() => ({
     activeWorkout,
     startWorkout,
@@ -147,21 +163,7 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
     removeExercise,
     completedExercisesInActiveWorkout,
     nonCompletedExercisesInActiveWorkout,
-    selectExercise: (exerciseId: string) => {
-      if (!activeWorkout) {
-        return;
-      }
-
-      const exerciceIndex = activeWorkout.exercisesWithStatus.findIndex((t) => t.exerciseId === exerciseId);
-
-      if (exerciceIndex > -1) {
-        const exercise = activeWorkout.exercisesWithStatus[exerciceIndex]!;
-        setActiveWorkout((prev) => ({
-          ...prev!,
-          exercisesWithStatus: [exercise, ...prev!.exercisesWithStatus.slice(0, exerciceIndex), ...prev!.exercisesWithStatus.slice(exerciceIndex + 1)],
-        }));
-      }
-    },
+    selectExercise,
     nextExercise: () => {
       if (!activeWorkout) {
         return;
@@ -182,11 +184,6 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
         }));
         return;
       }
-
-      // const exerciseIds = activeWorkout?.exercisesWithStatus.map((e) => e.exerciseId).length;
-      // const exercisesWithStatus = activeWorkout.exercisesWithStatus.filter((e) => e.exerciseId === exerciseId);
-
-      // const currentexerciseId = activeWorkout.exercisesWithStatus.find((t) => t.exerciseId);
       const exerciceIndex = activeWorkout.exercisesWithStatus.findIndex((t) => t.exerciseId === exerciseId);
 
       if (exerciceIndex > -1) {

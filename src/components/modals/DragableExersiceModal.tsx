@@ -17,10 +17,10 @@ import CurrentWorkoutContext, {
   useStartTimer, useCurrentWorkoutTime, usePauseTimer, useNextExercise,
 } from '../../contexts/CurrentWorkoutDataContext';
 import GainsDataContext, {
-  useExercises,
+  useExercises, useUpsertWorkoutTemplate,
 } from '../../contexts/GainsDataContext';
 import { WorkoutExerciseType } from '../../clients/__generated__/schema';
-import { Exercise, RootStackParamList } from '../../../types';
+import { Exercise, RootStackParamList, Workout } from '../../../types';
 
 const ICONSIZE = 40;
 const ExerciseModal = () => {
@@ -31,6 +31,7 @@ const ExerciseModal = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const startTimer = useStartTimer();
   const pauseTimer = usePauseTimer();
+  const upsertWorkoutTemplate = useUpsertWorkoutTemplate();
   // const findExerciseIndex = useFindExerciseIndex();
   const showTimer = useCurrentWorkoutTime();
   const exercises = useExercises();
@@ -48,14 +49,30 @@ const ExerciseModal = () => {
   const handleSheetChanges = useCallback((index: number) => {
     // handleSnapPress(1);
   }, []);
+  const addWorkoutToTemplate = useCallback((workout : Workout) => {
+    const exerciseIds = workout.exercisesWithStatus.map((exercise) => exercise.exerciseId);
+    const workoutTemplate = {
+      exercisesId: exerciseIds,
+      name: (`workoutTemplate: ${workout.id.toString()}`),
+      id: workout.id,
+    };
+    upsertWorkoutTemplate(workoutTemplate.exercisesId, workoutTemplate.name, workoutTemplate.id);
+  }, [upsertWorkoutTemplate]);
 
   useEffect(() => {
+    if (!activeWorkout) {
+      return;
+    }
     if (currentExercise) {
       navigation.setParams({ exercise: currentExercise });
     } else if (currentExercise === null) {
       finishWorkout();
+      addWorkoutToTemplate(activeWorkout);
+      // console.log('add workout to template');
+
+      // console.log('finish workout', workoutTemplatesList);
     }
-  }, [currentExercise, navigation, finishWorkout]);
+  }, [currentExercise, navigation, finishWorkout, activeWorkout, addWorkoutToTemplate]);
 
   const shouldShowCompletedExercise = useCallback((exerciseId: string) => {
     const completedSetCount = getCompletedSetCountForExercise(exerciseId);

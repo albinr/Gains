@@ -74,7 +74,7 @@ function BottomTabNavigator() {
           ),
         })}
       /> */}
-      {/* <BottomTab.Screen
+      <BottomTab.Screen
         name='WorkoutListTab'
         component={WorkoutListScreen}
         options={({ navigation }: RootTabScreenProps<'WorkoutListTab'>) => ({
@@ -96,7 +96,7 @@ function BottomTabNavigator() {
             <IconButton icon='arm-flex' onPress={() => {}} />
           ),
         })}
-      /> */}
+      />
       <BottomTab.Screen
         name='ExerciseListTab'
         component={ExerciseListScreen}

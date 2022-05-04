@@ -155,6 +155,30 @@ export const GainsContextProvider: React.FC = ({ children }) => {
   const addSet = useCallback((set: Omit<ExerciseSet, 'id' | 'createdAt'>) => {
     setSets((prev) => [{ id: nanoid(), createdAt: Date.now(), ...set }, ...prev]);
   }, []);
+
+  const getTotalSetCountForExercise = useCallback(
+    (exerciseId: string) => {
+      const exercise = exercises.find((e) => e.id === exerciseId);
+      if (exercise && exercise.setCount) {
+        return exercise.setCount;
+      }
+      return DEFAULT_SET_COUNT;
+    },
+    [exercises],
+  );
+
+  const upsertWorkoutTemplate = useCallback((exercises, name, workoutTemplateId) => {
+    setWorkoutTemplates((prev) => {
+      const workoutTemplate = prev.find((template) => template.id === workoutTemplateId);
+      if (workoutTemplate) {
+        return prev.map((template) => (template.id === workoutTemplateId ? { ...template, name, exerciseIds: exercises } : template));
+      }
+      return [...prev, { id: workoutTemplateId || nanoid(), exerciseIds: exercises, name }];
+    });
+  }, []);
+
+  const searchForExercises = useCallback((query) => exercises.filter((exercise) => exercise.name.toLocaleLowerCase().includes(query.toLocaleLowerCase())), [exercises]);
+
   const value = useMemo<GainsContextType>(() => ({
     sets,
     exercises,
@@ -162,31 +186,22 @@ export const GainsContextProvider: React.FC = ({ children }) => {
     addExercise,
     addSet,
     addWorkout,
-    getTotalSetCountForExercise: (exerciseId: string) => {
-      const exercise = exercises.find((e) => e.id === exerciseId);
-      if (exercise && exercise.setCount) {
-        return exercise.setCount;
-      }
-      return DEFAULT_SET_COUNT;
-    },
+    getTotalSetCountForExercise,
     workoutTemplates,
-    searchForExercises: (query) => exercises.filter((exercise) => exercise.name.toLocaleLowerCase().includes(query.toLocaleLowerCase())),
-    upsertWorkoutTemplate: (exercises, name, workoutTemplateId) => {
-      setWorkoutTemplates((prev) => {
-        const workoutTemplate = prev.find((template) => template.id === workoutTemplateId);
-        if (workoutTemplate) {
-          return prev.map((template) => (template.id === workoutTemplateId ? { ...template, name, exerciseIds: exercises } : template));
-        }
-        return [...prev, { id: workoutTemplateId || nanoid(), exerciseIds: exercises, name }];
-      });
-    },
-  }), [addSet, addExercise, sets, exercises, workouts, addWorkout, workoutTemplates]);
+    searchForExercises,
+    upsertWorkoutTemplate,
+  }), [addSet, addExercise, sets, exercises, workouts, addWorkout, workoutTemplates, upsertWorkoutTemplate, searchForExercises, getTotalSetCountForExercise]);
 
   return (
     <GainsContext.Provider value={value}>
       { children }
     </GainsContext.Provider>
   );
+};
+
+export const useUpsertWorkoutTemplate = () => {
+  const { upsertWorkoutTemplate } = React.useContext(GainsContext);
+  return upsertWorkoutTemplate;
 };
 
 export const useGetTotalSetCountForExercise = () => React.useContext(GainsContext).getTotalSetCountForExercise;
@@ -196,6 +211,11 @@ export const useSearchForExercises = () => {
   const { searchForExercises } = React.useContext(GainsContext);
 
   return searchForExercises;
+};
+
+export const useWorkoutTemplates = () => {
+  const { workoutTemplates } = React.useContext(GainsContext);
+  return workoutTemplates;
 };
 
 export const useExercises = () => React.useContext(GainsContext).exercises;
