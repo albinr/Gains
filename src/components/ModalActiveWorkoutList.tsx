@@ -5,7 +5,7 @@ import {
   View, Text, StyleSheet,
 } from 'react-native';
 import {
-  List,
+  List, Divider,
 } from 'react-native-paper';
 import { BottomSheetFlatList, BottomSheetView, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
@@ -49,16 +49,19 @@ const ModalActiveWorkoutList: React.FC <{ readonly isExerciseCompleted: (exercis
 
     if (isExerciseCompleted(item.id)) {
       return (
-        <List.Item
-          style={{ backgroundColor: 'white' }}
-          title={item.name}
-          // onPress={() => console.log('pressed', item)}
-          onPress={() => {
-            selectExercise(item.id);
-          // navigation.setParams({ exercise: item });
-          }}
-          right={right}
-        />
+        <View>
+          <List.Item
+            style={{ backgroundColor: 'white' }}
+            title={item.name}
+            // onPress={() => console.log('pressed', item)}
+            onPress={() => {
+              selectExercise(item.id);
+              // navigation.setParams({ exercise: item });
+            }}
+            right={right}
+          />
+          <Divider />
+        </View>
       );
     }
     return null;
@@ -66,11 +69,9 @@ const ModalActiveWorkoutList: React.FC <{ readonly isExerciseCompleted: (exercis
 
   return (
     <BottomSheetFlatList
-      windowSize={10}
       data={exercisesInActiveWorkout}
       renderItem={renderActiveWorkoutItem}
       contentContainerStyle={styles.contentContainer}
-      ItemSeparatorComponent={() => <View style={{ height: 1, backgroundColor: 'red' }} />}
     />
   );
 };

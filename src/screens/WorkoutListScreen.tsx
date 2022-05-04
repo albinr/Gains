@@ -2,7 +2,7 @@ import {
   View, FlatList, Text,
 } from 'react-native';
 import React, { useEffect, useMemo } from 'react';
-import { List } from 'react-native-paper';
+import { Divider, List } from 'react-native-paper';
 
 import { styles } from '../../constants/Styles';
 import { RootTabScreenProps } from '../../types';
@@ -23,13 +23,19 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
   // console.log('workoutTemplatesList', workoutTemplate);
 
   return (
-    <View style={styles.wrapper}>
-
+    <View>
       {workoutTemplate && workoutTemplate.length > 0 ? (
-        <FlatList data={workoutTemplateList} renderItem={({ item }) => <Text style={{ color: 'red' }}>{item.name}</Text>} />
+        <FlatList
+          data={workoutTemplateList}
+          inverted
+          renderItem={({ item }) => (
+            <View>
+              <List.Item title={item.name} />
+              <Divider />
+            </View>
+          )}
+        />
       ) : <Text>No workout templates</Text>}
     </View>
   );
 }
-
-{ /* <Text style={{ color: 'red' }}>{item.name}</Text>} */ }

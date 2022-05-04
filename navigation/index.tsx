@@ -78,7 +78,7 @@ function BottomTabNavigator() {
         name='WorkoutListTab'
         component={WorkoutListScreen}
         options={({ navigation }: RootTabScreenProps<'WorkoutListTab'>) => ({
-          title: 'Workouts',
+          title: 'Prev Workouts',
           tabBarIcon: ({ color }) => <TabBarIcon name='arm-flex' color={color} />,
           headerRight: () => (
             // <Pressable

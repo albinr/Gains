@@ -39,7 +39,7 @@ const ExerciseModal = () => {
   const [togglePause, setTogglePause] = useState(true);
   const { activeWorkout, exercisesInActiveWorkout } = React.useContext(CurrentWorkoutContext);
   const {
-    getCompletedSetCountForExercise, nonCompletedExercisesInActiveWorkout, currentExercise, selectExercise, finishWorkout,
+    getCompletedSetCountForExercise, nonCompletedExercisesInActiveWorkout, currentExercise, selectExercise, finishWorkout, isExerciseCompleted,
   } = React.useContext(CurrentWorkoutContext);
   const { getTotalSetCountForExercise } = React.useContext(GainsDataContext);
 
@@ -53,7 +53,7 @@ const ExerciseModal = () => {
     const exerciseIds = workout.exercisesWithStatus.map((exercise) => exercise.exerciseId);
     const workoutTemplate = {
       exercisesId: exerciseIds,
-      name: (`workoutTemplate: ${workout.id.toString()}`),
+      name: (`workoutTemplate: ${new Date().toLocaleString()}`),
       id: workout.id,
     };
     upsertWorkoutTemplate(workoutTemplate.exercisesId, workoutTemplate.name, workoutTemplate.id);
@@ -116,21 +116,23 @@ const ExerciseModal = () => {
             flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'flex-end',
           }}
           >
-            <Text style={{ fontSize: 16 }}>
-              {/* { exercisesInActiveWorkout[selected]?.name} */}
-            </Text>
+            {/* <Text style={{ fontSize: 16 }}>
+              { exercisesInActiveWorkout[selected]?.name}
+            </Text> */}
+
             <IconButton
               style={styles.iconBtn}
               animated
               size={ICONSIZE}
-              icon='arrow-right'
+              icon={currentExercise && currentExercise.setCount === 3 ? ('check') : ('chevron-right')}
               onPress={nextExercise}
             />
           </View>
         </View>
       </BottomSheetFooter>
     ),
-    [togglePause, pauseAndResume, nextExercise],
+
+    [togglePause, currentExercise, nextExercise, pauseAndResume],
   );
 
   // renders
@@ -180,7 +182,3 @@ const styles = StyleSheet.create({
 });
 
 export default ExerciseModal;
-
-// if (exerciseinWorkoutSetsThatYouaddtoit !== setsDoneForExercisethatisAddtoYourWorkout) {
-// show exercise in list
-// }

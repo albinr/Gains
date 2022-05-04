@@ -163,6 +163,7 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
           </Text>
           <Text>
             {setCount}
+            {' '}
             /
             {' '}
             {totalSetCount}
