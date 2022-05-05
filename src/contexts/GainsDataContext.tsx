@@ -131,13 +131,25 @@ export const GainsContextProvider: React.FC = ({ children }) => {
     });
   }, []);
 
-  const removeWorkout = useCallback((workoutId: string) => {
+  const removeWorkout = useCallback((workoutTemplateId) => {
     if (!workoutTemplates) {
       return;
     }
-    const exercisesWithStatus = workoutTemplates.exercisesWithStatus.filter((e) => e.exerciseId !== exerciseId);
-    setActiveWorkout({ ...activeWorkout, exercisesWithStatus });
+    setWorkoutTemplates((prev) => prev.filter((workoutTemplate) => workoutTemplate.id !== workoutTemplateId));
+    // const workoutTemplateInList = workoutTemplates.filter((e) => e.id !== workoutTemplateId && e.exerciseIds !== exercisesIds && e.name !== name);
+    // setWorkoutTemplates({ ...workoutTemplateInList });
+    // return prev.map((template) => (template.id === workoutTemplateId ? { ...template, name, exerciseIds: exercises } : template));
   }, [workoutTemplates]);
+
+  /* const removeWorkoutTemplate = useCallback((workoutTemplateId: string) => {
+    if (!workoutTemplates) {
+      return;
+    }
+    setWorkoutTemplates((prev) => {
+      const workoutTemplateInList = prev.filter((e) => e.id !== workoutTemplateId);
+      return prev.map((template) => (template.id === workoutTemplateId ? { ...template, workoutTemplateInList } : template));
+    });
+  }, [workoutTemplates]); */
 
   useEffect(() => {
     void AsyncStorage.setItem('sets', JSON.stringify(sets));

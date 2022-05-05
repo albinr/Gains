@@ -24,10 +24,11 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
   // ), [removeExercise]);
 
   // console.log('workoutTemplatesList', workoutTemplate);
+
   const listItemBtns = useCallback(({ item }) => (
     <View style={{ flexDirection: 'row' }}>
       <IconButton icon='star-outline' onPress={() => console.log('Pressed')} />
-      <IconButton icon='trash-can-outline' onPress={() => { removeWorkout(item.id); }} />
+      <IconButton icon='trash-can-outline' onPress={() => { removeWorkout(item.id); console.log('remove: ', item/*  removeWorkout(item.id) */); }} />
     </View>
   ), [removeWorkout]);
 
@@ -36,9 +37,10 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
       {workoutTemplate && workoutTemplate.length > 0 ? (
         <FlatList
           data={workoutTemplateList}
+          keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <View>
-              <List.Item title={item.name} description={item.name} right={listItemBtns} style={{ backgroundColor: '#fff' }} onPress={() => {}} />
+              <List.Item title='Nameless workout' description={item.name} right={() => listItemBtns({ item })} style={styles.workoutTemplateListItem} onPress={() => {}} />
               <Divider />
             </View>
           )}
@@ -51,6 +53,9 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  workoutTemplateListItem: {
+    backgroundColor: '#fff',
   },
   textContainer: {
     flex: 1,

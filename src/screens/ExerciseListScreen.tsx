@@ -79,12 +79,7 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
     navigation.setOptions({
     });
   }, [navigation]);
-  const right = ({ ...props }) => (
-    <IconButton
-      {...props}
-      icon='plus'
-    />
-  );
+
   const onPress = useCallback((item) => {
     if (activeWorkout && !activeWorkout.exercisesWithStatus.find((id) => id === item.id)) {
       addExerciseToWorkout(item.id);
@@ -92,17 +87,26 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
     }
   }, [addExerciseToWorkout, activeWorkout]);
 
-  const renderItem = useCallback(({ item }) => (
-    <List.Item
-      onPress={() => {
-        onPress(item);
-        console.log(item.name, 'item has been pressed');
-        // onBlurSearch();
-      }}
-      title={item.name}
-      right={right}
-    />
-  ), [onPress]);
+  const renderItem = useCallback(({ item }) => {
+    const right = ({ ...props }) => (
+      <IconButton
+        {...props}
+        icon='plus'
+      />
+    );
+
+    return (
+      <List.Item
+        onPress={() => {
+          onPress(item);
+          console.log(item.name, 'item has been pressed');
+          // onBlurSearch();
+        }}
+        title={item.name}
+        right={right}
+      />
+    );
+  }, [onPress]);
 
   const removeBtn = useCallback(({ item }) => (
     <IconButton
