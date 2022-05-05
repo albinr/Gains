@@ -18,7 +18,8 @@ export type GainsContextType = {
   // getExerciseAutosuggestions(): readonly Exercise[],
   searchForExercises(query: string): readonly Exercise[],
   readonly addWorkout: (workout: Workout) => void,
-  readonly upsertWorkoutTemplate:(exercises: readonly string[], name: string, workoutTemplateId?: string) => void,
+  readonly removeWorkout: (workoutId: string) => void,
+  readonly upsertWorkoutTemplate:(exercises: readonly string[], name: string, favourite: boolean, createdAt: Date, workoutTemplateId?: string) => void,
   readonly addExercise:(exercise: Omit<Exercise, 'id'>) => void,
   readonly addSet: (set: Omit<ExerciseSet, 'id' | 'createdAt'>) => void,
   getTotalSetCountForExercise(exerciseId: string): number,
@@ -31,6 +32,7 @@ export const GainsContext = React.createContext<GainsContextType>({
   sets: [],
   searchForExercises: () => [],
   addWorkout: () => {},
+  removeWorkout: () => {},
   addExercise: () => {},
   upsertWorkoutTemplate: () => {},
   addSet: () => {},
@@ -112,7 +114,11 @@ export const GainsContextProvider: React.FC = ({ children }) => {
 
     void AsyncStorage.getItem('workoutTemplates').then((value) => {
       if (value) {
-        setWorkoutTemplates(JSON.parse(value));
+        const workoutTemplatesJson = JSON.parse(value) as readonly WorkoutTemplate[];
+        setWorkoutTemplates(workoutTemplatesJson.map((workoutTemplate) => ({
+          ...workoutTemplate,
+          createdAt: new Date(workoutTemplate.createdAt),
+        })));
       }
     });
 
@@ -128,6 +134,13 @@ export const GainsContextProvider: React.FC = ({ children }) => {
       }
     });
   }, []);
+
+  const removeWorkout = useCallback((workoutTemplateId) => {
+    if (!workoutTemplates) {
+      return;
+    }
+    setWorkoutTemplates((prev) => prev.filter((workoutTemplate) => workoutTemplate.id !== workoutTemplateId));
+  }, [workoutTemplates]);
 
   useEffect(() => {
     void AsyncStorage.setItem('sets', JSON.stringify(sets));
@@ -167,13 +180,17 @@ export const GainsContextProvider: React.FC = ({ children }) => {
     [exercises],
   );
 
-  const upsertWorkoutTemplate = useCallback((exercises, name, workoutTemplateId) => {
+  const upsertWorkoutTemplate = useCallback<GainsContextType['upsertWorkoutTemplate']>((exercises, name, favourite, createdAt, workoutTemplateId) => {
     setWorkoutTemplates((prev) => {
       const workoutTemplate = prev.find((template) => template.id === workoutTemplateId);
       if (workoutTemplate) {
-        return prev.map((template) => (template.id === workoutTemplateId ? { ...template, name, exerciseIds: exercises } : template));
+        return prev.map((template) => (template.id === workoutTemplateId ? {
+          ...template, name, exerciseIds: exercises, favourite, createdAt,
+        } : template));
       }
-      return [...prev, { id: workoutTemplateId || nanoid(), exerciseIds: exercises, name }];
+      return [...prev, {
+        id: workoutTemplateId || nanoid(), exerciseIds: exercises, name, favourite, createdAt,
+      }];
     });
   }, []);
 
@@ -186,11 +203,12 @@ export const GainsContextProvider: React.FC = ({ children }) => {
     addExercise,
     addSet,
     addWorkout,
+    removeWorkout,
     getTotalSetCountForExercise,
     workoutTemplates,
     searchForExercises,
     upsertWorkoutTemplate,
-  }), [addSet, addExercise, sets, exercises, workouts, addWorkout, workoutTemplates, upsertWorkoutTemplate, searchForExercises, getTotalSetCountForExercise]);
+  }), [addSet, addExercise, sets, exercises, workouts, addWorkout, removeWorkout, workoutTemplates, upsertWorkoutTemplate, searchForExercises, getTotalSetCountForExercise]);
 
   return (
     <GainsContext.Provider value={value}>
@@ -229,6 +247,8 @@ export const useSetsForExercise = (exerciseId: string) => {
 };
 
 export const useWorkouts = () => React.useContext(GainsContext).workouts;
+
+export const useRemoveWorkout = () => React.useContext(GainsContext).removeWorkout;
 
 export const useAddExercise = () => React.useContext(GainsContext).addExercise;
 

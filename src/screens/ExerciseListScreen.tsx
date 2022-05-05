@@ -46,7 +46,6 @@ const CreateExercises: React.FC<{ readonly searchQuery: string, readonly onCreat
 
 const normalizeString = (str: string) => {
   const normalized = str.toLocaleLowerCase().trim();
-  // console.log('normalized', normalized);
   return normalized;
 };
 // ,  route: { params: { exercise }
@@ -70,44 +69,46 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
     && !workoutsToShow.find((w) => normalizeString(searchQuery) === normalizeString(w.name)), [searchQuery, workoutsToShow]);
 
   useEffect(() => {
-    startWorkout();
-  }, [startWorkout]);
-
-  // console.log('Workout: ', [workout], 'activeWorkout: ', activeWorkout?.exerciseIds);
+    if (!activeWorkout) {
+      startWorkout();
+    }
+  }, [startWorkout, activeWorkout]);
 
   useEffect(() => {
     navigation.setOptions({
     });
   }, [navigation]);
-  const right = ({ ...props }) => (
-    <IconButton
-      {...props}
-      icon='plus'
-    />
-  );
+
   const onPress = useCallback((item) => {
     if (activeWorkout && !activeWorkout.exercisesWithStatus.find((id) => id === item.id)) {
       addExerciseToWorkout(item.id);
-      console.log('added', item.id);
     }
   }, [addExerciseToWorkout, activeWorkout]);
 
-  const renderItem = useCallback(({ item }) => (
-    <List.Item
-      onPress={() => {
-        onPress(item);
-        console.log(item.name, 'item has been pressed');
-        // onBlurSearch();
-      }}
-      title={item.name}
-      right={right}
-    />
-  ), [onPress]);
+  const renderItem = useCallback(({ item }) => {
+    const right = ({ ...props }) => (
+      <IconButton
+        {...props}
+        icon='plus'
+      />
+    );
+
+    return (
+      <List.Item
+        onPress={() => {
+          onPress(item);
+          // onBlurSearch();
+        }}
+        title={item.name}
+        right={right}
+      />
+    );
+  }, [onPress]);
 
   const removeBtn = useCallback(({ item }) => (
     <IconButton
       icon='close'
-      onPress={(() => { console.log('remove', item.id); removeExercise(item.id); })}
+      onPress={() => removeExercise(item.id)}
     />
   ), [removeExercise]);
 
@@ -133,7 +134,7 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
         value={searchQuery}
         onChangeText={(text) => { setSearchQuery(text); }}
         onSubmitEditing={() => setSearchQuery('')}
-        // onBlur={() => console.log('you have been blured')}
+        left={<TextInput.Icon name='magnify' />}
       />
       {searchQuery.length > 0 ? (
         <Pressable
@@ -178,7 +179,7 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
           renderItem={renderActiveWorkoutItem}
         />
 
-      ) : <Text style={{ padding: 20, color: 'gray', zIndex: 5 }}>You have not added any exercises...</Text>}
+      ) : <View style={styles.textContainer}><Text style={{ padding: 20, color: 'gray', zIndex: 5 }}>You have not added any exercises...</Text></View>}
       {exercisesInActiveWorkout && exercisesInActiveWorkout.length > 0 ? (
         <StartWorkoutButton
           startingExercise={exercisesInActiveWorkout}
@@ -195,6 +196,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchSuggestionContainer: {
+    alignItems: 'center',
+  },
+  textContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
   },
   searchSuggestion: {

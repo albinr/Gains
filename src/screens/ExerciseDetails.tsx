@@ -178,18 +178,9 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
 
   );
 }
-/* <View style={{
-        width: '100%', height: 100, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#ccc',
-      }}
-      >
-        <IconButton icon='arrow-left' onPress={() => { navigation.navigate('Root'); }} />
-        <Text>{exercise.name}</Text>
-      </View> */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // alignItems: 'center',
-    // justifyContent: 'space-between',
   },
   stepperContainer: {
     width: '100%',
@@ -222,23 +213,3 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-/* <View style={{
-        width: '100%', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', backgroundColor: 'gray',
-      }}
-      >
-        <View style={{
-          justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row-reverse',
-        }}
-        >
-
-          <Text style={{ padding: 10 }}>00:00</Text>
-          <IconButton icon='pause' color='black' size={35} onPress={() => console.log('Pressed')} />
-        </View>
-        <View style={{
-          justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row-reverse',
-        }}
-        >
-          <IconButton icon='arrow-right' color='black' size={35} onPress={() => console.log('Pressed')} />
-
-        </View>
-      </View> */
