@@ -13,6 +13,7 @@ import BottomSheet, {
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 import ModalActiveWorkoutList from '../ModalActiveWorkoutList';
+import SaveWorkout from '../SaveWorkout';
 import CurrentWorkoutContext, {
   useStartTimer, useCurrentWorkoutTime, usePauseTimer, useNextExercise,
 } from '../../contexts/CurrentWorkoutDataContext';
@@ -21,6 +22,7 @@ import GainsDataContext, {
 } from '../../contexts/GainsDataContext';
 import { WorkoutExerciseType } from '../../clients/__generated__/schema';
 import { Exercise, RootStackParamList, Workout } from '../../../types';
+import useBoolState from '../../hooks/useBoolState';
 
 const ICONSIZE = 40;
 const ExerciseModal = () => {
@@ -32,6 +34,7 @@ const ExerciseModal = () => {
   const startTimer = useStartTimer();
   const pauseTimer = usePauseTimer();
   const upsertWorkoutTemplate = useUpsertWorkoutTemplate();
+  const [isCreateWorkoutDialogVisible, showWorkoutDialog, hideWorkoutDialog] = useBoolState(false);
   // const findExerciseIndex = useFindExerciseIndex();
   const showTimer = useCurrentWorkoutTime();
   const exercises = useExercises();
@@ -49,14 +52,15 @@ const ExerciseModal = () => {
   const handleSheetChanges = useCallback((index: number) => {
     // handleSnapPress(1);
   }, []);
-  const addWorkoutToTemplate = useCallback((workout : Workout) => {
+  const addWorkoutToTemplate = useCallback((workout : Workout, favourite: boolean, name) => {
     const exerciseIds = workout.exercisesWithStatus.map((exercise) => exercise.exerciseId);
     const workoutTemplate = {
       exercisesId: exerciseIds,
-      name: (`Created: ${new Date().toLocaleString()}`),
+      name: name === '' ? (`workoutTemplate: ${new Date().toLocaleString()}`) : name,
+      favourite: !!favourite,
       id: workout.id,
     };
-    upsertWorkoutTemplate(workoutTemplate.exercisesId, workoutTemplate.name, workoutTemplate.id);
+    upsertWorkoutTemplate(workoutTemplate.exercisesId, workoutTemplate.name, workoutTemplate.favourite, workoutTemplate.id);
   }, [upsertWorkoutTemplate]);
 
   useEffect(() => {
@@ -67,12 +71,13 @@ const ExerciseModal = () => {
       navigation.setParams({ exercise: currentExercise });
     } else if (currentExercise === null) {
       finishWorkout();
-      addWorkoutToTemplate(activeWorkout);
+      showWorkoutDialog();
+      // addWorkoutToTemplate(activeWorkout, );
       // console.log('add workout to template');
 
       // console.log('finish workout', workoutTemplatesList);
     }
-  }, [currentExercise, navigation, finishWorkout, activeWorkout, addWorkoutToTemplate]);
+  }, [currentExercise, navigation, finishWorkout, activeWorkout, addWorkoutToTemplate, showWorkoutDialog]);
 
   const shouldShowCompletedExercise = useCallback((exerciseId: string) => {
     const completedSetCount = getCompletedSetCountForExercise(exerciseId);
@@ -147,6 +152,19 @@ const ExerciseModal = () => {
       >
         <BottomSheetView style={styles.contentContainer}>
           <View style={{ width: '100%', alignItems: 'center' }}>
+            {currentExercise === null && activeWorkout
+              ? (
+                <SaveWorkout
+                  isVisible={isCreateWorkoutDialogVisible}
+                  onDismiss={hideWorkoutDialog}
+                  title='Give it a name'
+                  onCreate={(name, favourite) => {
+                    hideWorkoutDialog();
+                    // const associatedCodes = lastScannedQRCode ? { [lastScannedQRCode.type]: lastScannedQRCode.data } : {};
+                    addWorkoutToTemplate(activeWorkout, favourite, name);
+                  }}
+                />
+              ) : null}
             <Text style={{
               fontSize: 25, alignItems: 'center', justifyContent: 'center', padding: 10,
             }}
