@@ -18,6 +18,7 @@ export type GainsContextType = {
   // getExerciseAutosuggestions(): readonly Exercise[],
   searchForExercises(query: string): readonly Exercise[],
   readonly addWorkout: (workout: Workout) => void,
+  readonly removeWorkout: (workoutId: string) => void,
   readonly upsertWorkoutTemplate:(exercises: readonly string[], name: string, workoutTemplateId?: string) => void,
   readonly addExercise:(exercise: Omit<Exercise, 'id'>) => void,
   readonly addSet: (set: Omit<ExerciseSet, 'id' | 'createdAt'>) => void,
@@ -31,6 +32,7 @@ export const GainsContext = React.createContext<GainsContextType>({
   sets: [],
   searchForExercises: () => [],
   addWorkout: () => {},
+  removeWorkout: () => {},
   addExercise: () => {},
   upsertWorkoutTemplate: () => {},
   addSet: () => {},
@@ -129,6 +131,14 @@ export const GainsContextProvider: React.FC = ({ children }) => {
     });
   }, []);
 
+  const removeWorkout = useCallback((workoutId: string) => {
+    if (!workoutTemplates) {
+      return;
+    }
+    const exercisesWithStatus = workoutTemplates.exercisesWithStatus.filter((e) => e.exerciseId !== exerciseId);
+    setActiveWorkout({ ...activeWorkout, exercisesWithStatus });
+  }, [workoutTemplates]);
+
   useEffect(() => {
     void AsyncStorage.setItem('sets', JSON.stringify(sets));
   }, [sets]);
@@ -186,11 +196,12 @@ export const GainsContextProvider: React.FC = ({ children }) => {
     addExercise,
     addSet,
     addWorkout,
+    removeWorkout,
     getTotalSetCountForExercise,
     workoutTemplates,
     searchForExercises,
     upsertWorkoutTemplate,
-  }), [addSet, addExercise, sets, exercises, workouts, addWorkout, workoutTemplates, upsertWorkoutTemplate, searchForExercises, getTotalSetCountForExercise]);
+  }), [addSet, addExercise, sets, exercises, workouts, addWorkout, removeWorkout, workoutTemplates, upsertWorkoutTemplate, searchForExercises, getTotalSetCountForExercise]);
 
   return (
     <GainsContext.Provider value={value}>
@@ -229,6 +240,8 @@ export const useSetsForExercise = (exerciseId: string) => {
 };
 
 export const useWorkouts = () => React.useContext(GainsContext).workouts;
+
+export const useRemoveWorkout = () => React.useContext(GainsContext).removeWorkout;
 
 export const useAddExercise = () => React.useContext(GainsContext).addExercise;
 

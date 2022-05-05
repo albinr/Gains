@@ -133,6 +133,7 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
         value={searchQuery}
         onChangeText={(text) => { setSearchQuery(text); }}
         onSubmitEditing={() => setSearchQuery('')}
+        left={<TextInput.Icon name='magnify' />}
         // onBlur={() => console.log('you have been blured')}
       />
       {searchQuery.length > 0 ? (
@@ -178,7 +179,7 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
           renderItem={renderActiveWorkoutItem}
         />
 
-      ) : <Text style={{ padding: 20, color: 'gray', zIndex: 5 }}>You have not added any exercises...</Text>}
+      ) : <View style={styles.textContainer}><Text style={{ padding: 20, color: 'gray', zIndex: 5 }}>You have not added any exercises...</Text></View>}
       {exercisesInActiveWorkout && exercisesInActiveWorkout.length > 0 ? (
         <StartWorkoutButton
           startingExercise={exercisesInActiveWorkout}
@@ -195,6 +196,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchSuggestionContainer: {
+    alignItems: 'center',
+  },
+  textContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
   },
   searchSuggestion: {

@@ -79,7 +79,7 @@ function BottomTabNavigator() {
         component={WorkoutListScreen}
         options={({ navigation }: RootTabScreenProps<'WorkoutListTab'>) => ({
           title: 'Prev Workouts',
-          tabBarIcon: ({ color }) => <TabBarIcon name='arm-flex' color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name='format-list-bulleted-square' color={color} />,
           headerRight: () => (
             // <Pressable
             //   style={({ pressed }) => ({
@@ -93,7 +93,7 @@ function BottomTabNavigator() {
             //     style={{ marginRight: 15 }}
             //   />
             // </Pressable>
-            <IconButton icon='arm-flex' onPress={() => {}} />
+            <IconButton icon='format-list-bulleted-square' onPress={() => {}} />
           ),
         })}
       />

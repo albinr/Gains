@@ -26,6 +26,7 @@ type ExerciseWithStatus = Exercise & { readonly isCompleted: boolean };
     readonly startTimer: () => void,
     readonly pauseTimer: () => void
     readonly removeExercise: (exerciseId: string) => void,
+
     getCompletedSetCountForExercise(exerciseId: string): number,
     readonly exercisesInActiveWorkout: readonly ExerciseWithStatus[],
     readonly nonCompletedExercisesInActiveWorkout: readonly ExerciseWithStatus[],

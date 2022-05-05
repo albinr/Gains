@@ -53,7 +53,7 @@ const ExerciseModal = () => {
     const exerciseIds = workout.exercisesWithStatus.map((exercise) => exercise.exerciseId);
     const workoutTemplate = {
       exercisesId: exerciseIds,
-      name: (`workoutTemplate: ${new Date().toLocaleString()}`),
+      name: (`Workout: ${new Date().toLocaleString()}`),
       id: workout.id,
     };
     upsertWorkoutTemplate(workoutTemplate.exercisesId, workoutTemplate.name, workoutTemplate.id);
