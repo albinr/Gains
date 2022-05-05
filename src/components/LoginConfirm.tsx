@@ -11,7 +11,6 @@ const LoginConfirm: React.FC<{readonly email:string}> = ({ email }) => {
   const { login } = useContext(AuthContext);
   const [, loginConfirm] = useLoginConfirmMutation();
   const onSubmit = useCallback(async () => {
-    console.log('confirming with', { code, email });
     const { data, error } = await loginConfirm({
       email,
       code,

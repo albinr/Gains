@@ -77,6 +77,7 @@ export type WorkoutTemplate = {
   readonly name: string;
   readonly exerciseIds: readonly string[];
   readonly favourite: boolean;
+  readonly createdAt: Date;
 }
 
 export type Timer = {

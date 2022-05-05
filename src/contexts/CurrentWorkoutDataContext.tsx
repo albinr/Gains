@@ -303,7 +303,6 @@ export const useCurrentWorkoutTime = () => {
       // const date = new Date(0);
       // date.setSeconds(45); // specify value for SECONDS here
       // const timeString = date.toISOString();
-      // console.log(timeString);
 
       const updateTime = (startTime: number) => {
         const timeInMs = accumulatedTime + Date.now() - startTime,

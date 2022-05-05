@@ -10,5 +10,8 @@
       "source.organizeImports" : false,
       "source.fixAll.eslint" : true
     },
-    "eslint.packageManager": "yarn"
+    "eslint.packageManager": "yarn",
+    "cSpell.words": [
+      "favourite"
+    ]
   }

@@ -53,10 +53,8 @@ const ModalActiveWorkoutList: React.FC <{ readonly isExerciseCompleted: (exercis
           <List.Item
             style={{ backgroundColor: 'white' }}
             title={item.name}
-            // onPress={() => console.log('pressed', item)}
             onPress={() => {
               selectExercise(item.id);
-              // navigation.setParams({ exercise: item });
             }}
             right={right}
           />

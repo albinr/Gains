@@ -46,7 +46,6 @@ const CreateExercises: React.FC<{ readonly searchQuery: string, readonly onCreat
 
 const normalizeString = (str: string) => {
   const normalized = str.toLocaleLowerCase().trim();
-  // console.log('normalized', normalized);
   return normalized;
 };
 // ,  route: { params: { exercise }
@@ -70,10 +69,10 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
     && !workoutsToShow.find((w) => normalizeString(searchQuery) === normalizeString(w.name)), [searchQuery, workoutsToShow]);
 
   useEffect(() => {
-    startWorkout();
-  }, [startWorkout]);
-
-  // console.log('Workout: ', [workout], 'activeWorkout: ', activeWorkout?.exerciseIds);
+    if (!activeWorkout) {
+      startWorkout();
+    }
+  }, [startWorkout, activeWorkout]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -83,7 +82,6 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
   const onPress = useCallback((item) => {
     if (activeWorkout && !activeWorkout.exercisesWithStatus.find((id) => id === item.id)) {
       addExerciseToWorkout(item.id);
-      console.log('added', item.id);
     }
   }, [addExerciseToWorkout, activeWorkout]);
 
@@ -99,7 +97,6 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
       <List.Item
         onPress={() => {
           onPress(item);
-          console.log(item.name, 'item has been pressed');
           // onBlurSearch();
         }}
         title={item.name}
@@ -111,7 +108,7 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
   const removeBtn = useCallback(({ item }) => (
     <IconButton
       icon='close'
-      onPress={(() => { console.log('remove', item.id); removeExercise(item.id); })}
+      onPress={() => removeExercise(item.id)}
     />
   ), [removeExercise]);
 
@@ -138,7 +135,6 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
         onChangeText={(text) => { setSearchQuery(text); }}
         onSubmitEditing={() => setSearchQuery('')}
         left={<TextInput.Icon name='magnify' />}
-        // onBlur={() => console.log('you have been blured')}
       />
       {searchQuery.length > 0 ? (
         <Pressable
