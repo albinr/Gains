@@ -45,7 +45,6 @@ export type CommonSampleProps = {
   readonly modifiedAt: Scalars['DateTime'];
   readonly sourceType: SourceType;
   readonly startDate: Scalars['DateTime'];
-  readonly userId: Scalars['ObjectId'];
 };
 
 export type Competition = {
@@ -185,7 +184,7 @@ export type MealSample = CommonSampleProps & {
   readonly startDate: Scalars['DateTime'];
   readonly statAfterMeal: Scalars['Float'];
   readonly title?: Maybe<Scalars['String']>;
-  readonly userId: Scalars['ObjectId'];
+  readonly userHash: Scalars['String'];
   readonly weightInGrams?: Maybe<Scalars['Float']>;
 };
 
@@ -229,16 +228,18 @@ export type Mutation = {
   readonly __typename: 'Mutation';
   readonly acceptCompetitionInvite: AcceptCompetitionInviteResponse;
   readonly acceptFollowerInvite: AcceptUserInviteResponse;
-  readonly addSet: WorkoutSample;
   readonly generateCompetitionInvite: CompetitionInvitationResponse;
   readonly generateFollowerInvite: InvitationResponseSuccess;
   readonly loginConfirm: LoginConfirmResponse;
   readonly loginRequest: LoginRequestResponse;
   readonly subscribeToLibre: LibreMonitor;
   readonly upsertCompetition: Competition;
+  readonly upsertCustomExercise: WorkoutExercise;
   readonly upsertMeals: UpsertedResult;
-  readonly upsertQuantitySample: QuantitySample;
+  readonly upsertQuantitySample: UpsertQuantitySampleResponse;
   readonly upsertQuantitySamples: UpsertedResult;
+  readonly upsertSet: WorkoutSet;
+  readonly upsertWorkout: WorkoutSample;
   readonly upsertWorkoutSamples: UpsertedResult;
 };
 
@@ -248,11 +249,6 @@ export type MutationAcceptCompetitionInviteArgs = {
 
 export type MutationAcceptFollowerInviteArgs = {
   readonly inviteToken: Scalars['String'];
-};
-
-export type MutationAddSetArgs = {
-  readonly set: WorkoutSetInput;
-  readonly workoutId: Scalars['ObjectId'];
 };
 
 export type MutationGenerateCompetitionInviteArgs = {
@@ -272,6 +268,12 @@ export type MutationUpsertCompetitionArgs = {
   readonly competition: UpsertCompetition;
 };
 
+export type MutationUpsertCustomExerciseArgs = {
+  readonly exerciseId?: InputMaybe<Scalars['ObjectId']>;
+  readonly name: Scalars['String'];
+  readonly timestamp?: InputMaybe<Scalars['DateTime']>;
+};
+
 export type MutationUpsertMealsArgs = {
   readonly samples: ReadonlyArray<MealSampleUpsert>;
 };
@@ -282,6 +284,14 @@ export type MutationUpsertQuantitySampleArgs = {
 
 export type MutationUpsertQuantitySamplesArgs = {
   readonly samples: ReadonlyArray<QuantitySampleUpsert>;
+};
+
+export type MutationUpsertSetArgs = {
+  readonly set: WorkoutSetInput;
+};
+
+export type MutationUpsertWorkoutArgs = {
+  readonly workout: WorkoutSampleUpsert;
 };
 
 export type MutationUpsertWorkoutSamplesArgs = {
@@ -317,7 +327,7 @@ export type QuantitySample = CommonSampleProps & {
   readonly sourceType: SourceType;
   readonly startDate: Scalars['DateTime'];
   readonly unit: UnitInternal;
-  readonly userId: Scalars['ObjectId'];
+  readonly userHash: Scalars['String'];
   readonly value: Scalars['Float'];
 };
 
@@ -506,6 +516,8 @@ export enum SortDirection {
 }
 
 export enum SourceType {
+  EXTERNAL = 'EXTERNAL',
+  GAINS = 'GAINS',
   HEALTHKIT = 'HEALTHKIT',
   INTERNAL = 'INTERNAL',
   LIBRELINKUP = 'LIBRELINKUP'
@@ -578,6 +590,10 @@ export enum UpsertOperationType {
   UPSERTED = 'UPSERTED'
 }
 
+export type UpsertQuantitySampleResponse = NotFoundError | QuantitySample;
+
+export type UpsertSetResponse = NotFoundError | WorkoutSample;
+
 export type UpsertedItem = {
   readonly __typename: 'UpsertedItem';
   readonly _id: Scalars['ObjectId'];
@@ -600,6 +616,7 @@ export type User = IUser & {
   readonly competitions: ReadonlyArray<Competition>;
   readonly displayName: Scalars['String'];
   readonly email: Scalars['String'];
+  readonly exercises: ReadonlyArray<WorkoutExercise>;
   readonly followerIds: ReadonlyArray<Scalars['ObjectId']>;
   readonly followers: ReadonlyArray<RestrictedUser>;
   readonly following: ReadonlyArray<User>;
@@ -611,6 +628,7 @@ export type User = IUser & {
   readonly quantitySamples: ReadonlyArray<QuantitySample>;
   readonly quantityStat: StatWithValue;
   readonly userSettings: UserSettings;
+  readonly workoutById?: Maybe<WorkoutSample>;
   readonly workoutSamples: ReadonlyArray<WorkoutSample>;
 };
 
@@ -653,6 +671,10 @@ export type UserQuantityStatArgs = {
   readonly statistic: QuantityStat;
   readonly toDate?: InputMaybe<Scalars['DateTime']>;
   readonly unit?: InputMaybe<Unit>;
+};
+
+export type UserWorkoutByIdArgs = {
+  readonly workoutId: Scalars['ObjectId'];
 };
 
 export type UserWorkoutSamplesArgs = {
@@ -757,6 +779,25 @@ export enum WorkoutActivityType {
   YOGA = 'YOGA'
 }
 
+export type WorkoutExercise = {
+  readonly __typename: 'WorkoutExercise';
+  readonly _id: Scalars['ObjectId'];
+  readonly createdAt: Scalars['DateTime'];
+  readonly exerciseType: WorkoutExerciseType;
+  readonly exerciseTypeCustomId?: Maybe<Scalars['String']>;
+  readonly lastSet?: Maybe<WorkoutSet>;
+  readonly modifiedAt: Scalars['DateTime'];
+  readonly name: Scalars['String'];
+  readonly sets: ReadonlyArray<WorkoutSet>;
+  readonly sourceType?: Maybe<SourceType>;
+  readonly userHash?: Maybe<Scalars['String']>;
+};
+
+export type WorkoutExerciseSetsArgs = {
+  readonly after?: InputMaybe<Scalars['Int']>;
+  readonly skip?: InputMaybe<Scalars['Int']>;
+};
+
 export enum WorkoutExerciseType {
   BACK_EXTENSION = 'BACK_EXTENSION',
   BRIDGE_HIP_SINGLE_LEG = 'BRIDGE_HIP_SINGLE_LEG',
@@ -774,6 +815,7 @@ export enum WorkoutExerciseType {
   CRUNCH = 'CRUNCH',
   CRUNCH_TWISTING = 'CRUNCH_TWISTING',
   CURL_BICEP = 'CURL_BICEP',
+  CUSTOM = 'CUSTOM',
   DEADLIFT = 'DEADLIFT',
   DEADLIFT_RDL = 'DEADLIFT_RDL',
   DEADLIFT_SINGLE_LEG = 'DEADLIFT_SINGLE_LEG',
@@ -837,6 +879,8 @@ export type WorkoutSample = CommonSampleProps & {
   readonly appleHealthKitUUID?: Maybe<Scalars['String']>;
   readonly createdAt: Scalars['DateTime'];
   readonly endDate?: Maybe<Scalars['DateTime']>;
+  readonly exerciseIds: ReadonlyArray<Scalars['ObjectId']>;
+  readonly exercises: ReadonlyArray<WorkoutExercise>;
   readonly modifiedAt: Scalars['DateTime'];
   readonly quantities: ReadonlyArray<QuantitySample>;
   readonly quantitiesAfterWorkout: ReadonlyArray<QuantitySample>;
@@ -845,7 +889,7 @@ export type WorkoutSample = CommonSampleProps & {
   readonly startDate: Scalars['DateTime'];
   readonly stat: Scalars['Float'];
   readonly statAfterWorkout: Scalars['Float'];
-  readonly userId: Scalars['ObjectId'];
+  readonly userHash: Scalars['String'];
   readonly workoutActivityType: WorkoutActivityType;
 };
 
@@ -874,7 +918,7 @@ export type WorkoutSampleUpsert = {
   readonly _id?: InputMaybe<Scalars['ObjectId']>;
   readonly appleHealthKitUUID?: InputMaybe<Scalars['String']>;
   readonly endDate?: InputMaybe<Scalars['DateTime']>;
-  readonly sets?: InputMaybe<ReadonlyArray<WorkoutSetInput>>;
+  readonly exerciseIds?: InputMaybe<ReadonlyArray<Scalars['ObjectId']>>;
   readonly sourceType?: InputMaybe<SourceType>;
   readonly startDate?: InputMaybe<Scalars['DateTime']>;
   readonly timestamp?: InputMaybe<Scalars['DateTime']>;
@@ -883,23 +927,31 @@ export type WorkoutSampleUpsert = {
 
 export type WorkoutSet = {
   readonly __typename: 'WorkoutSet';
+  readonly _id: Scalars['ObjectId'];
   readonly endDate?: Maybe<Scalars['DateTime']>;
-  readonly exerciseType: WorkoutExerciseType;
+  readonly exercise?: Maybe<WorkoutExercise>;
+  readonly exerciseId: Scalars['ObjectId'];
   readonly repititions?: Maybe<Scalars['Int']>;
   readonly resistanceType?: Maybe<ResistanceType>;
   readonly resistanceUnit?: Maybe<UnitInternal>;
   readonly resistanceValue?: Maybe<Scalars['Float']>;
   readonly startDate: Scalars['DateTime'];
+  readonly userHash: Scalars['String'];
   readonly weight?: Maybe<Scalars['Float']>;
+  readonly workout?: Maybe<WorkoutSample>;
+  readonly workoutId: Scalars['ObjectId'];
 };
 
 export type WorkoutSetInput = {
+  readonly _id?: InputMaybe<Scalars['ObjectId']>;
   readonly endDate?: InputMaybe<Scalars['DateTime']>;
-  readonly exerciseType: WorkoutExerciseType;
+  readonly exerciseId: Scalars['ObjectId'];
   readonly repititions?: InputMaybe<Scalars['Int']>;
   readonly resistanceType?: InputMaybe<ResistanceType>;
   readonly resistanceUnit?: InputMaybe<UnitInternal>;
   readonly resistanceValue?: InputMaybe<Scalars['Float']>;
+  readonly sourceType: SourceType;
   readonly startDate: Scalars['DateTime'];
   readonly weight?: InputMaybe<Scalars['Float']>;
+  readonly workoutId: Scalars['ObjectId'];
 };
