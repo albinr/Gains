@@ -80,10 +80,11 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
   }, [navigation]);
 
   const onPress = useCallback((item) => {
-    if (activeWorkout && !activeWorkout.exercisesWithStatus.find((id) => id === item.id)) {
-      addExerciseToWorkout(item.id);
-    }
-  }, [addExerciseToWorkout, activeWorkout]);
+    if (activeWorkout && !exercisesInActiveWorkout.find((id) => id === item.id)) {
+      console.log('adding exercise to workout');
+      return addExerciseToWorkout(item.id);
+    } return null;
+  }, [addExerciseToWorkout, activeWorkout, exercisesInActiveWorkout]);
 
   const renderItem = useCallback(({ item }) => {
     const right = ({ ...props }) => (
@@ -101,6 +102,7 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
         }}
         title={item.name}
         right={right}
+
       />
     );
   }, [onPress]);
@@ -129,32 +131,30 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
   return (
     <View style={styles.container}>
       <TextInput
-        style={{ zIndex: 15, elevation: 2 }}
+        style={styles.searchBar}
         placeholder='Add or search exercises...'
         value={searchQuery}
         onChangeText={(text) => { setSearchQuery(text); }}
         onSubmitEditing={() => setSearchQuery('')}
-        left={<TextInput.Icon name='magnify' />}
+        left={<TextInput.Icon name='magnify-plus-outline' />}
       />
-      {searchQuery.length > 0 ? (
-        <Pressable
-          onPress={() => setSearchQuery('')}
-          style={{
-            flex: 1, top: 0, bottom: 0, right: 0, left: 0, position: 'absolute', zIndex: 10, elevation: 2,
-          }}
-        />
-      ) : null}
+
       { searchQuery.length > 0 ? (
         <View style={styles.searchSuggestionContainer}>
+          {searchQuery.length > 0 ? (
+            <Pressable
+              onPress={() => setSearchQuery('')}
+              style={styles.pressable}
+            />
+          ) : null}
 
           <View style={styles.searchSuggestion}>
             <FlatList
               data={workoutsToShow}
               renderItem={renderItem}
               keyExtractor={(item) => item.id}
-              style={{ maxHeight: 200 }}
+              // style={{ maxHeight: 200 }}
             />
-
             {shouldShowAdd ? (
               <View>
                 <Divider />
@@ -196,21 +196,37 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchSuggestionContainer: {
+    position: 'absolute',
     alignItems: 'center',
+    top: 70,
+    width: '100%',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 15,
+  },
+  searchSuggestion: {
+    width: '80%',
+    backgroundColor: '#ccc',
   },
   textContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  searchSuggestion: {
-    position: 'absolute',
-    width: '85%',
-    zIndex: 15,
+  searchBar: {
+    zIndex: 20,
     elevation: 5,
+    height: 70,
+  },
+  pressable: {
+    flex: 1,
     top: 0,
-    backgroundColor: '#ccc',
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 16,
+    bottom: 0,
+    right: 0,
+    left: 0,
+    position: 'absolute',
+    zIndex: 0,
+    elevation: 2,
   },
 });

@@ -141,50 +141,51 @@ const ExerciseModal = () => {
 
   // renders
   return (
-    <View style={styles.container}>
-      <BottomSheet
-        ref={bottomSheetRef}
-        snapPoints={snapPoints}
-        onChange={handleSheetChanges}
-        footerComponent={renderFooter}
-        index={0}
-      >
-        <BottomSheetView style={styles.contentContainer}>
-          <View style={{ width: '100%', alignItems: 'center' }}>
-            <Text style={{
-              fontSize: 25, alignItems: 'center', justifyContent: 'center', padding: 10,
-            }}
-            >
-              {showTimer}
-            </Text>
-          </View>
-          <SaveWorkout
-            isVisible={isCreateWorkoutDialogVisible}
-            onDismiss={hideWorkoutDialog}
-            title='Give it a name'
-            onCreate={(name, favourite) => {
-              hideWorkoutDialog();
-              // const associatedCodes = lastScannedQRCode ? { [lastScannedQRCode.type]: lastScannedQRCode.data } : {};
-              addWorkoutToTemplate(activeWorkout!, favourite, name);
-            }}
-          />
-          <Text>Active Workout</Text>
-          <ModalActiveWorkoutList isExerciseCompleted={shouldShowUncompletedExercise} textColor='grey' />
-          {currentExercise === null ? (<Text>Workout completed</Text>) : (<Text>Completed Exercises</Text>)}
-          <ModalActiveWorkoutList isExerciseCompleted={shouldShowCompletedExercise} textColor='green' />
-        </BottomSheetView>
-      </BottomSheet>
-    </View>
+    // <View style={styles.container}>
+    <BottomSheet
+      ref={bottomSheetRef}
+      snapPoints={snapPoints}
+      onChange={handleSheetChanges}
+      footerComponent={renderFooter}
+      index={0}
+    >
+      <BottomSheetView style={styles.contentContainer}>
+        <View style={{ width: '100%', alignItems: 'center' }}>
+          <Text style={{
+            fontSize: 25, alignItems: 'center', justifyContent: 'center', padding: 10,
+          }}
+          >
+            {showTimer}
+          </Text>
+        </View>
+        <SaveWorkout
+          isVisible={isCreateWorkoutDialogVisible}
+          onDismiss={hideWorkoutDialog}
+          title='Give it a name'
+          onCreate={(name, favourite) => {
+            hideWorkoutDialog();
+            // const associatedCodes = lastScannedQRCode ? { [lastScannedQRCode.type]: lastScannedQRCode.data } : {};
+            addWorkoutToTemplate(activeWorkout!, favourite, name);
+          }}
+        />
+        <Text>Active Workout</Text>
+        <ModalActiveWorkoutList isExerciseCompleted={shouldShowUncompletedExercise} textColor='grey' />
+        {currentExercise === null ? (<Text>Workout completed</Text>) : (<Text>Completed Exercises</Text>)}
+        <ModalActiveWorkoutList isExerciseCompleted={shouldShowCompletedExercise} textColor='green' />
+      </BottomSheetView>
+    </BottomSheet>
+    // </View>
   );
 };
 const styles = StyleSheet.create({
-  container: {
-    height: '100%',
-    width: '100%',
-    padding: 24,
-    position: 'absolute',
-    bottom: 0,
-  },
+  // container: {
+  //   flex: 1,
+  //   height: '100%',
+  //   width: '100%',
+  //   padding: 24,
+  //   position: 'absolute',
+  //   bottom: 0,
+  // },
   colapsedNavContainer: {
     flexDirection: 'row',
     backgroundColor: 'white',

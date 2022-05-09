@@ -170,7 +170,6 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
           </Text>
         </Pressable>
         <Stepper minValue={1} value={reps} onValueUpdated={setReps} textTitle='REPS' />
-        <View style={{ height: 100 }} />
       </View>
       {/* </Portal.Host> */}
       <ExerciseModal />
@@ -191,7 +190,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 14,
     borderTopRightRadius: 14,
     // position: 'absolute',
-    // bottom: 80,
+    bottom: 100,
   },
   title: {
     fontSize: 20,
