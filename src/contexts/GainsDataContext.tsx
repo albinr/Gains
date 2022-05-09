@@ -3,9 +3,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { nanoid } from 'nanoid';
 
 import {
-  ExerciseSet, Exercise, Workout, WorkoutTemplate,
+  ExerciseSet, Workout, WorkoutTemplate,
 } from '../../types';
-import { WorkoutExerciseType } from '../../clients/__generated__/schema';
+import { useExercisesQuery, ExerciseDefaultFragment } from '../clients/healthcloud.generated';
 
 // void AsyncStorage.clear();
 
@@ -13,14 +13,15 @@ export type GainsContextType = {
   readonly workouts: readonly Workout[],
   readonly workoutTemplates: readonly WorkoutTemplate[],
   readonly sets: readonly ExerciseSet[],
-  readonly exercises: readonly Exercise[],
+  // readonly exercises: readonly Exercise[],
+  readonly exercises: readonly ExerciseDefaultFragment[],
   // getExercisesById(exerciseIds: string[]): readonly Exercise[],
   // getExerciseAutosuggestions(): readonly Exercise[],
-  searchForExercises(query: string): readonly Exercise[],
+  searchForExercises(query: string): readonly ExerciseDefaultFragment[],
   readonly addWorkout: (workout: Workout) => void,
   readonly removeWorkout: (workoutId: string) => void,
   readonly upsertWorkoutTemplate:(exercises: readonly string[], name: string, favourite: boolean, createdAt: Date, workoutTemplateId?: string) => void,
-  readonly addExercise:(exercise: Omit<Exercise, 'id'>) => void,
+  readonly addExercise:(exercise: Omit<ExerciseDefaultFragment, 'id'>) => void,
   readonly addSet: (set: Omit<ExerciseSet, 'id' | 'createdAt'>) => void,
   getTotalSetCountForExercise(exerciseId: string): number,
 }
@@ -41,7 +42,7 @@ export const GainsContext = React.createContext<GainsContextType>({
 
 const DEFAULT_SET_COUNT = 3;
 
-const originalExercises: readonly Exercise[] = [{
+/* const originalExercises: readonly Exercise[] = [{
   id: 'press_bench',
   workoutExerciseType: WorkoutExerciseType.PRESS_BENCH,
   name: 'Bench Press',
@@ -96,13 +97,15 @@ const originalExercises: readonly Exercise[] = [{
   workoutExerciseType: WorkoutExerciseType.LEG_PRESS,
   name: 'Leg Press',
   associatedCodes: {},
-}];
+}]; */
 
 export const GainsContextProvider: React.FC = ({ children }) => {
   const [workouts, setWorkouts] = React.useState<readonly Workout[]>([]);
-  const [exercises, setExercises] = React.useState<readonly Exercise[]>(originalExercises);
+  // const [exercises, setExercises] = React.useState<readonly Exercise[]>(originalExercises);
   const [workoutTemplates, setWorkoutTemplates] = React.useState<readonly WorkoutTemplate[]>([]);
   const [sets, setSets] = React.useState<readonly ExerciseSet[]>([]);
+  const [{ data }] = useExercisesQuery();
+  const exercises = useMemo(() => (data?.me?.__typename === 'User' ? data.me.exercises : []), [data]);
   // const [searchQuery, setSeachQuery] = React.useState<readonly Exercise[]>([]);
 
   useEffect(() => {
@@ -119,12 +122,6 @@ export const GainsContextProvider: React.FC = ({ children }) => {
           ...workoutTemplate,
           createdAt: new Date(workoutTemplate.createdAt),
         })));
-      }
-    });
-
-    void AsyncStorage.getItem('exercises').then((value) => {
-      if (value) {
-        setExercises(JSON.parse(value));
       }
     });
 
@@ -151,33 +148,30 @@ export const GainsContextProvider: React.FC = ({ children }) => {
   }, [workoutTemplates]);
 
   useEffect(() => {
-    void AsyncStorage.setItem('exercises', JSON.stringify(exercises));
-  }, [exercises]);
-
-  useEffect(() => {
     void AsyncStorage.setItem('workouts', JSON.stringify(workouts));
   }, [workouts]);
+
   const addWorkout = useCallback((workout: Omit<Workout, 'id'>) => {
     setWorkouts((prev) => [{ id: nanoid(), ...workout }, ...prev]);
   }, []);
 
-  const addExercise = useCallback((exercise: Omit<Exercise, 'id'>) => {
-    setExercises((prev) => [{ id: nanoid(), ...exercise }, ...prev]);
+  const addExercise = useCallback((exercise: Omit<ExerciseDefaultFragment, 'id'>) => {
+    // setExercises((prev) => [{ id: nanoid(), ...exercise }, ...prev]);
   }, []);
 
   const addSet = useCallback((set: Omit<ExerciseSet, 'id' | 'createdAt'>) => {
     setSets((prev) => [{ id: nanoid(), createdAt: Date.now(), ...set }, ...prev]);
+
+    // spara set mot backend (utöver det som görs)
   }, []);
 
   const getTotalSetCountForExercise = useCallback(
-    (exerciseId: string) => {
-      const exercise = exercises.find((e) => e.id === exerciseId);
+    (exerciseId: string) => DEFAULT_SET_COUNT,
+    /* const exercise = exercises.find((e) => e.id === exerciseId);
       if (exercise && exercise.setCount) {
         return exercise.setCount;
-      }
-      return DEFAULT_SET_COUNT;
-    },
-    [exercises],
+      } */
+    [],
   );
 
   const upsertWorkoutTemplate = useCallback<GainsContextType['upsertWorkoutTemplate']>((exercises, name, favourite, createdAt, workoutTemplateId) => {

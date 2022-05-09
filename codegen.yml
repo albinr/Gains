@@ -5,7 +5,7 @@ schema: 'https://healthcloud-staging.herokuapp.com/graphql'
   #- '../schedulist-backend/src/schema.graphql'
 documents: '**/*.graphql'
 generates:
-  clients/__generated__/schema.ts:
+  src/clients/__generated__/schema.ts:
     plugins:
       - typescript
     config:
@@ -17,7 +17,7 @@ generates:
         ObjectId: string
       namingConvention:
           enumValues: keep
-  clients/:
+  src/clients/:
     preset: near-operation-file
     presetConfig:
       extension: .generated.ts

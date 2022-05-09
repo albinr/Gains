@@ -21,7 +21,7 @@ import GainsDataContext, {
   useExercises, useUpsertWorkoutTemplate,
 } from '../../contexts/GainsDataContext';
 import { WorkoutExerciseType } from '../../clients/__generated__/schema';
-import { Exercise, RootStackParamList, Workout } from '../../../types';
+import { RootStackParamList, Workout } from '../../../types';
 import useBoolState from '../../hooks/useBoolState';
 
 const ICONSIZE = 40;
@@ -128,7 +128,7 @@ const ExerciseModal = () => {
               style={styles.iconBtn}
               animated
               size={ICONSIZE}
-              icon={currentExercise && nonCompletedExercisesInActiveWorkout.length <= 1 && isExerciseCompleted(currentExercise.id) ? ('check') : ('chevron-right')}
+              icon={currentExercise && nonCompletedExercisesInActiveWorkout.length <= 1 && isExerciseCompleted(currentExercise._id) ? ('check') : ('chevron-right')}
               onPress={nextExercise}
             />
           </View>

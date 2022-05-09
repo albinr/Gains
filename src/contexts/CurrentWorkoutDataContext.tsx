@@ -3,14 +3,13 @@ import { nanoid } from 'nanoid';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 import {
-  ExerciseSet, Exercise, Workout, WorkoutTemplate, RootStackParamList,
+  Workout,
 } from '../../types';
-import { WorkoutExerciseType } from '../../clients/__generated__/schema';
 import { GainsContext, GainsContextType } from './GainsDataContext';
-
+import { ExerciseDefaultFragment } from '../clients/healthcloud.generated';
 // void AsyncStorage.clear();
 
-type ExerciseWithStatus = Exercise & { readonly isCompleted: boolean };
+type ExerciseWithStatus = ExerciseDefaultFragment & { readonly isCompleted: boolean };
 
   type CurrentWorkoutContextType = {
     readonly startWorkout:(workoutTemplateId?: string) => Workout,
@@ -21,7 +20,7 @@ type ExerciseWithStatus = Exercise & { readonly isCompleted: boolean };
     readonly isExerciseCompleted: (exerciseId: string) => boolean,
     // getCompletedExercisesFromWorkout:(exercisesWithStatus:{}) => Workout | null,
     readonly activeWorkout: Workout | null,
-    readonly currentExercise: Exercise | null,
+    readonly currentExercise: ExerciseDefaultFragment | null,
     readonly hasActiveWorkout: boolean,
     readonly startTimer: () => void,
     readonly pauseTimer: () => void
@@ -65,19 +64,20 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
   // const [selected, setSelected] = React.useState(1); // remove this later
 
   const startWorkout = useCallback((workoutTemplateId?: string) => {
-    if (activeWorkout) {
+    /* if (activeWorkout) {
       return activeWorkout;
-    }
-    const newWorkout = {
-      exerciseIds: workoutTemplates.find((t) => t.id === workoutTemplateId)?.exerciseIds || [],
+    } */
+    const exerciseIds = workoutTemplates.find((t) => t.id === workoutTemplateId)?.exerciseIds || [];
+    const newWorkout: Workout = {
       id: nanoid(),
       timers: [],
-      startTime: new Date(),
-      exercisesWithStatus: [],
+      // templateId: workoutTemplateId,
+      exercisesWithStatus: exerciseIds.map((exerciseId) => ({ exerciseId, isCompleted: false })),
     };
     setActiveWorkout(newWorkout);
+    console.log('new workout', newWorkout);
     return newWorkout;
-  }, [activeWorkout, workoutTemplates]);
+  }, [workoutTemplates]);
 
   const finishWorkout = useCallback(() => {
     if (!activeWorkout) {
@@ -88,6 +88,8 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
 
     // setActiveWorkout(null);
     addWorkout(finishedWorkout);
+
+    // spara workout mot backend (utöver det som görs)
 
     return finishedWorkout;
   }, [activeWorkout, addWorkout]);
@@ -106,7 +108,7 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
         return [];
       }
       return activeWorkout.exercisesWithStatus.map((e) => {
-        const exercise = exercises.find((ex) => ex.id === e.exerciseId)!;
+        const exercise = exercises.find((ex) => ex._id === e.exerciseId)!;
 
         return { ...exercise, isCompleted: e.isCompleted };
       });
@@ -166,7 +168,7 @@ export const CurrentWorkoutContextProvider: React.FC = ({ children }) => {
       return;
     }
 
-    const exerciseId = nonCompletedExercisesInActiveWorkout[0]?.id;
+    const exerciseId = nonCompletedExercisesInActiveWorkout[0]?._id;
 
     if (!exerciseId) {
       return;

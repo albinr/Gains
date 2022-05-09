@@ -7,7 +7,9 @@ import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { WorkoutExerciseType } from './clients/__generated__/schema';
+import { ExerciseDefaultFragment } from './src/clients/healthcloud.generated';
+
+export * from './src/clients/healthcloud.generated';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -21,7 +23,7 @@ declare global {
 export type RootStackParamList = {
   readonly Root: NavigatorScreenParams<RootTabParamList> | undefined;
   readonly Modal: {
-    readonly exercise: Exercise
+    readonly exercise: ExerciseDefaultFragment
   };
   readonly NotFound: undefined;
 };
@@ -54,14 +56,6 @@ export type RootTabScreenProps<Screen extends keyof RootTabParamList> = Composit
 BottomTabScreenProps<RootTabParamList, Screen>,
 NativeStackScreenProps<RootStackParamList>
 >;
-
-export type Exercise = {
-  readonly id: string;
-  readonly name: string;
-  readonly associatedCodes: Record<string, string>;
-  readonly workoutExerciseType: WorkoutExerciseType;
-  readonly setCount?: number;
-}
 
 export type ExerciseSet = {
   readonly id: string;

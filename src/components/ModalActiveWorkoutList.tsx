@@ -16,8 +16,8 @@ import CurrentWorkoutContext, {
 import GainsDataContext, {
   useExercises,
 } from '../contexts/GainsDataContext';
-import { WorkoutExerciseType } from '../../clients/__generated__/schema';
-import { Exercise, RootStackParamList } from '../../types';
+import { RootStackParamList } from '../../types';
+import { ExerciseDefaultFragment } from '../clients/healthcloud.generated';
 
 const ModalActiveWorkoutList: React.FC <{ readonly isExerciseCompleted: (exerciseId: string) => boolean, readonly textColor: string }> = ({
   isExerciseCompleted, textColor,
@@ -31,9 +31,9 @@ const ModalActiveWorkoutList: React.FC <{ readonly isExerciseCompleted: (exercis
 
   // styles
 
-  const renderActiveWorkoutItem = useCallback(({ item }: { readonly item: Exercise }) => {
-    const setCount = getCompletedSetCountForExercise(item.id);
-    const totalSetCount = getTotalSetCountForExercise(item.id);
+  const renderActiveWorkoutItem = useCallback(({ item }: { readonly item: ExerciseDefaultFragment }) => {
+    const setCount = getCompletedSetCountForExercise(item._id);
+    const totalSetCount = getTotalSetCountForExercise(item._id);
     const right = ({ ...props }) => (
       <Text style={{
         color: textColor, paddingRight: 10,
@@ -47,14 +47,14 @@ const ModalActiveWorkoutList: React.FC <{ readonly isExerciseCompleted: (exercis
       </Text>
     );
 
-    if (isExerciseCompleted(item.id)) {
+    if (isExerciseCompleted(item._id)) {
       return (
         <View>
           <List.Item
             style={{ backgroundColor: 'white' }}
             title={item.name}
             onPress={() => {
-              selectExercise(item.id);
+              selectExercise(item._id);
             }}
             right={right}
           />
