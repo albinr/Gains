@@ -1,20 +1,18 @@
 import dayjs from 'dayjs';
 import calendar from 'dayjs/plugin/calendar';
-import { StatusBar } from 'expo-status-bar';
 import React, {
   useEffect, useState, useCallback, useMemo,
 } from 'react';
 import {
-  Platform, Pressable, ScrollView, SectionList, StyleSheet, TextInput, View,
+  Pressable, SectionList, StyleSheet, TextInput, View,
 } from 'react-native';
 import {
-  Headline, IconButton, List, ThemeProvider, Portal,
+  Headline, IconButton, List,
 } from 'react-native-paper';
 import {
-  Background, VictoryAxis, VictoryChart, VictoryScatter,
+  VictoryAxis, VictoryChart, VictoryScatter,
 } from 'victory-native';
 
-import EditScreenInfo from '../components/EditScreenInfo';
 import { Text } from '../components/Themed';
 import { useSaveSet, useSetsForExercise, useGetTotalSetCountForExercise } from '../contexts/GainsDataContext';
 import { RootStackScreenProps, ExerciseSet } from '../../types';
@@ -69,7 +67,7 @@ const Stepper: React.FC<{ readonly minValue?: number, readonly value: number, re
 };
 
 export default function ModalScreen({ navigation, route: { params: { exercise } } }: RootStackScreenProps<'Modal'>) {
-  const exerciseId = exercise.id;
+  const exerciseId = exercise._id;
   const workoutId = React.useContext(CurrentWorkoutContext).activeWorkout?.id;
   const sets = useSetsForExercise(exerciseId);
   const [reps, setReps] = useState(10);
@@ -79,8 +77,8 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
   const getCompletedSetCountForExercise = useGetCompletedSetCountForExercise();
   const getTotalSetCountForExercise = useGetTotalSetCountForExercise();
 
-  const setCount = useMemo(() => getCompletedSetCountForExercise(exercise.id), [getCompletedSetCountForExercise, exercise.id]);
-  const totalSetCount = useMemo(() => getTotalSetCountForExercise(exercise.id), [getTotalSetCountForExercise, exercise.id]);
+  const setCount = useMemo(() => getCompletedSetCountForExercise(exercise._id), [getCompletedSetCountForExercise, exercise._id]);
+  const totalSetCount = useMemo(() => getTotalSetCountForExercise(exercise._id), [getTotalSetCountForExercise, exercise._id]);
   useEffect(() => {
     if (sets[0]) {
       setReps(sets[0].reps);

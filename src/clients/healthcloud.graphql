@@ -27,3 +27,24 @@ mutation UpsertSamples($samples: [QuantitySampleUpsert!]!) {
     modifiedCount
   }
 }
+
+fragment ExerciseDefault on WorkoutExercise {
+  exerciseType
+  _id
+  name
+}
+
+query Exercises{
+  me {
+    __typename
+    ... on AuthenticationError {
+      message
+    }
+    ... on User {
+      _id
+      exercises {
+        ...ExerciseDefault
+      }
+    }
+  }
+}

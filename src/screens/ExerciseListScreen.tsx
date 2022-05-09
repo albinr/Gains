@@ -9,14 +9,14 @@ import {
 } from 'react-native-paper';
 import { ThemeProvider } from '@react-navigation/native';
 
-import { RootTabScreenProps } from '../../types';
+import { RootTabScreenProps, ExerciseDefaultFragment } from '../../types';
 import {
   useExercises, useAddExercise, useWorkouts, useSearchForExercises,
 } from '../contexts/GainsDataContext';
 import CurrentWorkoutContext, {
   useStartTimer, useStartWorkout, useAddExerciseToWorkout, useRemoveExercise,
 } from '../contexts/CurrentWorkoutDataContext';
-import { WorkoutExerciseType } from '../../clients/__generated__/schema';
+// import { WorkoutExerciseType } from '../../clients/__generated__/schema';
 import { StartWorkoutButton } from '../components/StartWorkout';
 
 const CreateExercises: React.FC<{ readonly searchQuery: string, readonly onCreate: (name: string) => void }> = ({
@@ -61,12 +61,12 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
   const searchForExercises = useSearchForExercises();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const workoutsToShow = useMemo(() => (searchQuery.length > 0
+  const exercisesToShow = useMemo(() => (searchQuery.length > 0
     ? searchForExercises(searchQuery)
     : exercises), [searchQuery, exercises, searchForExercises]);
 
   const shouldShowAdd = useMemo(() => searchQuery.length > 0
-    && !workoutsToShow.find((w) => normalizeString(searchQuery) === normalizeString(w.name)), [searchQuery, workoutsToShow]);
+    && !exercisesToShow.find((w) => normalizeString(searchQuery) === normalizeString(w.name)), [searchQuery, exercisesToShow]);
 
   useEffect(() => {
     if (!activeWorkout) {
@@ -79,14 +79,14 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
     });
   }, [navigation]);
 
-  const onPress = useCallback((item) => {
-    if (activeWorkout && !exercisesInActiveWorkout.find((id) => id === item.id)) {
+  const onPress = useCallback((item: ExerciseDefaultFragment) => {
+    if (activeWorkout && !exercisesInActiveWorkout.find((id) => id._id === item._id)) {
       console.log('adding exercise to workout');
-      return addExerciseToWorkout(item.id);
+      return addExerciseToWorkout(item._id);
     } return null;
   }, [addExerciseToWorkout, activeWorkout, exercisesInActiveWorkout]);
 
-  const renderItem = useCallback(({ item }) => {
+  const renderItem = useCallback(({ item }: { readonly item: ExerciseDefaultFragment }) => {
     const right = ({ ...props }) => (
       <IconButton
         {...props}
@@ -110,23 +110,26 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
   const removeBtn = useCallback(({ item }) => (
     <IconButton
       icon='close'
-      onPress={() => removeExercise(item.id)}
+      onPress={() => removeExercise(item._id)}
     />
   ), [removeExercise]);
 
-  const renderActiveWorkoutItem = useCallback(({ item }) => (
-    <View>
-      <List.Item
-        style={{ backgroundColor: 'white' }}
-        onPress={() => {
-          navigation.navigate('Modal', { exercise: item });
-        }}
-        title={item.name}
-        right={() => removeBtn({ item })}
-      />
-      <Divider />
-    </View>
-  ), [navigation, removeBtn]);
+  const renderActiveWorkoutItem = useCallback(({ item }: { readonly item: ExerciseDefaultFragment }) => {
+    console.log('renderActiveWorkoutItem', item);
+    return (
+      <View>
+        <List.Item
+          style={{ backgroundColor: '#fff' }}
+          onPress={() => {
+            navigation.navigate('Modal', { exercise: item });
+          }}
+          title={item.name}
+          right={() => removeBtn({ item })}
+        />
+        <Divider />
+      </View>
+    );
+  }, [navigation, removeBtn]);
 
   return (
     <View style={styles.container}>
@@ -150,9 +153,9 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
 
           <View style={styles.searchSuggestion}>
             <FlatList
-              data={workoutsToShow}
+              data={exercisesToShow}
               renderItem={renderItem}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item) => item._id}
               // style={{ maxHeight: 200 }}
             />
             {shouldShowAdd ? (
@@ -163,7 +166,7 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
                   onCreate={(name) => {
                     // addExerciseToWorkout(item.id);
                     const associatedCodes = {};
-                    addExercise({ name, associatedCodes, workoutExerciseType: WorkoutExerciseType.GOOD_MORNING });
+                    // addExercise({ name, associatedCodes, workoutExerciseType: WorkoutExerciseType.GOOD_MORNING });
                   }}
                 />
 
@@ -175,6 +178,7 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
       ) : null }
       {exercisesInActiveWorkout && exercisesInActiveWorkout.length > 0 ? (
         <FlatList
+          keyExtractor={(item) => item._id}
           data={exercisesInActiveWorkout}
           renderItem={renderActiveWorkoutItem}
         />
