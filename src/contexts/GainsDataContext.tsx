@@ -42,63 +42,6 @@ export const GainsContext = React.createContext<GainsContextType>({
 
 const DEFAULT_SET_COUNT = 3;
 
-/* const originalExercises: readonly Exercise[] = [{
-  id: 'press_bench',
-  workoutExerciseType: WorkoutExerciseType.PRESS_BENCH,
-  name: 'Bench Press',
-  associatedCodes: {},
-}, {
-  id: 'deadlift',
-  workoutExerciseType: WorkoutExerciseType.DEADLIFT,
-  name: 'Deadlift',
-  associatedCodes: {},
-}, {
-  id: 'romanian_deadlift',
-  workoutExerciseType: WorkoutExerciseType.DEADLIFT_RDL,
-  name: 'Romanian Deadlift',
-  associatedCodes: {},
-}, {
-  id: 'curl_bicep',
-  workoutExerciseType: WorkoutExerciseType.CURL_BICEP,
-  name: 'Bicep Curl',
-  associatedCodes: {},
-}, {
-  id: 'triceps_extension',
-  workoutExerciseType: WorkoutExerciseType.TRICEPS_EXTENSION,
-  name: 'Triceps Extension',
-  associatedCodes: {},
-}, {
-  id: 'shrug',
-  workoutExerciseType: WorkoutExerciseType.SHRUG,
-  name: 'Shrug',
-  associatedCodes: {},
-}, {
-  id: 'press_shoulder',
-  workoutExerciseType: WorkoutExerciseType.PRESS_SHOULDER,
-  name: 'Shoulder Press',
-  associatedCodes: {},
-}, {
-  id: 'pull_up',
-  workoutExerciseType: WorkoutExerciseType.PULLUP,
-  name: 'Pullup',
-  associatedCodes: {},
-}, {
-  id: 'chinup',
-  workoutExerciseType: WorkoutExerciseType.CHINUP,
-  name: 'Chinup',
-  associatedCodes: {},
-}, {
-  id: 'calf_press',
-  workoutExerciseType: WorkoutExerciseType.CALF_PRESS,
-  name: 'Calf Press',
-  associatedCodes: {},
-}, {
-  id: 'leg_press',
-  workoutExerciseType: WorkoutExerciseType.LEG_PRESS,
-  name: 'Leg Press',
-  associatedCodes: {},
-}]; */
-
 export const GainsContextProvider: React.FC = ({ children }) => {
   const [workouts, setWorkouts] = React.useState<readonly Workout[]>([]);
   // const [exercises, setExercises] = React.useState<readonly Exercise[]>(originalExercises);
