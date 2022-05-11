@@ -1,9 +1,10 @@
 import {
-  View, FlatList, Text, StyleSheet,
+  FlatList, StyleSheet,
 } from 'react-native';
 import React, { useMemo, useCallback } from 'react';
 import { Divider, IconButton, List } from 'react-native-paper';
 
+import { View, Text } from '../components/Themed';
 import { RootTabScreenProps, WorkoutTemplate } from '../../types';
 import GainsDataContext, {
   useWorkoutTemplates, useRemoveWorkout, useUpsertWorkoutTemplate,
@@ -28,7 +29,7 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
   }, [startWorkout, navigation]);
 
   const listItemBtns = useCallback(({ item }: { readonly item: WorkoutTemplate }) => (
-    <View style={{ flexDirection: 'row' }}>
+    <View lightColor='#FFFFFF' darkColor='#1E1E1E' style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
       <IconButton icon={item.favourite ? ('star') : ('star-outline')} onPress={() => { upsertWorkoutTemplate(item.exerciseIds, item.name, !item.favourite, item.createdAt, item.id); }} />
       <IconButton icon='trash-can-outline' onPress={() => removeWorkout(item.id)} />
     </View>
@@ -41,7 +42,7 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
           data={workoutTemplateList}
           // keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <View>
+            <View lightColor='#FFFFFF' darkColor='#1E1E1E'>
               <List.Item
                 title={item.name}
                 description={`Created: ${item.createdAt.toLocaleDateString()}`}
@@ -63,10 +64,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   workoutTemplateListItem: {
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
   },
   textContainer: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
   },
 });

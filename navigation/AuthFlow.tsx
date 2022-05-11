@@ -29,15 +29,16 @@ function StackNavNavigator() {
         name='LoginRequest'
         component={LoginScreen}
         options={({ navigation }: LoginScreenProps<'LoginRequest'>) => ({
-          title: 'Login',
+          title: 'Login / Register',
           headerShown: true,
+
         })}
       />
       <StackNav.Screen
         name='LoginConfirm'
         component={LoginConfirmScreen}
         options={{
-          title: 'Login',
+          title: 'Confirm Login',
 
         }}
       />

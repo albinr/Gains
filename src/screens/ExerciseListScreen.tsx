@@ -2,15 +2,16 @@ import React, {
   useEffect, useMemo, useState, useRef, useCallback,
 } from 'react';
 import {
-  StyleSheet, View, FlatList, Pressable, TouchableWithoutFeedback, Keyboard,
+  StyleSheet, FlatList, Pressable, TouchableWithoutFeedback, Keyboard,
 } from 'react-native';
 import {
-  List, Text, TextInput, IconButton, Divider,
+  List, IconButton, Divider, TextInput,
 } from 'react-native-paper';
-import { ThemeProvider } from '@react-navigation/native';
+// import { ThemeProvider } from '@react-navigation/native';
 import { BlurView } from 'expo-blur';
 import DraggableFlatList from 'react-native-draggable-flatlist';
 
+import { View, Text } from '../components/Themed';
 import { RootTabScreenProps, ExerciseDefaultFragment } from '../../types';
 import {
   useExercises, useAddExercise, useWorkouts, useSearchForExercises,
@@ -46,7 +47,7 @@ const CreateExercises: React.FC<{ readonly searchQuery: string, readonly onCreat
       style={{
         // borderColor: 'blue',
         // borderWidth: 1,
-        backgroundColor: '#ccc',
+        // backgroundColor: '#ccc',
       }}
     />
   );
@@ -100,24 +101,28 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
       <IconButton
         {...props}
         icon={activeWorkout && !exercisesInActiveWorkout.find((id) => id._id === item._id) ? 'plus' : 'check'}
-        color={activeWorkout && !exercisesInActiveWorkout.find((id) => id._id === item._id) ? '#000' : '#0FC600'}
       />
     );
     return (
-      <List.Item
-        onPress={() => {
-          onPress(item);
+      <View
+        lightColor='#FFFFFF'
+        darkColor='#1E1E1E'
+      >
+        <List.Item
+          onPress={() => {
+            onPress(item);
           // onBlurSearch();
-        }}
-        title={item.name}
-        right={right}
-        style={{
+          }}
+          title={item.name}
+          right={right}
+          style={{
           // borderColor: 'blue',
           // borderWidth: 1,
-          backgroundColor: '#ccc',
-        }}
+          // backgroundColor: '#ccc',
+          }}
 
-      />
+        />
+      </View>
     );
   }, [onPress, exercisesInActiveWorkout, activeWorkout]);
 
@@ -131,9 +136,9 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
   const renderActiveWorkoutItem = useCallback(({ item }: { readonly item: ExerciseDefaultFragment }) => {
     console.log('renderActiveWorkoutItem', item);
     return (
-      <View>
+      <View lightColor='#FFFFFF' darkColor='#1E1E1E'>
         <List.Item
-          style={{ backgroundColor: '#fff' }}
+          // style={{ backgroundColor: '#fff' }}
           onPress={() => {
             navigation.navigate('Modal', { exercise: item });
           }}
@@ -160,7 +165,7 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
           {searchQuery.length > 0 ? (
 
             <Pressable
-              onPress={() => setSearchQuery('')}
+              onPress={() => { setSearchQuery(''); Keyboard.dismiss(); }}
               style={styles.pressable}
             />
 
@@ -204,7 +209,16 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
           keyExtractor={(item, index) => item._id}
         />
 
-      ) : <View style={styles.textContainer}><Text style={{ padding: 20, color: 'gray', zIndex: 5 }}>You have not added any exercises...</Text></View>}
+      ) : (
+        <View style={styles.textContainer}>
+          <Text style={{
+            padding: 20, color: 'gray', zIndex: 5, marginTop: -70,
+          }}
+          >
+            You have not added any exercises...
+          </Text>
+        </View>
+      )}
       {exercisesInActiveWorkout && exercisesInActiveWorkout.length > 0 ? (
         <StartWorkoutButton
           startingExercise={exercisesInActiveWorkout}
@@ -219,7 +233,6 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
   },
   searchSuggestionContainer: {
     position: 'absolute',
@@ -229,6 +242,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 15,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    // backgroundColor: '#fff',
     // borderColor: 'red',
     // borderWidth: 2,
   },

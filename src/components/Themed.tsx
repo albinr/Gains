@@ -5,6 +5,12 @@
 
 import * as React from 'react';
 import { Text as DefaultText, View as DefaultView } from 'react-native';
+import { BottomSheetBackgroundProps } from '@gorhom/bottom-sheet';
+import { VictoryAxis } from 'victory-native';
+import Animated, {
+  useAnimatedStyle,
+  interpolateColor,
+} from 'react-native-reanimated';
 
 import Colors from '../../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
@@ -47,3 +53,50 @@ export function View(props: ViewProps) {
 
   return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
 }
+
+export function TextInput(props: ViewProps) {
+  const {
+    style, lightColor, darkColor, ...otherProps
+  } = props;
+  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
+
+  return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
+}
+
+export const CustomBackground: React.FC<BottomSheetBackgroundProps> = ({
+  style,
+}) => {
+  // #region styles
+  // const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
+  const backgroundColor = useThemeColor({ light: '#fff', dark: '#000' }, 'background');
+  const containerAnimatedStyle = useAnimatedStyle(() => ({
+    backgroundColor,
+  }));
+  const containerStyle = React.useMemo(
+    () => [style, containerAnimatedStyle],
+    [style, containerAnimatedStyle],
+  );
+  // #endregion
+
+  // render
+  return <Animated.View pointerEvents='none' style={containerStyle} />;
+};
+
+// export default CustomBackground;
+// export const CustomBackground: React.FC<BottomSheetBackgroundProps> = ({
+//   style, animatedIndex,
+// }) => {
+//   // #region styles
+//   // const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
+//   const backgroundColorTheme = useThemeColor({ light: '#fff', dark: '#000' }, 'background');
+//   const containerAnimatedStyle = useAnimatedStyle(() => ({
+//     backgroundColor: interpolateColor(
+//       animatedIndex.value,
+//       [0, 1],
+//       [backgroundColorTheme, backgroundColorTheme],
+//     ),
+//   }));
+//   const containerStyle = React.useMemo(
+//     () => [style, containerAnimatedStyle],
+//     [style, containerAnimatedStyle],
+//   );
