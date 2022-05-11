@@ -2,12 +2,14 @@ import React, {
   useEffect, useMemo, useState, useRef, useCallback,
 } from 'react';
 import {
-  StyleSheet, View, FlatList, Pressable,
+  StyleSheet, View, FlatList, Pressable, TouchableWithoutFeedback, Keyboard,
 } from 'react-native';
 import {
   List, Text, TextInput, IconButton, Divider,
 } from 'react-native-paper';
 import { ThemeProvider } from '@react-navigation/native';
+import { BlurView } from 'expo-blur';
+import DraggableFlatList from 'react-native-draggable-flatlist';
 
 import { RootTabScreenProps, ExerciseDefaultFragment } from '../../types';
 import {
@@ -40,6 +42,12 @@ const CreateExercises: React.FC<{ readonly searchQuery: string, readonly onCreat
       title={searchQuery}
       description='Add Custom Exercise'
       right={right}
+      onPress={() => {}}
+      style={{
+        // borderColor: 'blue',
+        // borderWidth: 1,
+        backgroundColor: '#ccc',
+      }}
     />
   );
 };
@@ -60,6 +68,7 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
   const { activeWorkout, exercisesInActiveWorkout } = React.useContext(CurrentWorkoutContext);
   const searchForExercises = useSearchForExercises();
   const [searchQuery, setSearchQuery] = useState('');
+  const [data, setData] = useState(exercisesInActiveWorkout);
 
   const exercisesToShow = useMemo(() => (searchQuery.length > 0
     ? searchForExercises(searchQuery)
@@ -90,10 +99,10 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
     const right = ({ ...props }) => (
       <IconButton
         {...props}
-        icon='plus'
+        icon={activeWorkout && !exercisesInActiveWorkout.find((id) => id._id === item._id) ? 'plus' : 'check'}
+        color={activeWorkout && !exercisesInActiveWorkout.find((id) => id._id === item._id) ? '#000' : '#0FC600'}
       />
     );
-
     return (
       <List.Item
         onPress={() => {
@@ -102,10 +111,15 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
         }}
         title={item.name}
         right={right}
+        style={{
+          // borderColor: 'blue',
+          // borderWidth: 1,
+          backgroundColor: '#ccc',
+        }}
 
       />
     );
-  }, [onPress]);
+  }, [onPress, exercisesInActiveWorkout, activeWorkout]);
 
   const removeBtn = useCallback(({ item }) => (
     <IconButton
@@ -141,23 +155,24 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
         onSubmitEditing={() => setSearchQuery('')}
         left={<TextInput.Icon name='magnify-plus-outline' />}
       />
-
       { searchQuery.length > 0 ? (
         <View style={styles.searchSuggestionContainer}>
           {searchQuery.length > 0 ? (
+
             <Pressable
               onPress={() => setSearchQuery('')}
               style={styles.pressable}
             />
-          ) : null}
 
+          ) : null}
           <View style={styles.searchSuggestion}>
             <FlatList
               data={exercisesToShow}
               renderItem={renderItem}
               keyExtractor={(item) => item._id}
-              // style={{ maxHeight: 200 }}
+              onScrollBeginDrag={() => Keyboard.dismiss()}
             />
+
             {shouldShowAdd ? (
               <View>
                 <Divider />
@@ -172,15 +187,21 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
 
               </View>
             ) : null}
-          </View>
 
+          </View>
         </View>
       ) : null }
       {exercisesInActiveWorkout && exercisesInActiveWorkout.length > 0 ? (
+      // <DraggableFlatList
+      //   data={data}
+      //   renderItem={renderActiveWorkoutItem}
+      //   keyExtractor={(item, index) => item._id}
+      //   onDragEnd={({ data }) => setData(data)}
+      // />
         <FlatList
-          keyExtractor={(item) => item._id}
           data={exercisesInActiveWorkout}
           renderItem={renderActiveWorkoutItem}
+          keyExtractor={(item, index) => item._id}
         />
 
       ) : <View style={styles.textContainer}><Text style={{ padding: 20, color: 'gray', zIndex: 5 }}>You have not added any exercises...</Text></View>}
@@ -198,20 +219,24 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+
   },
   searchSuggestionContainer: {
     position: 'absolute',
     alignItems: 'center',
     top: 70,
-    width: '100%',
     bottom: 0,
     left: 0,
     right: 0,
     zIndex: 15,
+    // borderColor: 'red',
+    // borderWidth: 2,
   },
   searchSuggestion: {
-    width: '80%',
-    backgroundColor: '#ccc',
+    width: '75%',
+    maxHeight: '100%',
+    // borderColor: 'green',
+    // borderWidth: 2,
   },
   textContainer: {
     flex: 1,
@@ -220,7 +245,6 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     zIndex: 20,
-    elevation: 5,
     height: 70,
   },
   pressable: {
@@ -231,6 +255,6 @@ const styles = StyleSheet.create({
     left: 0,
     position: 'absolute',
     zIndex: 0,
-    elevation: 2,
+    // elevation: 0,
   },
 });
