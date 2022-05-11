@@ -1,9 +1,10 @@
 import React, { useCallback, useState } from 'react';
 // import { View, Text, TextInput, Button } from 'react-native';
-import { View, TextInput } from 'react-native';
-import { Text, Button } from 'react-native-paper';
+import { TextInput } from 'react-native';
+import { Button } from 'react-native-paper';
 
-import Colors, { primary, secondary, tintColorLight } from '../../constants/Colors';
+import { Text, View } from './Themed';
+import Colors, { tintColorLight } from '../../constants/Colors';
 import { styles } from '../../constants/Styles';
 import { useLoginRequestMutation } from '../clients/healthcloud.generated';
 

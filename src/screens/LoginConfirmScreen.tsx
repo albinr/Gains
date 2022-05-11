@@ -1,5 +1,4 @@
-import { View } from 'react-native';
-
+import { View } from '../components/Themed';
 import { styles } from '../../constants/Styles';
 import LoginConfirm from '../components/LoginConfirm';
 import { LoginScreenProps } from '../../types';

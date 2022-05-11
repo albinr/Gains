@@ -1,7 +1,8 @@
 import React, { useCallback, useContext, useState } from 'react';
-import { View, TextInput } from 'react-native';
-import { Text, Button } from 'react-native-paper';
+import { TextInput } from 'react-native';
+import { Button } from 'react-native-paper';
 
+import { Text, View } from './Themed';
 import { useLoginConfirmMutation } from '../clients/healthcloud.generated';
 import { AuthContext } from '../contexts/AuthContext';
 import { styles } from '../../constants/Styles';

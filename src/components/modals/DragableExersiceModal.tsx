@@ -2,7 +2,7 @@ import React, {
   useCallback, useMemo, useRef, useState, useEffect,
 } from 'react';
 import {
-  View, Text, StyleSheet,
+  StyleSheet,
 } from 'react-native';
 import {
   IconButton, List, Divider,
@@ -12,6 +12,8 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
+import Handle from './CustomHandle';
+import { View, Text, CustomBackground } from '../Themed';
 import ModalActiveWorkoutList from '../ModalActiveWorkoutList';
 import SaveWorkout from '../SaveWorkout';
 import CurrentWorkoutContext, {
@@ -47,7 +49,7 @@ const ExerciseModal = () => {
   const { getTotalSetCountForExercise } = React.useContext(GainsDataContext);
 
   // variables
-  const snapPoints = useMemo(() => [100, '100%'], []);
+  const snapPoints = useMemo(() => [92, '100%'], []);
   // callbacks
   const handleSheetChanges = useCallback((index: number) => {
     // handleSnapPress(1);
@@ -109,29 +111,29 @@ const ExerciseModal = () => {
   const renderFooter = useCallback(
     (props) => (
       <BottomSheetFooter {...props}>
-        <View style={styles.colapsedNavContainer}>
-          <View style={{ flex: 1 }}>
-            <IconButton style={styles.iconBtn} animated size={ICONSIZE} icon='qrcode' onPress={() => {}} />
-          </View>
-          <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-            <IconButton style={styles.iconBtn} animated size={ICONSIZE} icon={togglePause === true ? ('pause') : ('play')} onPress={() => { pauseAndResume(); }} />
-          </View>
-          <View style={{
+        <View darkColor='#8559da' style={[styles.NavContainer]}>
+          {/* <View style={{ flex: 1 }}> */}
+          <IconButton style={styles.iconBtn} animated size={ICONSIZE} icon='qrcode' onPress={() => {}} />
+          {/* </View> */}
+          {/* <View style={{ alignItems: 'center', justifyContent: 'center' }}> */}
+          <IconButton style={styles.iconBtn} animated size={ICONSIZE} icon={togglePause === true ? ('pause') : ('play')} onPress={() => { pauseAndResume(); }} />
+          {/* </View> */}
+          {/* <View style={{
             flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'flex-end',
           }}
-          >
-            {/* <Text style={{ fontSize: 16 }}>
+          > */}
+          {/* <Text style={{ fontSize: 16 }}>
               { exercisesInActiveWorkout[selected]?.name}
             </Text> */}
 
-            <IconButton
-              style={styles.iconBtn}
-              animated
-              size={ICONSIZE}
-              icon={currentExercise && nonCompletedExercisesInActiveWorkout.length <= 1 && isExerciseCompleted(currentExercise._id) ? ('check') : ('chevron-right')}
-              onPress={nextExercise}
-            />
-          </View>
+          <IconButton
+            style={styles.iconBtn}
+            animated
+            size={ICONSIZE}
+            icon={currentExercise && nonCompletedExercisesInActiveWorkout.length <= 1 && isExerciseCompleted(currentExercise._id) ? ('check') : ('chevron-right')}
+            onPress={nextExercise}
+          />
+          {/* </View> */}
         </View>
       </BottomSheetFooter>
     ),
@@ -147,6 +149,8 @@ const ExerciseModal = () => {
       snapPoints={snapPoints}
       onChange={handleSheetChanges}
       footerComponent={renderFooter}
+      backgroundComponent={CustomBackground}
+      handleComponent={Handle}
       index={0}
     >
       <BottomSheetView style={styles.contentContainer}>
@@ -186,9 +190,11 @@ const styles = StyleSheet.create({
   //   position: 'absolute',
   //   bottom: 0,
   // },
-  colapsedNavContainer: {
+  NavContainer: {
     flexDirection: 'row',
-    backgroundColor: 'white',
+    justifyContent: 'space-between',
+    flex: 1,
+    // backgroundColor: 'red',
   },
   iconBtn: {},
   contentContainer: {

@@ -4,19 +4,19 @@ import React, {
   useEffect, useState, useCallback, useMemo,
 } from 'react';
 import {
-  Pressable, SectionList, StyleSheet, TextInput, View,
+  Pressable, SectionList, StyleSheet, TextInput,
 } from 'react-native';
 import {
   Headline, IconButton, List,
 } from 'react-native-paper';
 import {
-  VictoryAxis, VictoryChart, VictoryScatter,
+  VictoryAxis, VictoryChart, VictoryScatter, VictoryTheme,
 } from 'victory-native';
 
-import { Text } from '../components/Themed';
+import { useThemeColor, Text, View } from '../components/Themed';
+import useColorScheme from '../hooks/useColorScheme';
 import { useSaveSet, useSetsForExercise, useGetTotalSetCountForExercise } from '../contexts/GainsDataContext';
 import { RootStackScreenProps, ExerciseSet } from '../../types';
-import Colors from '../../constants/Colors';
 import ExerciseModal from '../components/modals/DragableExersiceModal';
 import CurrentWorkoutContext, { useGetCompletedSetCountForExercise } from '../contexts/CurrentWorkoutDataContext';
 
@@ -40,20 +40,29 @@ const Stepper: React.FC<{ readonly minValue?: number, readonly value: number, re
   }, [value]);
 
   return (
-    <View style={{
-      flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%',
-    }}
+    <View
+      lightColor='#ccc'
+      darkColor='#512da8'
+      style={{
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%',
+      }}
     >
       <IconButton size={25} style={{ flex: 1 }} disabled={minValue === value} animated icon='minus' onPress={() => onValueUpdated((p) => Math.max(minValue, p - 1))} />
-      <View style={{ width: 100, flexDirection: 'row', justifyContent: 'center' }}>
-        <TextInput
+      <View
+        lightColor='#ccc'
+        darkColor='#512da8'
+        style={{ width: 100, flexDirection: 'row', justifyContent: 'center' }}
+      >
+        <Text
           style={{
             fontSize: 16, fontVariant: ['tabular-nums'], textAlign: 'center', alignSelf: 'center',
           }}
-          value={value.toString()}
+          // value={value.toString()}
           // onBlur={}
-          keyboardType='numeric'
-        />
+          // keyboardType='numeric'
+        >
+          {value}
+        </Text>
         <Text style={{
           fontSize: 10, fontVariant: ['tabular-nums'], textAlign: 'center', alignSelf: 'center', paddingLeft: 4,
         }}
@@ -76,7 +85,7 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
   const activeWorkoutSetCount = React.useContext(CurrentWorkoutContext).activeWorkout?.exercisesWithStatus;
   const getCompletedSetCountForExercise = useGetCompletedSetCountForExercise();
   const getTotalSetCountForExercise = useGetTotalSetCountForExercise();
-
+  const themeColor = useThemeColor({ light: '#000000', dark: '#fff' }, 'text');
   const setCount = useMemo(() => getCompletedSetCountForExercise(exercise._id), [getCompletedSetCountForExercise, exercise._id]);
   const totalSetCount = useMemo(() => getTotalSetCountForExercise(exercise._id), [getTotalSetCountForExercise, exercise._id]);
   useEffect(() => {
@@ -112,16 +121,48 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
       {/* <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} /> */}
       <VictoryChart>
         <VictoryScatter
-          style={{ data: { fill: '#c43a31' } }}
+          //
+          style={{
+            data: { fill: '#c43a31' },
+          }}
+          padding={{
+            left: 10,
+          }}
+          domain={{ y: [0, 50] }}
           bubbleProperty='amount'
           maxBubbleSize={10}
           domainPadding={{ x: 10, y: 10 }}
           minBubbleSize={5}
-          height={200}
+          height={300}
           data={sets.map((s) => ({ x: s.createdAt, y: s.weight, amount: s.reps }))}
         />
-        <VictoryAxis dependentAxis crossAxis domainPadding={{ x: 10, y: 10 }} orientation='left' />
-        <VictoryAxis tickFormat={() => ''} domainPadding={{ x: 10, y: 10 }} orientation='bottom' />
+        <VictoryAxis
+          dependentAxis
+          crossAxis
+          domainPadding={{ x: 10, y: 10 }}
+          orientation='left'
+          tickFormat={(t) => `${t}kg` ?? '0kg'}
+          // tickCount={5}
+          style={{
+            axis: { stroke: themeColor, strokeWidth: 1 },
+            axisLabel: { fontSize: 15, padding: 30 },
+            ticks: { stroke: '#ccc', size: 5 },
+            tickLabels: {
+              fontSize: 10, padding: 5, stroke: themeColor,
+            },
+          }}
+        />
+        <VictoryAxis
+          tickFormat={() => ''}
+          domainPadding={{ x: 10, y: 10 }}
+          orientation='bottom'
+          style={{
+            axis: { stroke: themeColor, strokeWidth: 1 },
+            axisLabel: { fontSize: 10, padding: 10 },
+            ticks: { stroke: '#ccc', size: 5 },
+            tickLabels: { fontSize: 10, padding: 5, stroke: themeColor },
+          }}
+        />
       </VictoryChart>
       <Text>Set Log</Text>
       <SectionList
@@ -143,7 +184,7 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
         )}
       />
       {/* <Portal.Host> */}
-      <View style={styles.stepperContainer}>
+      <View lightColor='#ccc' darkColor='#512da8' style={styles.stepperContainer}>
         <Stepper value={weight} onValueUpdated={setWeight} textTitle='KG' />
         <Pressable
           style={styles.saveSetBtn}
@@ -184,11 +225,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
-    backgroundColor: 'lightgray',
+    // backgroundColor: 'lightgray',
     borderTopLeftRadius: 14,
     borderTopRightRadius: 14,
     // position: 'absolute',
-    bottom: 100,
+    bottom: 92,
   },
   title: {
     fontSize: 20,

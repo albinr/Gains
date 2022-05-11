@@ -2,14 +2,15 @@ import React, {
   useCallback, useMemo, useRef, useState, useEffect,
 } from 'react';
 import {
-  View, Text, StyleSheet,
+  StyleSheet,
 } from 'react-native';
 import {
   List, Divider,
 } from 'react-native-paper';
-import { BottomSheetFlatList, BottomSheetView, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
+import { View, Text } from './Themed';
 import CurrentWorkoutContext, {
   useStartTimer, useCurrentWorkoutTime, usePauseTimer, useNextExercise,
 } from '../contexts/CurrentWorkoutDataContext';
@@ -35,23 +36,25 @@ const ModalActiveWorkoutList: React.FC <{ readonly isExerciseCompleted: (exercis
     const setCount = getCompletedSetCountForExercise(item._id);
     const totalSetCount = getTotalSetCountForExercise(item._id);
     const right = ({ ...props }) => (
-      <Text style={{
-        color: textColor, paddingRight: 10,
-      }}
-      >
-        {setCount}
-        {' '}
-        /
-        {' '}
-        {totalSetCount}
-      </Text>
+      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{
+          color: textColor, paddingRight: 20,
+        }}
+        >
+          {setCount}
+          {' '}
+          /
+          {' '}
+          {totalSetCount}
+        </Text>
+      </View>
     );
 
     if (isExerciseCompleted(item._id)) {
       return (
         <View>
           <List.Item
-            style={{ backgroundColor: 'white' }}
+            // style={{ backgroundColor: 'white' }}
             title={item.name}
             onPress={() => {
               selectExercise(item._id);
