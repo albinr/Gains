@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useMemo, useRef, useState, useEffect,
+  useCallback,
 } from 'react';
 import {
   StyleSheet,
@@ -9,14 +9,13 @@ import {
 } from 'react-native-paper';
 import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
+import {
+  FlatList,
+} from 'react-native-gesture-handler';
 
 import { View, Text } from './Themed';
-import CurrentWorkoutContext, {
-  useStartTimer, useCurrentWorkoutTime, usePauseTimer, useNextExercise,
-} from '../contexts/CurrentWorkoutDataContext';
-import GainsDataContext, {
-  useExercises,
-} from '../contexts/GainsDataContext';
+import CurrentWorkoutContext from '../contexts/CurrentWorkoutDataContext';
+import GainsDataContext from '../contexts/GainsDataContext';
 import { RootStackParamList } from '../../types';
 import { ExerciseDefaultFragment } from '../clients/healthcloud.generated';
 
@@ -36,7 +35,7 @@ const ModalActiveWorkoutList: React.FC <{ readonly isExerciseCompleted: (exercis
     const setCount = getCompletedSetCountForExercise(item._id);
     const totalSetCount = getTotalSetCountForExercise(item._id);
     const right = ({ ...props }) => (
-      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: 'transparent' }}>
         <Text style={{
           color: textColor, paddingRight: 20,
         }}
@@ -61,7 +60,7 @@ const ModalActiveWorkoutList: React.FC <{ readonly isExerciseCompleted: (exercis
             }}
             right={right}
           />
-          <Divider />
+          <Divider style={{ height: 1 }} />
         </View>
       );
     }
@@ -69,7 +68,9 @@ const ModalActiveWorkoutList: React.FC <{ readonly isExerciseCompleted: (exercis
   }, [getCompletedSetCountForExercise, getTotalSetCountForExercise, isExerciseCompleted, selectExercise, textColor]);
 
   return (
-    <BottomSheetFlatList
+    <FlatList
+      // initialNumToRender={4}
+      keyExtractor={(item) => item?._id}
       data={exercisesInActiveWorkout}
       renderItem={renderActiveWorkoutItem}
       contentContainerStyle={styles.contentContainer}
@@ -78,7 +79,7 @@ const ModalActiveWorkoutList: React.FC <{ readonly isExerciseCompleted: (exercis
 };
 const styles = StyleSheet.create({
   contentContainer: {
-
+    // height: '100%',
     // backgroundColor: 'orange',
     // height: 100,
     // paddingHorizontal: 16,

@@ -5,10 +5,10 @@ import {
   StyleSheet,
 } from 'react-native';
 import {
-  IconButton, List, Divider,
+  IconButton, Button, Divider,
 } from 'react-native-paper';
 import BottomSheet, {
-  BottomSheetView, BottomSheetFooter, BottomSheetFlatList,
+  BottomSheetView, BottomSheetFooter,
 } from '@gorhom/bottom-sheet';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
@@ -23,7 +23,7 @@ import GainsDataContext, {
   useExercises, useUpsertWorkoutTemplate,
 } from '../../contexts/GainsDataContext';
 import { WorkoutExerciseType } from '../../clients/__generated__/schema';
-import { RootStackParamList, Workout } from '../../../types';
+import { RootStackParamList, Workout, WorkoutTemplate } from '../../../types';
 import useBoolState from '../../hooks/useBoolState';
 
 const ICONSIZE = 40;
@@ -46,7 +46,7 @@ const ExerciseModal = () => {
   const {
     getCompletedSetCountForExercise, nonCompletedExercisesInActiveWorkout, currentExercise, selectExercise, finishWorkout, isExerciseCompleted,
   } = React.useContext(CurrentWorkoutContext);
-  const { getTotalSetCountForExercise } = React.useContext(GainsDataContext);
+  const { getTotalSetCountForExercise, workoutTemplates } = React.useContext(GainsDataContext);
 
   // variables
   const snapPoints = useMemo(() => [92, '100%'], []);
@@ -56,6 +56,7 @@ const ExerciseModal = () => {
   }, []);
   const addWorkoutToTemplate = useCallback((workout : Workout, favourite: boolean, name: string) => {
     const exerciseIds = workout.exercisesWithStatus.map((exercise) => exercise.exerciseId);
+
     const workoutTemplate = {
       exercisesId: exerciseIds,
       name: name === '' ? (`Workout Template`) : name,
@@ -70,15 +71,17 @@ const ExerciseModal = () => {
     if (!activeWorkout) {
       return;
     }
-
+    // const workoutTemplate = prev.find((template) => template.id === workoutTemplateId)
     if (currentExercise) {
       navigation.setParams({ exercise: currentExercise });
     } else if (currentExercise === null) {
+      if (workoutTemplates && !workoutTemplates.find((template) => template.id === activeWorkout.id)) {
+        addWorkoutToTemplate(activeWorkout, false, '');
+      }
+      // Congrats Dialog ShowCongratsMessage;
       finishWorkout();
-      addWorkoutToTemplate(activeWorkout, false, '');
-      showWorkoutDialog();
     }
-  }, [currentExercise, navigation, finishWorkout, activeWorkout, addWorkoutToTemplate, showWorkoutDialog]);
+  }, [currentExercise, navigation, finishWorkout, activeWorkout, addWorkoutToTemplate, workoutTemplates]);
 
   const shouldShowCompletedExercise = useCallback((exerciseId: string) => {
     const completedSetCount = getCompletedSetCountForExercise(exerciseId);
@@ -111,7 +114,7 @@ const ExerciseModal = () => {
   const renderFooter = useCallback(
     (props) => (
       <BottomSheetFooter {...props}>
-        <View darkColor='#8559da' style={[styles.NavContainer]}>
+        <View darkColor='#8559da' lightColor='#b987ff' style={[styles.NavContainer]}>
           {/* <View style={{ flex: 1 }}> */}
           <IconButton style={styles.iconBtn} animated size={ICONSIZE} icon='qrcode' onPress={() => {}} />
           {/* </View> */}
@@ -154,14 +157,16 @@ const ExerciseModal = () => {
       index={0}
     >
       <BottomSheetView style={styles.contentContainer}>
-        <View style={{ width: '100%', alignItems: 'center' }}>
-          <Text style={{
-            fontSize: 25, alignItems: 'center', justifyContent: 'center', padding: 10,
-          }}
+        <View darkColor='#000000' style={{ width: '100%', alignItems: 'center' }}>
+          <Text
+            style={{
+              fontSize: 25, alignItems: 'center', justifyContent: 'center', padding: 10,
+            }}
           >
             {showTimer}
           </Text>
         </View>
+        <Button icon='plus' onPress={showWorkoutDialog}>Save workout</Button>
         <SaveWorkout
           isVisible={isCreateWorkoutDialogVisible}
           onDismiss={hideWorkoutDialog}
@@ -172,10 +177,22 @@ const ExerciseModal = () => {
             addWorkoutToTemplate(activeWorkout!, favourite, name);
           }}
         />
-        <Text>Active Workout</Text>
-        <ModalActiveWorkoutList isExerciseCompleted={shouldShowUncompletedExercise} textColor='grey' />
-        {currentExercise === null ? (<Text>Workout completed</Text>) : (<Text>Completed Exercises</Text>)}
-        <ModalActiveWorkoutList isExerciseCompleted={shouldShowCompletedExercise} textColor='green' />
+        <View darkColor='#522da8' lightColor='#8559da' style={{ justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={styles.text}>Active Workout</Text>
+        </View>
+        <Divider style={{ height: 1 }} />
+        <View style={{ flex: 1 }}>
+          <View style={{ maxHeight: '50%' }}>
+            <ModalActiveWorkoutList isExerciseCompleted={shouldShowUncompletedExercise} textColor='grey' />
+          </View>
+          <View darkColor='#522da8' lightColor='#8559da' style={{ justifyContent: 'center', alignItems: 'center' }}>
+            {currentExercise === null ? (<Text style={styles.text}>Workout completed</Text>) : (<Text style={styles.text}>Completed Exercises</Text>)}
+          </View>
+          <View style={{ maxHeight: '50%' }}>
+            <Divider style={{ height: 1 }} />
+            <ModalActiveWorkoutList isExerciseCompleted={shouldShowCompletedExercise} textColor='green' />
+          </View>
+        </View>
       </BottomSheetView>
     </BottomSheet>
     // </View>
@@ -197,8 +214,16 @@ const styles = StyleSheet.create({
     // backgroundColor: 'red',
   },
   iconBtn: {},
+  text: {
+    padding: 10,
+    fontWeight: 'bold',
+    fontSize: 16,
+
+  },
   contentContainer: {
     flex: 1,
+    borderColor: 'red',
+    marginBottom: 72,
   },
 });
 

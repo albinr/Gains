@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { IconButton } from 'react-native-paper';
 
+import { primary, secondary } from '../../constants/Colors';
 import { useStartTimer } from '../contexts/CurrentWorkoutDataContext';
 
 export const StartWorkoutButton: React.FC<{ readonly startingExercise: any, readonly onStart: (item: any) => void }> = ({
@@ -25,7 +26,15 @@ export const StartWorkoutButton: React.FC<{ readonly startingExercise: any, read
   return (
     <View style={{ position: 'absolute', bottom: 15, right: 15 }}>
       {/* {timer ? ( */}
-      <IconButton icon='play' style={{ backgroundColor: 'lightgreen' }} size={60} onPress={onStartWorkout} />
+      <IconButton
+        icon='play'
+        color='#fff'
+        style={{
+          backgroundColor: '#522da8',
+        }}
+        size={60}
+        onPress={onStartWorkout}
+      />
       {/*  ) : (null)} */}
     </View>
   );

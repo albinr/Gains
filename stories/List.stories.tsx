@@ -3,32 +3,27 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { Button } from 'react-native-paper';
+import { List } from 'react-native-paper';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Example/Button',
-  component: Button,
+  title: 'Example/List',
+  component: List.Item,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {
-    color: { control: 'color' },
     mode: {
-      defaultValue: 'contained',
-      control: 'radio',
-      options: ['contained', 'outlined', 'text'],
+      control: {
+        type: 'select',
+        options: ['single-select', 'multi-select'],
+      },
     },
-    dark: {
-      type: 'boolean',
-      defaultValue: false,
-    },
-  },
-  args: {
 
   },
-} as ComponentMeta<typeof Button>;
+
+} as ComponentMeta<typeof List.Item>;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof Button> = (args) => <Button {...args} />;
+const Template: ComponentStory<typeof List.Item> = (args) => <List.Item {...args} />;
 
 export const Primary = Template.bind({});
 
@@ -39,26 +34,21 @@ export const Outlined = Template.bind({});
 export const Text = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Primary.args = {
-  mode: 'contained',
-  children: 'My button title',
-  style: {},
-  color: '#fff',
-  dark: false,
-  onPress: () => {},
+  title: 'Primary',
+  description: 'Primary description',
+  style: { },
+  left: () => <List.Icon icon='folder' />,
 
 };
 
 Secondary.args = {
-  mode: 'outlined',
-  children: 'My button title',
+
 };
 
 Outlined.args = {
-  mode: 'outlined',
-  children: 'My button title',
+
 };
 
-Text.args = {
-  mode: 'text',
-  children: 'My button title',
-};
+/* Text.args = {
+
+}; */

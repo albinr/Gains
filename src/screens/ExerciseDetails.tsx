@@ -7,6 +7,7 @@ import {
   Pressable, SectionList, StyleSheet, TextInput,
 } from 'react-native';
 import {
+  Divider,
   Headline, IconButton, List,
 } from 'react-native-paper';
 import {
@@ -41,7 +42,7 @@ const Stepper: React.FC<{ readonly minValue?: number, readonly value: number, re
 
   return (
     <View
-      lightColor='#ccc'
+      lightColor='#8559da'
       darkColor='#512da8'
       style={{
         flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%',
@@ -49,7 +50,7 @@ const Stepper: React.FC<{ readonly minValue?: number, readonly value: number, re
     >
       <IconButton size={25} style={{ flex: 1 }} disabled={minValue === value} animated icon='minus' onPress={() => onValueUpdated((p) => Math.max(minValue, p - 1))} />
       <View
-        lightColor='#ccc'
+        lightColor='#8559da'
         darkColor='#512da8'
         style={{ width: 100, flexDirection: 'row', justifyContent: 'center' }}
       >
@@ -164,10 +165,11 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
           }}
         />
       </VictoryChart>
-      <Text>Set Log</Text>
+      <Divider style={{ height: 1 }} />
       <SectionList
         sections={setsPerDay}
-        style={{ width: '100%', flex: 1 }}
+        initialNumToRender={5}
+        style={{ width: '100%' }}
         renderSectionHeader={({ section: { title } }) => (
           <Headline style={{ paddingHorizontal: 10 }}>{title}</Headline>
         )}
@@ -184,7 +186,7 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
         )}
       />
       {/* <Portal.Host> */}
-      <View lightColor='#ccc' darkColor='#512da8' style={styles.stepperContainer}>
+      <View lightColor='#8559da' darkColor='#512da8' style={styles.stepperContainer}>
         <Stepper value={weight} onValueUpdated={setWeight} textTitle='KG' />
         <Pressable
           style={styles.saveSetBtn}
@@ -243,7 +245,7 @@ const styles = StyleSheet.create({
   saveSetBtn: {
     width: 100,
     height: 80,
-    borderRadius: 30,
+    borderRadius: 20,
     borderColor: 'black',
     borderWidth: 2,
     flexDirection: 'column',

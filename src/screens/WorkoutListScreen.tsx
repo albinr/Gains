@@ -29,7 +29,7 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
   }, [startWorkout, navigation]);
 
   const listItemBtns = useCallback(({ item }: { readonly item: WorkoutTemplate }) => (
-    <View lightColor='#FFFFFF' darkColor='#1E1E1E' style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+    <View style={styles.listBtnStyle}>
       <IconButton icon={item.favourite ? ('star') : ('star-outline')} onPress={() => { upsertWorkoutTemplate(item.exerciseIds, item.name, !item.favourite, item.createdAt, item.id); }} />
       <IconButton icon='trash-can-outline' onPress={() => removeWorkout(item.id)} />
     </View>
@@ -42,15 +42,16 @@ export default function WorkoutListScreen({ navigation }: RootTabScreenProps<'Wo
           data={workoutTemplateList}
           // keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <View lightColor='#FFFFFF' darkColor='#1E1E1E'>
+            <View lightColor='#FFFFFF' darkColor='#522da8'>
               <List.Item
                 title={item.name}
                 description={`Created: ${item.createdAt.toLocaleDateString()}`}
+                descriptionStyle={{ opacity: 0.8 }}
                 right={() => listItemBtns({ item })}
                 style={styles.workoutTemplateListItem}
                 onPress={() => onPress(item)}
               />
-              <Divider />
+              <Divider style={{ height: 1 }} />
             </View>
           )}
         />
@@ -71,4 +72,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+
+  listBtnStyle: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+
 });
