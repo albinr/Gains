@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     borderRadius: 4,
-    color: primary,
+    // color: primary,
     borderColor: '#9600A3',
   },
   btn: {
@@ -26,6 +26,12 @@ const styles = StyleSheet.create({
   },
   txt: {
     margin: 10,
+  },
+  logo: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+
   },
 });
 

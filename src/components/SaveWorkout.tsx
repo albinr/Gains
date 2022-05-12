@@ -36,15 +36,15 @@ const SaveWorkout: React.FC<{ readonly title?: string, readonly isVisible: boole
           <Dialog.Content>
             <TextInput
               onSubmitEditing={onCreateInternal}
-              placeholder='Workout name'
+              label='Workout name'
               autoFocus
               onChangeText={(text) => { workoutName.current = text; }}
             />
           </Dialog.Content>
-          <Dialog.Actions>
+          <Dialog.Actions style={{ justifyContent: 'space-between' }}>
             <Button onPress={onDismiss}>Cancel</Button>
-            <Button onPress={onCreateInternal}>Create</Button>
-            <Button onPress={onCreatefavourite}>Create as favourite</Button>
+            {/* <Button onPress={onCreateInternal}>Create</Button> */}
+            <Button onPress={onCreatefavourite}>Save as favourite</Button>
           </Dialog.Actions>
         </KeyboardAvoidingView>
       </Dialog>

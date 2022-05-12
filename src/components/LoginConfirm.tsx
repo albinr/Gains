@@ -1,6 +1,5 @@
 import React, { useCallback, useContext, useState } from 'react';
-import { TextInput } from 'react-native';
-import { Button } from 'react-native-paper';
+import { Button, TextInput } from 'react-native-paper';
 
 import { Text, View } from './Themed';
 import { useLoginConfirmMutation } from '../clients/healthcloud.generated';
@@ -26,19 +25,16 @@ const LoginConfirm: React.FC<{readonly email:string}> = ({ email }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.txt}>Enter the code you recieved</Text>
       <TextInput
-        placeholder='Login Code'
+        label='Confirmation Code'
         keyboardType='number-pad'
-        placeholderTextColor='#2f95dc'
         value={code}
         onChangeText={setCode}
         onSubmitEditing={onSubmit}
         enablesReturnKeyAutomatically
         returnKeyType='send'
-        style={styles.input}
       />
-      <Button mode='contained' onPress={onSubmit} style={styles.btn}>Continue</Button>
+      <Button mode='contained' onPress={onSubmit} style={styles.btn}>Confirm</Button>
     </View>
   );
 };

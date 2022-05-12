@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
 import {
-  StyleProp, StyleSheet, ViewStyle, View, Text,
+  StyleProp, StyleSheet, ViewStyle, Text,
 } from 'react-native';
 import { BottomSheetHandleProps } from '@gorhom/bottom-sheet';
+import { Divider } from 'react-native-paper';
 
-import { useThemeColor } from '../Themed';
+import { View, useThemeColor } from '../Themed';
 
 interface HandleProps extends BottomSheetHandleProps {
   readonly style?: StyleProp<ViewStyle>;

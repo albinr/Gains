@@ -1,7 +1,5 @@
 import React, { useCallback, useState } from 'react';
-// import { View, Text, TextInput, Button } from 'react-native';
-import { TextInput } from 'react-native';
-import { Button } from 'react-native-paper';
+import { Button, TextInput } from 'react-native-paper';
 
 import { Text, View } from './Themed';
 import Colors, { tintColorLight } from '../../constants/Colors';
@@ -20,10 +18,10 @@ const LoginRequest: React.FC<{readonly onEmailRequested: (email: string) => void
 
   return (
     <View style={styles.container}>
-      <Text style={styles.txt}>Enter your email below to get started!</Text>
       <TextInput
-        placeholder='Email'
+        label='Email'
         placeholderTextColor={tintColorLight}
+        textAlign='center'
         value={email}
         keyboardType='email-address'
         onChangeText={setEmail}
@@ -31,10 +29,8 @@ const LoginRequest: React.FC<{readonly onEmailRequested: (email: string) => void
         enablesReturnKeyAutomatically
         autoCapitalize='none'
         returnKeyType='send'
-        style={styles.input}
       />
       <Button mode='contained' onPress={onSubmit} style={styles.btn}>CONTINUE</Button>
-      <Text style={styles.txt}>New user? Just enter your email and we’ll send you the magic link - that’s all you need to get started!</Text>
     </View>
   );
 };

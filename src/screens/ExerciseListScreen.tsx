@@ -145,7 +145,7 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
           title={item.name}
           right={() => removeBtn({ item })}
         />
-        <Divider />
+        <Divider style={{ height: 1 }} />
       </View>
     );
   }, [navigation, removeBtn]);
@@ -159,6 +159,7 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
         onChangeText={(text) => { setSearchQuery(text); }}
         onSubmitEditing={() => setSearchQuery('')}
         left={<TextInput.Icon name='magnify-plus-outline' />}
+        right={searchQuery.length > 0 ? (<TextInput.Icon name='close' onPress={() => { setSearchQuery(''); Keyboard.dismiss(); }} />) : null}
       />
       { searchQuery.length > 0 ? (
         <View style={styles.searchSuggestionContainer}>
@@ -180,7 +181,7 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
 
             {shouldShowAdd ? (
               <View>
-                <Divider />
+                <Divider style={{ height: 1 }} />
                 <CreateExercises
                   searchQuery={searchQuery}
                   onCreate={(name) => {
@@ -205,6 +206,7 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
       // />
         <FlatList
           data={exercisesInActiveWorkout}
+          contentContainerStyle={{ paddingBottom: 130 }}
           renderItem={renderActiveWorkoutItem}
           keyExtractor={(item, index) => item._id}
         />

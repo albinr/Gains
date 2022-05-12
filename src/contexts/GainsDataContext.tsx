@@ -15,6 +15,7 @@ export type GainsContextType = {
   readonly sets: readonly ExerciseSet[],
   // readonly exercises: readonly Exercise[],
   readonly exercises: readonly ExerciseDefaultFragment[],
+  // readonly checkifActiveWorkoutAlreadyExists: (workout: Workout) => boolean,
   // getExercisesById(exerciseIds: string[]): readonly Exercise[],
   // getExerciseAutosuggestions(): readonly Exercise[],
   searchForExercises(query: string): readonly ExerciseDefaultFragment[],
@@ -31,6 +32,7 @@ export const GainsContext = React.createContext<GainsContextType>({
   exercises: [],
   workoutTemplates: [],
   sets: [],
+  // checkifActiveWorkoutAlreadyExists: () => false,
   searchForExercises: () => [],
   addWorkout: () => {},
   removeWorkout: () => {},
@@ -116,6 +118,20 @@ export const GainsContextProvider: React.FC = ({ children }) => {
       } */
     [],
   );
+  // const checkIfWorkoutExists = useCallback((workoutId: string) => workouts.some((workout) => workout.id === workoutId), [workouts]);
+  // const checkIfWorkoutTemplateExists = useCallback((workoutTemplateId: string) => workoutTemplates.some((workoutTemplate) => workoutTemplate.id === workoutTemplateId), [workoutTemplates]);
+
+  const checkIfActiveWorkoutAlreadyExists = useCallback(() => {
+    const activeWorkout = workouts.find((workout) => workout);
+    if (activeWorkout) {
+      return workoutTemplates.some((workoutTemplate) => workoutTemplate.id === activeWorkout.id);
+    }
+    return false;
+  }, [workouts, workoutTemplates]);
+  /* const checkIfWorkoutTemplateIdExists = useCallback((workoutTemplateId: string) => {
+    const workoutIsSaved = workoutTemplates.some((workoutTemplate) => workoutTemplate.id === workoutTemplateId);
+    return workoutIsSaved;
+  }, [workoutTemplates]); */
 
   const upsertWorkoutTemplate = useCallback<GainsContextType['upsertWorkoutTemplate']>((exercises, name, favourite, createdAt, workoutTemplateId) => {
     setWorkoutTemplates((prev) => {
@@ -139,13 +155,15 @@ export const GainsContextProvider: React.FC = ({ children }) => {
     workouts,
     addExercise,
     addSet,
+    // checkIfActiveWorkoutAlreadyExists,
     addWorkout,
     removeWorkout,
     getTotalSetCountForExercise,
     workoutTemplates,
     searchForExercises,
     upsertWorkoutTemplate,
-  }), [addSet, addExercise, sets, exercises, workouts, addWorkout, removeWorkout, workoutTemplates, upsertWorkoutTemplate, searchForExercises, getTotalSetCountForExercise]);
+  }), [addSet, addExercise, sets, exercises, workouts, addWorkout, removeWorkout, workoutTemplates,
+    upsertWorkoutTemplate, searchForExercises, getTotalSetCountForExercise]);
 
   return (
     <GainsContext.Provider value={value}>

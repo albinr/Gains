@@ -25,6 +25,7 @@ import WorkoutListScreen from '../src/screens/WorkoutListScreen';
 import TabTwoScreen from '../src/screens/TabTwoScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+import GainsContext from '../src/contexts/GainsDataContext';
 
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/

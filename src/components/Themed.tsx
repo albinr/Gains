@@ -68,7 +68,7 @@ export const CustomBackground: React.FC<BottomSheetBackgroundProps> = ({
 }) => {
   // #region styles
   // const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
-  const backgroundColor = useThemeColor({ light: '#fff', dark: '#000' }, 'background');
+  const backgroundColor = useThemeColor({ light: '#ffffff', dark: '#000000' }, 'background');
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     backgroundColor,
   }));
