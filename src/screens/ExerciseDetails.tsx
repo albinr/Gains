@@ -4,22 +4,22 @@ import React, {
   useEffect, useState, useCallback, useMemo,
 } from 'react';
 import {
-  Pressable, SectionList, StyleSheet, TextInput,
+  Pressable, SectionList, StyleSheet,
 } from 'react-native';
 import {
   Divider,
   Headline, IconButton, List,
 } from 'react-native-paper';
 import {
-  VictoryAxis, VictoryChart, VictoryScatter, VictoryTheme,
+  VictoryAxis, VictoryChart, VictoryScatter, VictoryLine, VictoryZoomContainer,
 } from 'victory-native';
 
 import { useThemeColor, Text, View } from '../components/Themed';
-import useColorScheme from '../hooks/useColorScheme';
 import { useSaveSet, useSetsForExercise, useGetTotalSetCountForExercise } from '../contexts/GainsDataContext';
 import { RootStackScreenProps, ExerciseSet } from '../../types';
 import ExerciseModal from '../components/modals/DragableExersiceModal';
 import CurrentWorkoutContext, { useGetCompletedSetCountForExercise } from '../contexts/CurrentWorkoutDataContext';
+import { primary, secondary } from '../../constants/Colors';
 
 dayjs.extend(calendar, {
   sameDay: '[Today at] h:mm A', // The same day (Today at 2:30 AM)
@@ -121,6 +121,19 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
       {/* Use a light status bar on iOS to account for the black space above the modal */}
       {/* <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} /> */}
       <VictoryChart>
+        <VictoryLine
+          data={sets.map((s) => ({ x: s.createdAt, y: s.weight, amount: s.reps }))}
+          style={{
+            data: { stroke: primary, strokeWidth: 0.6, strokeDasharray: '5,5' },
+          }}
+          padding={{
+            left: 10,
+          }}
+          animate
+          domain={{ y: [0, weight * 1.5], x: [sets[0]?.createdAt || 0, sets[sets.length - 1]?.createdAt || 0] }}
+          domainPadding={{ x: 6, y: 6 }}
+          height={300}
+        />
         <VictoryScatter
           //
           style={{
@@ -129,19 +142,20 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
           padding={{
             left: 10,
           }}
-          domain={{ y: [0, 50] }}
+          animate
+          domain={{ y: [0, weight * 1.5], x: [sets[0]?.createdAt || 0, sets[sets.length - 1]?.createdAt || 0] }}
           bubbleProperty='amount'
-          maxBubbleSize={10}
-          domainPadding={{ x: 10, y: 10 }}
-          minBubbleSize={5}
+          maxBubbleSize={12}
+          minBubbleSize={4}
+          domainPadding={{ x: 6, y: 6 }}
           height={300}
           data={sets.map((s) => ({ x: s.createdAt, y: s.weight, amount: s.reps }))}
         />
         <VictoryAxis
+          orientation='left'
           dependentAxis
           crossAxis
           domainPadding={{ x: 10, y: 10 }}
-          orientation='left'
           tickFormat={(t) => `${t}kg` ?? '0kg'}
           // tickCount={5}
           style={{
@@ -154,9 +168,10 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
           }}
         />
         <VictoryAxis
-          tickFormat={() => ''}
-          domainPadding={{ x: 10, y: 10 }}
           orientation='bottom'
+          domainPadding={{ x: 10, y: 10 }}
+          crossAxis
+          tickFormat={(t) => `${(new Date(new Date(t).getTime() - 2 * 24 * 60 * 60 * 1000).toLocaleDateString())}` ?? '0'}
           style={{
             axis: { stroke: themeColor, strokeWidth: 1 },
             axisLabel: { fontSize: 10, padding: 10 },
@@ -177,7 +192,7 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
           <List.Item
             title={(
               <Text>
-                { `${item.reps} reps @ `}
+                { `${item.reps} reps with `}
                 <Text style={{ fontWeight: 'bold' }}>{`${item.weight} kg`}</Text>
               </Text>
             )}

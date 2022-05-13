@@ -13,7 +13,9 @@ interface HandleProps extends BottomSheetHandleProps {
 
 const Handle: React.FC<HandleProps> = ({ style, animatedIndex }) => (
   <View style={styles.header}>
+    <Divider style={{ height: 3 }} />
     <View style={[styles.handle, { backgroundColor: useThemeColor({ light: '#000', dark: '#fff' }, 'background') }]} />
+    <Divider style={{ height: 3 }} />
   </View>
 );
 
@@ -28,8 +30,8 @@ const styles = StyleSheet.create(
       justifyContent: 'center',
     },
     handle: {
-      width: '10%',
-      height: 5,
+      width: '20%',
+      height: 4,
       backgroundColor: 'black',
       borderRadius: 10,
     },

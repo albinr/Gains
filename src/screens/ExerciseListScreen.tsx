@@ -2,8 +2,9 @@ import React, {
   useEffect, useMemo, useState, useRef, useCallback,
 } from 'react';
 import {
-  StyleSheet, FlatList, Pressable, TouchableWithoutFeedback, Keyboard,
+  StyleSheet, Pressable, TouchableWithoutFeedback, Keyboard,
 } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 import {
   List, IconButton, Divider, TextInput,
 } from 'react-native-paper';
@@ -21,6 +22,7 @@ import CurrentWorkoutContext, {
 } from '../contexts/CurrentWorkoutDataContext';
 // import { WorkoutExerciseType } from '../../clients/__generated__/schema';
 import { StartWorkoutButton } from '../components/StartWorkout';
+import { primary } from '../../constants/Colors';
 
 const CreateExercises: React.FC<{ readonly searchQuery: string, readonly onCreate: (name: string) => void }> = ({
   searchQuery, onCreate,
@@ -32,11 +34,13 @@ const CreateExercises: React.FC<{ readonly searchQuery: string, readonly onCreat
   }, [onCreate, searchQuery]);
 
   const right = ({ ...props }) => (
-    <IconButton
-      {...props}
-      icon='plus'
+    <View style={styles.centering}>
+      <IconButton
+        {...props}
+        icon='plus'
       // onPress={onCreateExercises}
-    />
+      />
+    </View>
   );
   return (
     <List.Item
@@ -96,34 +100,38 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
     } return null;
   }, [addExerciseToWorkout, activeWorkout, exercisesInActiveWorkout]);
 
-  const renderItem = useCallback(({ item }: { readonly item: ExerciseDefaultFragment }) => {
+  const searchItem = useCallback(({ item }: { readonly item: ExerciseDefaultFragment }) => {
     const right = ({ ...props }) => (
-      <IconButton
-        {...props}
-        icon={activeWorkout && !exercisesInActiveWorkout.find((id) => id._id === item._id) ? 'plus' : 'check'}
-      />
-    );
-    return (
-      <View
-        lightColor='#FFFFFF'
-        darkColor='#1E1E1E'
-      >
-        <List.Item
-          onPress={() => {
-            onPress(item);
-          // onBlurSearch();
-          }}
-          title={item.name}
-          right={right}
-          style={{
-          // borderColor: 'blue',
-          // borderWidth: 1,
-          // backgroundColor: '#ccc',
-          }}
-
+      <View style={styles.centering}>
+        <IconButton
+          {...props}
+          // icon={activeWorkout && !exercisesInActiveWorkout.find((id) => id._id === item._id) ? 'plus' : 'check'}
+          icon='plus'
+          onPress={() => onPress(item)}
         />
       </View>
     );
+    if (activeWorkout && !exercisesInActiveWorkout.find((id) => id._id === item._id)) {
+      return (
+        <View
+          lightColor='#FFFFFF'
+          darkColor='#1E1E1E'
+        >
+          <List.Item
+            onPress={() => {
+              onPress(item);
+              // onBlurSearch();
+              setSearchQuery('');
+              Keyboard.dismiss();
+            }}
+            title={item.name}
+            right={right}
+          />
+          <Divider style={{ height: 1 }} />
+        </View>
+      );
+    }
+    return null;
   }, [onPress, exercisesInActiveWorkout, activeWorkout]);
 
   const removeBtn = useCallback(({ item }) => (
@@ -174,14 +182,14 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
           <View style={styles.searchSuggestion}>
             <FlatList
               data={exercisesToShow}
-              renderItem={renderItem}
+              renderItem={searchItem}
               keyExtractor={(item) => item._id}
               onScrollBeginDrag={() => Keyboard.dismiss()}
             />
 
             {shouldShowAdd ? (
               <View>
-                <Divider style={{ height: 1 }} />
+                <Divider style={{ height: 1, backgroundColor: primary }} />
                 <CreateExercises
                   searchQuery={searchQuery}
                   onCreate={(name) => {
@@ -198,12 +206,6 @@ export default function ExerciseListScreen({ navigation }: RootTabScreenProps<'E
         </View>
       ) : null }
       {exercisesInActiveWorkout && exercisesInActiveWorkout.length > 0 ? (
-      // <DraggableFlatList
-      //   data={data}
-      //   renderItem={renderActiveWorkoutItem}
-      //   keyExtractor={(item, index) => item._id}
-      //   onDragEnd={({ data }) => setData(data)}
-      // />
         <FlatList
           data={exercisesInActiveWorkout}
           contentContainerStyle={{ paddingBottom: 130 }}
@@ -273,5 +275,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 0,
     // elevation: 0,
+  },
+  centering: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
   },
 });
