@@ -11,7 +11,7 @@ import {
   Headline, IconButton, List,
 } from 'react-native-paper';
 import {
-  VictoryAxis, VictoryChart, VictoryScatter, VictoryLine, VictoryZoomContainer,
+  VictoryAxis, VictoryChart, VictoryScatter, VictoryLine, VictoryLegend,
 } from 'victory-native';
 
 import { useThemeColor, Text, View } from '../components/Themed';
@@ -121,6 +121,7 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
       {/* Use a light status bar on iOS to account for the black space above the modal */}
       {/* <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} /> */}
       <VictoryChart>
+
         <VictoryLine
           data={sets.map((s) => ({ x: s.createdAt, y: s.weight, amount: s.reps }))}
           style={{
@@ -163,7 +164,7 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
             axisLabel: { fontSize: 15, padding: 30 },
             ticks: { stroke: '#ccc', size: 5 },
             tickLabels: {
-              fontSize: 10, padding: 5, stroke: themeColor,
+              fontSize: 10, padding: 5, fill: themeColor,
             },
           }}
         />
@@ -176,14 +177,27 @@ export default function ModalScreen({ navigation, route: { params: { exercise } 
             axis: { stroke: themeColor, strokeWidth: 1 },
             axisLabel: { fontSize: 10, padding: 10 },
             ticks: { stroke: '#ccc', size: 5 },
-            tickLabels: { fontSize: 10, padding: 5, stroke: themeColor },
+            tickLabels: { fontSize: 10, padding: 5, fill: themeColor },
           }}
+        />
+        <VictoryLegend
+          x={125}
+          y={50}
+          // title='Legend'
+          centerTitle
+          orientation='horizontal'
+          gutter={30}
+          style={{ border: { stroke: '#ccc' }, title: { fontSize: 20, fill: themeColor } }}
+          data={[
+            { name: 'reps', symbol: { fill: '#c43a31' }, labels: { fill: themeColor } },
+            /*  { name: 'Two', symbol: { fill: 'orange' } },
+            { name: 'Three', symbol: { fill: 'gold' } }, */
+          ]}
         />
       </VictoryChart>
       <Divider style={{ height: 1 }} />
       <SectionList
         sections={setsPerDay}
-        initialNumToRender={5}
         style={{ width: '100%' }}
         renderSectionHeader={({ section: { title } }) => (
           <Headline style={{ paddingHorizontal: 10 }}>{title}</Headline>

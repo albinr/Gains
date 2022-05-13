@@ -79,7 +79,7 @@ const ExerciseModal = () => {
         addWorkoutToTemplate(activeWorkout, false, '');
       }
       // Congrats Dialog ShowCongratsMessage;
-      finishWorkout();
+      finishWorkout(); // move to playbutton
     }
   }, [currentExercise, navigation, finishWorkout, activeWorkout, addWorkoutToTemplate, workoutTemplates]);
 
