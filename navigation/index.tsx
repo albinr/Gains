@@ -3,7 +3,7 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import { Button, IconButton } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
@@ -22,10 +22,8 @@ import NotFoundScreen from '../src/screens/NotFoundScreen';
 import ProflieScreen from '../src/screens/ProfileScreen';
 import ExerciseListScreen from '../src/screens/ExerciseListScreen';
 import WorkoutListScreen from '../src/screens/WorkoutListScreen';
-import TabTwoScreen from '../src/screens/TabTwoScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
-import GainsContext from '../src/contexts/GainsDataContext';
 
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
