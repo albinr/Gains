@@ -10,6 +10,13 @@ This App is the last part in the Front End developer course at KYH. This app is 
 
 Gains is an app that lets you create and track your workouts. You can also see your strength progress on the induviduall exercises.
 
+>This projekt is made with:
+> - Typescript
+> - Expo Go
+> - React Native
+> - GaphQL
+> - URQL
+
 [The github repo.](https://github.com/AlbinR/gains)
 
 > To run/edit the project on your computer:
