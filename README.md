@@ -1,6 +1,7 @@
 # Gains: Gym app
 
 > Hello, my name is Albin Ryberg, and this is my last assignment in the course Front End developer at KYH.
+> It is made in collaboratin with my classmate [Anton Larsson-Auna](https://github.com/xamnotna).
 
 ---
 
