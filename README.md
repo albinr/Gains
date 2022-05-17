@@ -22,6 +22,7 @@ Gains is an app that lets you create and track your workouts. You can also see y
 
 ### People who worked on this project:
 [Anton Larsson-Auna](https://github.com/xamnotna)
+</br>
 [Robert Herber](https://github.com/robertherber)
 
 > To run/edit the project on your computer:
