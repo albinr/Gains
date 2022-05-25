@@ -17,6 +17,7 @@ Gains is an app that lets you create and track your workouts. You can also see y
 > - React Native
 > - GaphQL
 > - URQL
+> - MongoDB
 
 [The github repo.](https://github.com/AlbinR/gains)
 
